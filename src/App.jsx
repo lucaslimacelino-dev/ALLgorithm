@@ -1,17 +1,24 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { AuthProvider } from './context/AuthContext'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { LanguageProvider } from './context/LanguageContext'
+import ScrollManager from './components/ScrollManager'
 import Landing from './pages/Landing'
-import Dashboard from './pages/Dashboard'
+import Library from './pages/Library'
+import AlgorithmPage from './pages/AlgorithmPage'
 
 export default function App() {
   return (
-    <AuthProvider>
+    <LanguageProvider>
       <BrowserRouter>
+        <ScrollManager />
         <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/algoritmos" element={<Library />} />
+          <Route path="/algoritmos/:id" element={<AlgorithmPage />} />
+          {/* Rota antiga, mantida para links já compartilhados */}
+          <Route path="/dashboard" element={<Navigate to="/algoritmos" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
-    </AuthProvider>
+    </LanguageProvider>
   )
 }
