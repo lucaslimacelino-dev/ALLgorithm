@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
@@ -6,7 +6,7 @@ import CodeBlock from '../components/CodeBlock'
 import DifficultyBadge from '../components/DifficultyBadge'
 import { getVisualizer } from '../components/visualizers'
 import { SITE } from '../config/site'
-import { algorithms, getAlgorithm, getCategory } from '../data'
+import { algorithms, getAlgorithm, getCategory, loadAlgorithmContent, preloadAlgorithm } from '../data'
 import { usePageTitle } from '../lib/usePageTitle'
 
 const complexityLabels = [
@@ -127,6 +127,9 @@ function Article({ algorithm }) {
       const el = document.getElementById(sid)
       if (el) observer.observe(el)
     })
+    // Links com âncora (ex.: #visualizacao) chegam antes do conteúdo: rola de novo quando ele aparece.
+    const target = window.location.hash && document.getElementById(decodeURIComponent(window.location.hash.slice(1)))
+    if (target) target.scrollIntoView()
     return () => observer.disconnect()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -156,7 +159,7 @@ function Article({ algorithm }) {
             {category.items.map(a => (
               <li key={a.id}>
                 <Link
-                  to={`/algoritmos/${a.id}`}
+                  onMouseEnter={() => preloadAlgorithm(a.id)} to={`/algoritmos/${a.id}`}
                   aria-current={a.id === algorithm.id ? 'page' : undefined}
                   className={`block px-3 py-1.5 rounded-lg ${a.id === algorithm.id ? 'text-accent font-medium' : 'text-muted hover:text-ink'}`}
                 >
@@ -200,7 +203,9 @@ function Article({ algorithm }) {
         <div className="mt-16 space-y-16 max-w-4xl">
           {Visualizer && (
             <Section id="visualizacao" number={number('visualizacao')} title="Visualização">
-              <Visualizer algorithm={algorithm} />
+              <Suspense fallback={<Placeholder height="h-[420px]" />}>
+                <Visualizer algorithm={algorithm} />
+              </Suspense>
             </Section>
           )}
 
@@ -275,17 +280,77 @@ function Article({ algorithm }) {
   )
 }
 
+function Placeholder({ height = 'h-40' }) {
+  return <div className={`${height} rounded-2xl bg-subtle/70 animate-pulse`} />
+}
+
+// Exibido enquanto o conteúdo completo do artigo é baixado: usa só os campos do índice leve.
+function ArticleSkeleton({ algorithm, error, onRetry }) {
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 grid gap-12 grid-cols-[minmax(0,1fr)] lg:grid-cols-[200px_minmax(0,1fr)]">
+      <div className="hidden lg:block" />
+      <article className="min-w-0" aria-busy={!error}>
+        <div className="h-4 mb-8" />
+        <h1 className="title text-[40px] sm:text-[52px] leading-[1.05] tracking-[-0.04em]">{algorithm.name}</h1>
+        <p className="mt-4 font-display italic text-2xl leading-snug text-muted">{algorithm.summary}</p>
+        <p className="mt-7 prose-body max-w-3xl">{algorithm.description}</p>
+        {error ? (
+          <div className="mt-12 card p-6 max-w-xl">
+            <p className="text-sm text-ink">Não foi possível carregar o restante do artigo.</p>
+            <p className="mt-1 text-sm text-muted">Verifique sua conexão — ou o site pode ter sido atualizado agora há pouco.</p>
+            <button onClick={onRetry} className="btn-primary mt-4">Tentar de novo</button>
+          </div>
+        ) : (
+          <div className="mt-16 space-y-6 max-w-4xl">
+            <Placeholder height="h-[420px]" />
+            <Placeholder />
+          </div>
+        )}
+      </article>
+    </div>
+  )
+}
+
+const contentCache = new Map()
+
 export default function AlgorithmPage() {
   const { id } = useParams()
   const algorithm = getAlgorithm(id)
+  const [content, setContent] = useState(() => contentCache.get(id) ?? null)
+  const [error, setError] = useState(false)
+  const [attempt, setAttempt] = useState(0)
+
+  useEffect(() => {
+    if (!algorithm) return
+    if (contentCache.has(id)) { setContent(contentCache.get(id)); return }
+    let cancelled = false
+    setError(false)
+    loadAlgorithmContent(id)
+      .then(full => {
+        contentCache.set(id, full)
+        if (!cancelled) setContent(full)
+      })
+      .catch(() => { if (!cancelled) setError(true) })
+    return () => { cancelled = true }
+  }, [id, algorithm, attempt])
+
+  // Adianta o download dos artigos vizinhos.
+  useEffect(() => {
+    const i = algorithms.findIndex(a => a.id === id)
+    ;[algorithms[i - 1], algorithms[i + 1]].forEach(a => a && preloadAlgorithm(a.id))
+  }, [id])
+
   if (!algorithm) return <Navigate to="/algoritmos" replace />
+  const current = content?.id === id ? content : contentCache.get(id)
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-1">
-        {/* key: reinicia o estado (sumário ativo, visualizador) ao trocar de artigo */}
-        <Article key={algorithm.id} algorithm={algorithm} />
+        {current
+          // key: reinicia o estado (sumário ativo, visualizador) ao trocar de artigo
+          ? <Article key={id} algorithm={current} />
+          : <ArticleSkeleton algorithm={algorithm} error={error} onRetry={() => setAttempt(a => a + 1)} />}
       </main>
       <Footer />
     </div>

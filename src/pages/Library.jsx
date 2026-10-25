@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import DifficultyBadge from '../components/DifficultyBadge'
-import { algorithms, categories, difficulties, mainComplexity } from '../data'
+import { algorithms, categories, difficulties, mainComplexity, preloadAlgorithm } from '../data'
 import { matchScore } from '../lib/search'
 import { usePageTitle } from '../lib/usePageTitle'
 
@@ -120,7 +120,7 @@ export default function Library() {
                   {cat.items.map((a, i) => (
                     <li key={a.id}>
                       <Link
-                        to={`/algoritmos/${a.id}`}
+                        onMouseEnter={() => preloadAlgorithm(a.id)} to={`/algoritmos/${a.id}`}
                         className="group grid grid-cols-[28px_minmax(0,1fr)] sm:grid-cols-[28px_minmax(0,1fr)_120px_110px_16px] gap-x-4 gap-y-1.5 items-center px-5 py-4 hover:bg-subtle/60"
                       >
                         <span className="font-mono text-xs text-faint tabular-nums">{String(i + 1).padStart(2, '0')}</span>

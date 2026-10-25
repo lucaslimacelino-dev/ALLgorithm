@@ -1,34 +1,28 @@
+import { lazy } from 'react'
 import { hasSortingVisualizer } from '../../lib/sortingFrames'
 import { arraySearches } from '../../lib/searchFrames'
 import { gridSearches } from '../../lib/gridSearch'
 import { stringSearches } from '../../lib/stringFrames'
-import StringSearchVisualizer from './StringSearchVisualizer'
 import { graphAlgorithms } from '../../lib/graphFrames'
-import GraphVisualizer from './GraphVisualizer'
-import ForceLayoutVisualizer from './ForceLayoutVisualizer'
-import SortingVisualizer from './SortingVisualizer'
-import ArraySearchVisualizer from './ArraySearchVisualizer'
-import GridSearchVisualizer from './GridSearchVisualizer'
-import BstVisualizer from './BstVisualizer'
-import HashVisualizer from './HashVisualizer'
-import StackQueuePlayground from './structures/StackQueuePlayground'
-import LinkedListPlayground from './structures/LinkedListPlayground'
-import HeapPlayground from './structures/HeapPlayground'
-import TriePlayground from './structures/TriePlayground'
-import UnionFindPlayground from './structures/UnionFindPlayground'
-import AvlPlayground from './structures/AvlPlayground'
+
+// Cada visualizador é um pedaço separado do bundle, carregado só quando o artigo é aberto.
+const SortingVisualizer = lazy(() => import('./SortingVisualizer'))
+const ArraySearchVisualizer = lazy(() => import('./ArraySearchVisualizer'))
+const GridSearchVisualizer = lazy(() => import('./GridSearchVisualizer'))
+const StringSearchVisualizer = lazy(() => import('./StringSearchVisualizer'))
+const GraphVisualizer = lazy(() => import('./GraphVisualizer'))
 
 const byId = {
-  'bst-search': BstVisualizer,
-  'hash-search': HashVisualizer,
-  'stack': StackQueuePlayground,
-  'queue': StackQueuePlayground,
-  'linked-list': LinkedListPlayground,
-  'binary-heap': HeapPlayground,
-  'trie': TriePlayground,
-  'union-find': UnionFindPlayground,
-  'avl-tree': AvlPlayground,
-  'force-directed': ForceLayoutVisualizer,
+  'bst-search': lazy(() => import('./BstVisualizer')),
+  'hash-search': lazy(() => import('./HashVisualizer')),
+  'stack': lazy(() => import('./structures/StackQueuePlayground')),
+  'queue': lazy(() => import('./structures/StackQueuePlayground')),
+  'linked-list': lazy(() => import('./structures/LinkedListPlayground')),
+  'binary-heap': lazy(() => import('./structures/HeapPlayground')),
+  'trie': lazy(() => import('./structures/TriePlayground')),
+  'union-find': lazy(() => import('./structures/UnionFindPlayground')),
+  'avl-tree': lazy(() => import('./structures/AvlPlayground')),
+  'force-directed': lazy(() => import('./ForceLayoutVisualizer')),
 }
 
 // Devolve o componente de visualização do algoritmo, ou null se ele ainda não tiver um.

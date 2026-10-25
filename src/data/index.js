@@ -1,18 +1,9 @@
-import ordenacao from './algorithms/ordenacao'
-import busca from './algorithms/busca'
-import estruturas from './algorithms/estruturas'
-import strings from './algorithms/strings'
-import grafos from './algorithms/grafos'
+import algorithmIndex from 'virtual:algorithm-index'
+import { categoryList } from './categories'
 
-// Grupos na ordem em que aparecem no site (dos mais simples aos mais avançados).
-// Para adicionar um algoritmo, basta incluí-lo no arquivo da categoria correspondente.
-export const categories = [
-  { id: 'ordenacao', title: 'Ordenação', icon: '⇅', description: 'Colocar dados em ordem — a base de buscas, rankings e bancos de dados.', items: ordenacao },
-  { id: 'busca', title: 'Busca', icon: '◎', description: 'Encontrar um elemento em listas, árvores, tabelas e grafos — do jeito mais rápido possível.', items: busca },
-  { id: 'estruturas', title: 'Estruturas de Dados', icon: '⬡', description: 'Formas de organizar dados na memória — e o custo de cada operação sobre elas.', items: estruturas },
-  { id: 'strings', title: 'Busca em Strings', icon: '❝', description: 'Encontrar um padrão dentro de um texto sem reler o que já foi lido.', items: strings },
-  { id: 'grafos', title: 'Grafos', icon: '◈', description: 'Mapas, redes e dependências: caminhos mínimos, árvores, fluxos e rotas.', items: grafos },
-]
+// Para adicionar um algoritmo, basta incluí-lo em src/data/algorithms/<categoria>.js.
+// Aqui ficam só os campos leves (gerados no build); o conteúdo completo vem de loadAlgorithmContent.
+export const categories = categoryList.map(c => ({ ...c, items: algorithmIndex[c.id] ?? [] }))
 
 export const algorithms = categories.flatMap(c => c.items.map(a => ({ ...a, category: c.id })))
 
@@ -21,6 +12,22 @@ export const getAlgorithm = id => algorithms.find(a => a.id === id)
 // Complexidade de destaque: caso médio dos algoritmos ou a primeira operação das estruturas de dados.
 export const mainComplexity = a => a.complexity?.average ?? a.operations?.[0]?.[1]
 export const getCategory = id => categories.find(c => c.id === id)
+
+// Cada arquivo de categoria vira um pedaço (chunk) separado, baixado só quando necessário.
+const contentLoaders = import.meta.glob('./algorithms/*.js')
+const loaderOf = category => contentLoaders[`./algorithms/${category}.js`]
+
+export async function loadAlgorithmContent(id) {
+  const meta = getAlgorithm(id)
+  const module = await loaderOf(meta.category)()
+  return { ...meta, ...module.default.find(a => a.id === id) }
+}
+
+// Começa a baixar o conteúdo antes do clique (ao passar o mouse em um link).
+export function preloadAlgorithm(id) {
+  const meta = getAlgorithm(id)
+  if (meta) loaderOf(meta.category)().catch(() => {})
+}
 
 export const languages = [
   { id: 'python', label: 'Python' },

@@ -6,7 +6,7 @@ import HeroVisual from '../components/HeroVisual'
 import DifficultyBadge from '../components/DifficultyBadge'
 import { SITE } from '../config/site'
 import { usePageTitle } from '../lib/usePageTitle'
-import { algorithms, categories, getAlgorithm, getCategory, languages, mainComplexity, upcomingCategories } from '../data'
+import { algorithms, categories, getAlgorithm, getCategory, languages, mainComplexity, preloadAlgorithm, upcomingCategories } from '../data'
 
 const popular = ['quick-sort', 'merge-sort', 'heap-sort', 'bubble-sort'].map(getAlgorithm).filter(Boolean)
 
@@ -68,7 +68,7 @@ export default function Landing() {
               <div className="mt-5 flex flex-wrap items-center gap-2 text-sm">
                 <span className="text-faint mr-1">Populares</span>
                 {popular.map(a => (
-                  <Link key={a.id} to={`/algoritmos/${a.id}`} className="px-3 h-7 inline-flex items-center rounded-full border border-line bg-surface text-muted hover:text-ink hover:border-ink/20">
+                  <Link key={a.id} onMouseEnter={() => preloadAlgorithm(a.id)} to={`/algoritmos/${a.id}`} className="px-3 h-7 inline-flex items-center rounded-full border border-line bg-surface text-muted hover:text-ink hover:border-ink/20">
                     {a.name}
                   </Link>
                 ))}
@@ -147,7 +147,7 @@ export default function Landing() {
                   <ul className="mt-5 flex flex-wrap gap-1.5">
                     {cat.items.slice(0, 6).map(a => (
                       <li key={a.id}>
-                        <Link to={`/algoritmos/${a.id}`} className="px-2.5 h-7 inline-flex items-center rounded-full bg-subtle text-[13px] text-muted hover:text-ink hover:bg-line/60">
+                        <Link onMouseEnter={() => preloadAlgorithm(a.id)} to={`/algoritmos/${a.id}`} className="px-2.5 h-7 inline-flex items-center rounded-full bg-subtle text-[13px] text-muted hover:text-ink hover:bg-line/60">
                           {a.name}
                         </Link>
                       </li>
