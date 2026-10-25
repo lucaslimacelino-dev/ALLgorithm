@@ -22,6 +22,10 @@ export const categoryList = [
     id: 'grafos', icon: '◈', title: 'Grafos', description: 'Mapas, redes e dependências: caminhos mínimos, árvores, fluxos e rotas.',
     en: { title: 'Graphs', description: 'Maps, networks and dependencies: shortest paths, trees, flows and routes.' },
   },
+  {
+    id: 'matematica', icon: '∑', title: 'Teoria dos Números', description: 'Primos, divisores e fatoração: a matemática que sustenta a criptografia moderna.',
+    en: { title: 'Number Theory', description: 'Primes, divisors and factorization: the mathematics behind modern cryptography.' },
+  },
 ]
 
 // Campos incluídos no índice carregado com o site (busca, biblioteca, página inicial).

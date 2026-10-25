@@ -4,6 +4,7 @@ import { arraySearches } from '../../lib/searchFrames'
 import { gridSearches } from '../../lib/gridSearch'
 import { stringSearches } from '../../lib/stringFrames'
 import { graphAlgorithms } from '../../lib/graphFrames'
+import { numberAlgorithms } from '../../lib/numberFrames'
 
 // Cada visualizador é um pedaço separado do bundle, carregado só quando o artigo é aberto.
 const SortingVisualizer = lazy(() => import('./SortingVisualizer'))
@@ -11,6 +12,7 @@ const ArraySearchVisualizer = lazy(() => import('./ArraySearchVisualizer'))
 const GridSearchVisualizer = lazy(() => import('./GridSearchVisualizer'))
 const StringSearchVisualizer = lazy(() => import('./StringSearchVisualizer'))
 const GraphVisualizer = lazy(() => import('./GraphVisualizer'))
+const NumberTraceVisualizer = lazy(() => import('./NumberTraceVisualizer'))
 
 const byId = {
   'bst-search': lazy(() => import('./BstVisualizer')),
@@ -23,6 +25,7 @@ const byId = {
   'union-find': lazy(() => import('./structures/UnionFindPlayground')),
   'avl-tree': lazy(() => import('./structures/AvlPlayground')),
   'force-directed': lazy(() => import('./ForceLayoutVisualizer')),
+  'sieve-of-eratosthenes': lazy(() => import('./SieveVisualizer')),
 }
 
 // Devolve o componente de visualização do algoritmo, ou null se ele ainda não tiver um.
@@ -33,5 +36,6 @@ export function getVisualizer(id) {
   if (id in gridSearches) return GridSearchVisualizer
   if (id in stringSearches) return StringSearchVisualizer
   if (id in graphAlgorithms) return GraphVisualizer
+  if (id in numberAlgorithms) return NumberTraceVisualizer
   return null
 }
