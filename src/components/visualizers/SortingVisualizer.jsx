@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react'
 import { buildFrames, visualizerSize } from '../../lib/sortingFrames'
 import { Legend, PlayerControls, usePlayer } from './Player'
+import { useI18n } from '../../i18n'
 
 const randomArray = n => Array.from({ length: n }, () => 5 + Math.floor(Math.random() * 96))
 
 export default function SortingVisualizer({ algorithm }) {
+  const { t } = useI18n()
   const size = visualizerSize(algorithm.id)
   const [input, setInput] = useState(() => randomArray(size))
   const frames = useMemo(() => buildFrames(algorithm.id, input), [algorithm.id, input])
@@ -30,7 +32,7 @@ export default function SortingVisualizer({ algorithm }) {
   return (
     <figure className="card overflow-hidden">
       <div className="px-4 sm:px-6 pt-6 pb-4 border-b border-line">
-        <div className="flex items-end gap-[3px] h-60" role="img" aria-label={`Animação do ${algorithm.name}`}>
+        <div className="flex items-end gap-[3px] h-60" role="img" aria-label={t('viz.animationOf', { name: algorithm.name })}>
           {frame.arr.map((v, i) => (
             <div key={i} className="flex-1 flex flex-col justify-end items-center h-full">
               {size <= 8 && <span className="text-xs font-mono text-muted mb-1.5">{v}</span>}
@@ -41,12 +43,12 @@ export default function SortingVisualizer({ algorithm }) {
       </div>
 
       <PlayerControls player={player}>
-        <button onClick={shuffle} className="btn-ghost !h-9">Novos dados</button>
+        <button onClick={shuffle} className="btn-ghost !h-9">{t('viz.newData')}</button>
       </PlayerControls>
 
       <Legend
-        items={[['bg-amber-500', 'Comparando'], ['bg-rose-500', 'Movendo'], ['bg-ink', 'Na posição final']]}
-        status={`passo ${player.step}/${player.last} · ${comparisons} comparações`}
+        items={[['bg-amber-500', t('viz.comparing')], ['bg-rose-500', t('viz.moving')], ['bg-ink', t('viz.finalPosition')]]}
+        status={`${t('player.step', { s: player.step, t: player.last })} · ${t('viz.comparisons', { c: comparisons })}`}
       />
     </figure>
   )

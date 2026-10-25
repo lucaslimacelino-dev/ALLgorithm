@@ -1,9 +1,11 @@
 import { Fragment, useState } from 'react'
 import { OpButton, Playground, ValueInput, randomInt, tone, useAnimatedState } from './common'
+import { useI18n } from '../../../i18n'
 
 const LIMIT = 8
 
 export default function LinkedListPlayground() {
+  const { t } = useI18n()
   const s = useAnimatedState([5, 10, 20], 'Cada nó guarda um valor e um ponteiro para o próximo. Só a cabeça (head) é acessada diretamente.')
   const [value, setValue] = useState('')
   const list = s.state
@@ -60,13 +62,13 @@ export default function LinkedListPlayground() {
     <Playground
       note={s.note}
       controls={<>
-        <ValueInput value={value} onChange={setValue} placeholder="aleat." />
-        <OpButton primary onClick={insertHead} disabled={s.busy}>Inserir no início</OpButton>
-        <OpButton onClick={insertTail} disabled={s.busy}>Inserir no fim</OpButton>
-        <OpButton onClick={() => find(false)} disabled={s.busy}>Buscar</OpButton>
-        <OpButton onClick={() => find(true)} disabled={s.busy}>Remover</OpButton>
+        <ValueInput value={value} onChange={setValue} placeholder={t('pg.randomPh')} />
+        <OpButton primary onClick={insertHead} disabled={s.busy}>{t('pg.insertHead')}</OpButton>
+        <OpButton onClick={insertTail} disabled={s.busy}>{t('pg.insertTail')}</OpButton>
+        <OpButton onClick={() => find(false)} disabled={s.busy}>{t('pg.search')}</OpButton>
+        <OpButton onClick={() => find(true)} disabled={s.busy}>{t('pg.remove')}</OpButton>
       </>}
-      legend={[['bg-amber-400', 'Percorrendo'], ['bg-emerald-500', 'Novo nó'], ['bg-rose-500', 'Removendo'], ['bg-ink', 'Encontrado']]}
+      legend={[['bg-amber-400', t('pg.walking')], ['bg-emerald-500', t('pg.newNode')], ['bg-rose-500', t('pg.removing')], ['bg-ink', t('viz.found')]]}
     >
       <div className="flex items-center flex-wrap justify-center gap-y-6">
         <span className="text-[11px] font-mono text-faint mr-2">head →</span>

@@ -7,14 +7,12 @@ import DifficultyBadge from '../components/DifficultyBadge'
 import { getVisualizer } from '../components/visualizers'
 import { SITE } from '../config/site'
 import { algorithms, getAlgorithm, getCategory, loadAlgorithmContent, preloadAlgorithm } from '../data'
+import { isFullyTranslated, useI18n } from '../i18n'
+import { infoboxTerms } from '../i18n/messages'
 import { usePageTitle } from '../lib/usePageTitle'
 
-const complexityLabels = [
-  ['best', 'Melhor caso'],
-  ['average', 'Caso médio'],
-  ['worst', 'Pior caso'],
-  ['space', 'Espaço'],
-]
+const complexityKeys = ['best', 'average', 'worst', 'space']
+const sectionIds = ['visualizacao', 'como-funciona', 'implementacao', 'onde-e-usado', 'mundo-real', 'curiosidades']
 
 const months = ['jan.', 'fev.', 'mar.', 'abr.', 'maio', 'jun.', 'jul.', 'ago.', 'set.', 'out.', 'nov.', 'dez.']
 const abntDate = d => `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`
@@ -32,22 +30,24 @@ function Section({ id, number, title, children }) {
 }
 
 function Infobox({ algorithm, category }) {
+  const { t, loc, locale } = useI18n()
+  const term = text => infoboxTerms[locale]?.[text] ?? text
   const row = 'flex items-baseline justify-between gap-4 py-2.5'
   return (
     <aside className="card p-5 text-[13.5px] self-start">
       <dl className="divide-y divide-line">
         <div className={row}>
-          <dt className="text-muted">Categoria</dt>
-          <dd><Link to={`/algoritmos#${category.id}`} className="text-ink hover:text-accent">{category.title}</Link></dd>
+          <dt className="text-muted">{t('article.category')}</dt>
+          <dd><Link to={`/algoritmos#${category.id}`} className="text-ink hover:text-accent">{loc(category).title}</Link></dd>
         </div>
         <div className={row}>
-          <dt className="text-muted">Nível</dt>
+          <dt className="text-muted">{t('article.level')}</dt>
           <dd><DifficultyBadge level={algorithm.difficulty} className="!text-[13.5px] !text-ink" /></dd>
         </div>
         {Object.entries(algorithm.facts ?? {}).map(([label, value]) => (
           <div key={label} className={row}>
-            <dt className="text-muted shrink-0">{label}</dt>
-            <dd className="text-ink text-right">{value}</dd>
+            <dt className="text-muted shrink-0">{term(label)}</dt>
+            <dd className="text-ink text-right">{term(value)}</dd>
           </div>
         ))}
       </dl>
@@ -55,16 +55,16 @@ function Infobox({ algorithm, category }) {
         <dl className="mt-4 rounded-xl bg-subtle px-3 py-1 divide-y divide-line">
           {algorithm.operations.map(([op, cost]) => (
             <div key={op} className="flex items-baseline justify-between gap-3 py-2">
-              <dt className="text-[12.5px] text-muted">{op}</dt>
+              <dt className="text-[12.5px] text-muted">{term(op)}</dt>
               <dd className="font-mono text-[13px] text-ink whitespace-nowrap">{cost}</dd>
             </div>
           ))}
         </dl>
       ) : (
         <dl className="mt-4 grid grid-cols-2 gap-2">
-          {complexityLabels.map(([key, label]) => (
+          {complexityKeys.map(key => (
             <div key={key} className="rounded-xl bg-subtle px-3 py-2.5">
-              <dt className="text-[11.5px] text-muted">{label}</dt>
+              <dt className="text-[11.5px] text-muted">{t(`article.${key}`)}</dt>
               <dd className="mt-0.5 font-mono text-[13px] text-ink">{algorithm.complexity[key]}</dd>
             </div>
           ))}
@@ -74,10 +74,15 @@ function Infobox({ algorithm, category }) {
   )
 }
 
-function Citation({ algorithm }) {
+function Citation({ name }) {
   const { pathname } = useLocation()
+  const { t, locale } = useI18n()
   const [copied, setCopied] = useState(false)
-  const text = `${SITE.name.toUpperCase()}. ${algorithm.name}. ${SITE.name}: ${SITE.tagline.toLowerCase()}, ${new Date().getFullYear()}. Disponível em: ${window.location.origin}${pathname}. Acesso em: ${abntDate(new Date())}.`
+  const url = `${window.location.origin}${pathname}`
+  const now = new Date()
+  const text = locale === 'pt'
+    ? `${SITE.name.toUpperCase()}. ${name}. ${SITE.name}: ${t('site.tagline').toLowerCase()}, ${now.getFullYear()}. Disponível em: ${url}. Acesso em: ${abntDate(now)}.`
+    : `${SITE.name}. (${now.getFullYear()}). ${name}. In ${SITE.name}: ${t('site.tagline')}. Retrieved ${now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}, from ${url}`
 
   const copy = async () => {
     try {
@@ -90,30 +95,28 @@ function Citation({ algorithm }) {
   return (
     <div className="rounded-2xl border border-line p-6">
       <div className="flex items-center justify-between gap-4 mb-3">
-        <h2 className="text-sm font-medium text-ink">Como citar este artigo <span className="text-faint font-normal">· ABNT</span></h2>
-        <button onClick={copy} className="btn-ghost !h-8 !px-3 text-xs">{copied ? 'Copiado ✓' : 'Copiar'}</button>
+        <h2 className="text-sm font-medium text-ink">{t('article.cite')} <span className="text-faint font-normal">· {t('article.citeStyle')}</span></h2>
+        <button onClick={copy} className="btn-ghost !h-8 !px-3 text-xs">{copied ? t('common.copied') : t('common.copy')}</button>
       </div>
       <p className="font-mono text-[12.5px] leading-relaxed text-muted break-words">{text}</p>
     </div>
   )
 }
 
-function Article({ algorithm }) {
+function Article({ algorithm: original }) {
+  const { t, loc, locale } = useI18n()
+  const algorithm = loc(original)
   usePageTitle(algorithm.name)
-  const category = getCategory(algorithm.category)
-  const index = algorithms.findIndex(a => a.id === algorithm.id)
+  const category = getCategory(original.category)
+  const index = algorithms.findIndex(a => a.id === original.id)
   const prev = algorithms[index - 1]
   const next = algorithms[index + 1]
-  const Visualizer = getVisualizer(algorithm.id)
+  const Visualizer = getVisualizer(original.id)
+  const translated = isFullyTranslated(original, locale)
 
-  const sections = [
-    ...(Visualizer ? [['visualizacao', 'Visualização']] : []),
-    ['como-funciona', 'Como funciona'],
-    ['implementacao', 'Implementação'],
-    ['onde-e-usado', 'Onde é usado'],
-    ['mundo-real', 'Aplicações no mundo real'],
-    ['curiosidades', 'Notas e curiosidades'],
-  ]
+  const sections = sectionIds
+    .filter(id => id !== 'visualizacao' || Visualizer)
+    .map(id => [id, t(`article.section.${id}`)])
   const number = id => sections.findIndex(([sid]) => sid === id) + 1
 
   // Destaca no sumário a seção que está sendo lida.
@@ -138,8 +141,8 @@ function Article({ algorithm }) {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 grid gap-12 grid-cols-[minmax(0,1fr)] lg:grid-cols-[200px_minmax(0,1fr)] animate-page-in">
       {/* Sumário */}
       <aside className="hidden lg:block lg:sticky lg:top-24 lg:self-start space-y-10 text-[13.5px]">
-        <nav aria-label="Nesta página">
-          <h2 className="kicker mb-3">Nesta página</h2>
+        <nav aria-label={t('article.onThisPage')}>
+          <h2 className="kicker mb-3">{t('article.onThisPage')}</h2>
           <ol className="space-y-0.5">
             {sections.map(([sid, label]) => (
               <li key={sid}>
@@ -153,17 +156,17 @@ function Article({ algorithm }) {
             ))}
           </ol>
         </nav>
-        <nav aria-label={`Outros artigos de ${category.title}`}>
-          <h2 className="kicker mb-3">{category.title}</h2>
+        <nav aria-label={t('article.otherIn', { category: loc(category).title })}>
+          <h2 className="kicker mb-3">{loc(category).title}</h2>
           <ul className="space-y-0.5 max-h-[45vh] overflow-y-auto pr-1">
             {category.items.map(a => (
               <li key={a.id}>
                 <Link
                   onMouseEnter={() => preloadAlgorithm(a.id)} to={`/algoritmos/${a.id}`}
-                  aria-current={a.id === algorithm.id ? 'page' : undefined}
-                  className={`block px-3 py-1.5 rounded-lg ${a.id === algorithm.id ? 'text-accent font-medium' : 'text-muted hover:text-ink'}`}
+                  aria-current={a.id === original.id ? 'page' : undefined}
+                  className={`block px-3 py-1.5 rounded-lg ${a.id === original.id ? 'text-accent font-medium' : 'text-muted hover:text-ink'}`}
                 >
-                  {a.name}
+                  {loc(a).name}
                 </Link>
               </li>
             ))}
@@ -173,23 +176,30 @@ function Article({ algorithm }) {
 
       <article className="min-w-0">
         <nav className="text-[13px] text-faint mb-8" aria-label="Trilha">
-          <Link to="/" className="hover:text-ink">Início</Link>
+          <Link to="/" className="hover:text-ink">{t('crumb.home')}</Link>
           <span className="mx-2">/</span>
-          <Link to="/algoritmos" className="hover:text-ink">Biblioteca</Link>
+          <Link to="/algoritmos" className="hover:text-ink">{t('crumb.library')}</Link>
           <span className="mx-2">/</span>
-          <Link to={`/algoritmos#${category.id}`} className="text-muted hover:text-ink">{category.title}</Link>
+          <Link to={`/algoritmos#${category.id}`} className="text-muted hover:text-ink">{loc(category).title}</Link>
         </nav>
+
+        {!translated && (
+          <div className="mb-8 flex gap-3 items-start rounded-2xl border border-amber-300/60 bg-amber-50 dark:bg-amber-400/10 dark:border-amber-400/30 px-5 py-4 text-sm text-ink/85" lang="en">
+            <span aria-hidden className="mt-0.5">🌐</span>
+            <p>{t('article.notTranslated')}</p>
+          </div>
+        )}
 
         {/* Introdução + quadro-resumo */}
         <header className="grid gap-10 grid-cols-[minmax(0,1fr)] xl:grid-cols-[minmax(0,1fr)_300px]">
           <div>
             <h1 className="title text-[40px] sm:text-[52px] leading-[1.05] tracking-[-0.04em]">{algorithm.name}</h1>
             <p className="mt-4 font-display italic text-2xl leading-snug text-muted">{algorithm.summary}</p>
-            <p className="mt-7 prose-body">{algorithm.description}</p>
+            <p className="mt-7 prose-body" lang={translated ? undefined : 'pt-BR'}>{algorithm.description}</p>
 
             {/* Sumário compacto para telas menores */}
             <details className="lg:hidden mt-8 card">
-              <summary className="px-5 py-3.5 text-sm font-medium cursor-pointer">Nesta página</summary>
+              <summary className="px-5 py-3.5 text-sm font-medium cursor-pointer">{t('article.onThisPage')}</summary>
               <ol className="px-5 pb-4 space-y-2 text-sm">
                 {sections.map(([sid, label], i) => (
                   <li key={sid}><a href={`#${sid}`} className="text-muted hover:text-ink"><span className="font-mono text-xs text-faint mr-2">{i + 1}</span>{label}</a></li>
@@ -200,16 +210,16 @@ function Article({ algorithm }) {
           <Infobox algorithm={algorithm} category={category} />
         </header>
 
-        <div className="mt-16 space-y-16 max-w-4xl">
+        <div className="mt-16 space-y-16 max-w-4xl" lang={translated ? undefined : 'pt-BR'}>
           {Visualizer && (
-            <Section id="visualizacao" number={number('visualizacao')} title="Visualização">
+            <Section id="visualizacao" number={number('visualizacao')} title={t('article.section.visualizacao')}>
               <Suspense fallback={<Placeholder height="h-[420px]" />}>
                 <Visualizer algorithm={algorithm} />
               </Suspense>
             </Section>
           )}
 
-          <Section id="como-funciona" number={number('como-funciona')} title="Como funciona">
+          <Section id="como-funciona" number={number('como-funciona')} title={t('article.section.como-funciona')}>
             <ol className="relative space-y-5 before:absolute before:left-[13px] before:top-2 before:bottom-2 before:w-px before:bg-line">
               {algorithm.steps.map((step, i) => (
                 <li key={i} className="relative grid grid-cols-[28px_minmax(0,1fr)] gap-4">
@@ -220,12 +230,12 @@ function Article({ algorithm }) {
             </ol>
           </Section>
 
-          <Section id="implementacao" number={number('implementacao')} title="Implementação">
+          <Section id="implementacao" number={number('implementacao')} title={t('article.section.implementacao')}>
             <CodeBlock code={algorithm.code} />
-            <p className="mt-3 text-xs text-faint">A linguagem escolhida fica salva e é usada em todos os artigos.</p>
+            <p className="mt-3 text-xs text-faint">{t('article.languageNote')}</p>
           </Section>
 
-          <Section id="onde-e-usado" number={number('onde-e-usado')} title="Onde é usado">
+          <Section id="onde-e-usado" number={number('onde-e-usado')} title={t('article.section.onde-e-usado')}>
             <ul className="flex flex-wrap gap-2">
               {algorithm.usedIn.map(item => (
                 <li key={item} className="px-3.5 h-9 inline-flex items-center rounded-full border border-line bg-surface text-sm text-ink/85">
@@ -235,7 +245,7 @@ function Article({ algorithm }) {
             </ul>
           </Section>
 
-          <Section id="mundo-real" number={number('mundo-real')} title="Aplicações no mundo real">
+          <Section id="mundo-real" number={number('mundo-real')} title={t('article.section.mundo-real')}>
             <div className="grid gap-4 sm:grid-cols-2">
               {algorithm.realWorld.map(({ title, text }, i) => (
                 <div key={title} className={`card p-6 ${algorithm.realWorld.length % 2 && i === algorithm.realWorld.length - 1 ? 'sm:col-span-2' : ''}`}>
@@ -246,7 +256,7 @@ function Article({ algorithm }) {
             </div>
           </Section>
 
-          <Section id="curiosidades" number={number('curiosidades')} title="Notas e curiosidades">
+          <Section id="curiosidades" number={number('curiosidades')} title={t('article.section.curiosidades')}>
             <ol className="divide-y divide-line border-y border-line">
               {algorithm.curiosities.map((c, i) => (
                 <li key={i} className="grid grid-cols-[32px_minmax(0,1fr)] gap-3 py-5">
@@ -257,20 +267,20 @@ function Article({ algorithm }) {
             </ol>
           </Section>
 
-          <Citation algorithm={algorithm} />
+          <Citation name={algorithm.name} />
 
           {/* Navegação entre artigos */}
-          <nav className="grid sm:grid-cols-2 gap-4" aria-label="Artigos vizinhos">
+          <nav className="grid sm:grid-cols-2 gap-4" aria-label={t('article.neighbors')}>
             {prev ? (
               <Link to={`/algoritmos/${prev.id}`} className="group card card-hover p-5">
-                <span className="text-xs text-faint">← Anterior</span>
-                <span className="block mt-1 title text-lg group-hover:text-accent">{prev.name}</span>
+                <span className="text-xs text-faint">{t('article.prev')}</span>
+                <span className="block mt-1 title text-lg group-hover:text-accent">{loc(prev).name}</span>
               </Link>
             ) : <span className="hidden sm:block" />}
             {next && (
               <Link to={`/algoritmos/${next.id}`} className="group card card-hover p-5 sm:text-right">
-                <span className="text-xs text-faint">Próximo →</span>
-                <span className="block mt-1 title text-lg group-hover:text-accent">{next.name}</span>
+                <span className="text-xs text-faint">{t('article.next')}</span>
+                <span className="block mt-1 title text-lg group-hover:text-accent">{loc(next).name}</span>
               </Link>
             )}
           </nav>
@@ -285,7 +295,9 @@ function Placeholder({ height = 'h-40' }) {
 }
 
 // Exibido enquanto o conteúdo completo do artigo é baixado: usa só os campos do índice leve.
-function ArticleSkeleton({ algorithm, error, onRetry }) {
+function ArticleSkeleton({ algorithm: original, error, onRetry }) {
+  const { t, loc } = useI18n()
+  const algorithm = loc(original)
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 grid gap-12 grid-cols-[minmax(0,1fr)] lg:grid-cols-[200px_minmax(0,1fr)]">
       <div className="hidden lg:block" />
@@ -296,9 +308,9 @@ function ArticleSkeleton({ algorithm, error, onRetry }) {
         <p className="mt-7 prose-body max-w-3xl">{algorithm.description}</p>
         {error ? (
           <div className="mt-12 card p-6 max-w-xl">
-            <p className="text-sm text-ink">Não foi possível carregar o restante do artigo.</p>
-            <p className="mt-1 text-sm text-muted">Verifique sua conexão — ou o site pode ter sido atualizado agora há pouco.</p>
-            <button onClick={onRetry} className="btn-primary mt-4">Tentar de novo</button>
+            <p className="text-sm text-ink">{t('article.loadError')}</p>
+            <p className="mt-1 text-sm text-muted">{t('article.loadErrorHint')}</p>
+            <button onClick={onRetry} className="btn-primary mt-4">{t('article.retry')}</button>
           </div>
         ) : (
           <div className="mt-16 space-y-6 max-w-4xl">

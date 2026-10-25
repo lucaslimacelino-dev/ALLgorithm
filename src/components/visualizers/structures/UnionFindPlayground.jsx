@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { OpButton, Playground, TreeSvg, ValueInput, layoutForest, useAnimatedState } from './common'
+import { useI18n } from '../../../i18n'
 
 const N = 10
 const initial = () => ({ parent: Array.from({ length: N }, (_, i) => i), rank: Array(N).fill(0) })
@@ -25,6 +26,7 @@ function findFrames(state, x, label) {
 }
 
 export default function UnionFindPlayground() {
+  const { t } = useI18n()
   const s = useAnimatedState(initial(), 'Cada elemento começa no próprio grupo. Una pares e veja os grupos virarem árvores, cada uma com um representante (a raiz).')
   const [a, setA] = useState('')
   const [b, setB] = useState('')
@@ -74,15 +76,15 @@ export default function UnionFindPlayground() {
         <ValueInput value={b} onChange={setB} onEnter={union} placeholder="b" width="w-16" />
         <OpButton primary onClick={union} disabled={s.busy}>union(a, b)</OpButton>
         <OpButton onClick={find} disabled={s.busy}>find(a)</OpButton>
-        <OpButton onClick={() => s.play([{ state: initial(), hl: {}, note: 'Todos os elementos voltaram a grupos separados.' }])} disabled={s.busy}>Reiniciar</OpButton>
-        <span className="text-xs text-muted ml-1">{roots.length} {roots.length === 1 ? 'grupo' : 'grupos'}</span>
+        <OpButton onClick={() => s.play([{ state: initial(), hl: {}, note: 'Todos os elementos voltaram a grupos separados.' }])} disabled={s.busy}>{t('pg.reset')}</OpButton>
+        <span className="text-xs text-muted ml-1">{roots.length === 1 ? t('pg.group') : t('pg.groups', { n: roots.length })}</span>
       </>}
-      legend={[['bg-amber-400', 'Nó atual'], ['bg-accent/20 border border-accent/40', 'Caminho até a raiz'], ['bg-emerald-500', 'Raiz ligada'], ['bg-ink', 'Raiz']]}
+      legend={[['bg-amber-400', t('pg.currentNode')], ['bg-accent/20 border border-accent/40', t('pg.pathToRoot')], ['bg-emerald-500', t('pg.rootLinked')], ['bg-ink', t('pg.root')]]}
     >
       <TreeSvg
         layout={layoutForest(roots, children, i => i)}
         label={i => i}
-        sublabel={i => (parent[i] === i ? `posto ${rank[i]}` : '')}
+        sublabel={i => (parent[i] === i ? t('pg.rank', { r: rank[i] }) : '')}
         toneOf={i => s.hl[i] ?? 'idle'}
         colW={52}
         rowH={70}

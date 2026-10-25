@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useI18n } from '../../i18n'
 
 export const speeds = [
   { label: '0,5×', ms: 900 },
@@ -44,23 +45,24 @@ export function usePlayer(total, { speedScale = 1, initialSpeed = 1 } = {}) {
 const disabled = 'disabled:opacity-40 disabled:pointer-events-none'
 
 export function PlayerControls({ player, children }) {
+  const { t } = useI18n()
   return (
     <div className="px-4 sm:px-6 py-4 flex flex-wrap items-center gap-2">
       <button onClick={player.toggle} className={`btn-primary !h-9 min-w-[112px] ${disabled}`}>
-        {player.playing ? '❚❚ Pausar' : player.finished && player.last > 0 ? '↺ Repetir' : '▶ Executar'}
+        {player.playing ? t('player.pause') : player.finished && player.last > 0 ? t('player.replay') : t('player.run')}
       </button>
-      <button onClick={player.prev} disabled={player.playing || player.step === 0} className={`btn-ghost !h-9 ${disabled}`} aria-label="Passo anterior">←</button>
-      <button onClick={player.next} disabled={player.playing || player.finished} className={`btn-ghost !h-9 ${disabled}`} aria-label="Próximo passo">→</button>
+      <button onClick={player.prev} disabled={player.playing || player.step === 0} className={`btn-ghost !h-9 ${disabled}`} aria-label={t('player.prev')}>←</button>
+      <button onClick={player.next} disabled={player.playing || player.finished} className={`btn-ghost !h-9 ${disabled}`} aria-label={t('player.next')}>→</button>
       {children}
 
-      <div className="ml-auto inline-flex p-1 rounded-full border border-line" role="group" aria-label="Velocidade">
+      <div className="ml-auto inline-flex p-1 rounded-full border border-line" role="group" aria-label={t('player.speed')}>
         {speeds.map((s, i) => (
           <button
             key={s.label}
             onClick={() => player.setSpeed(i)}
             className={`h-7 px-3 rounded-full text-xs font-mono ${player.speed === i ? 'bg-subtle text-ink font-medium' : 'text-muted hover:text-ink'}`}
           >
-            {s.label}
+            {i === 0 ? t('player.half') : s.label}
           </button>
         ))}
       </div>

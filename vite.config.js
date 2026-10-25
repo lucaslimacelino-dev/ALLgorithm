@@ -25,7 +25,8 @@ function algorithmIndex() {
         const file = resolve(dataDir, 'algorithms', `${cat}.js`)
         this.addWatchFile(file)
         const items = (await load(file)).default
-        index[cat] = items.map(a => Object.fromEntries(indexFields.filter(f => f in a).map(f => [f, a[f]])))
+        const pick = obj => Object.fromEntries(indexFields.filter(f => f in obj).map(f => [f, obj[f]]))
+        index[cat] = items.map(a => ({ ...pick(a), ...(a.en ? { en: pick(a.en) } : {}) }))
       }
       return `export default ${JSON.stringify(index)}`
     },

@@ -3,6 +3,7 @@ export default [
     id: 'naive-string-search',
     name: 'Busca Ingênua (Força Bruta)',
     difficulty: 'Iniciante',
+    en: { name: 'Naive String Search (Brute Force)', summary: 'Tries the pattern at every position of the text, comparing letter by letter.' },
     facts: { 'Também chamada': 'Força bruta', 'Pré-processamento': 'Nenhum', 'Direção da comparação': 'Esquerda → direita' },
     summary: 'Testa o padrão em cada posição do texto, comparando letra a letra.',
     description:
@@ -103,6 +104,7 @@ export default [
     id: 'kmp',
     name: 'Knuth-Morris-Pratt (KMP)',
     difficulty: 'Intermediário',
+    en: { name: 'Knuth-Morris-Pratt (KMP)', summary: 'Uses what has already matched so it never goes back in the text: guaranteed linear time.' },
     facts: { 'Criado por': 'Knuth, Morris e Pratt', 'Ano': '1970 (publicado em 1977)', 'Pré-processamento': 'Tabela LPS, O(m)' },
     summary: 'Usa o que já casou para nunca voltar no texto: tempo linear garantido.',
     description:
@@ -265,6 +267,7 @@ export default [
     id: 'rabin-karp',
     name: 'Rabin-Karp',
     difficulty: 'Intermediário',
+    en: { name: 'Rabin-Karp', summary: 'Compares "fingerprints" (hashes) of text windows and only checks letters when they match.' },
     facts: { 'Criado por': 'Michael Rabin e Richard Karp', 'Ano': '1987', 'Técnica': 'Hash rolante' },
     summary: 'Compara "impressões digitais" (hashes) das janelas do texto e só confere letras quando batem.',
     description:
@@ -405,6 +408,7 @@ export default [
     id: 'boyer-moore',
     name: 'Boyer-Moore',
     difficulty: 'Avançado',
+    en: { name: 'Boyer-Moore', summary: 'Compares right to left and uses two tricks to skip several positions at once.' },
     facts: { 'Criado por': 'Robert S. Boyer e J Strother Moore', 'Ano': '1977', 'Regras': 'Mau caractere + bom sufixo' },
     summary: 'Compara da direita para a esquerda e usa dois truques para saltar várias posições de uma vez.',
     description:
@@ -615,6 +619,7 @@ export default [
     id: 'horspool',
     name: 'Boyer-Moore-Horspool',
     difficulty: 'Intermediário',
+    en: { name: 'Boyer-Moore-Horspool', summary: 'A simplified Boyer-Moore: decides the shift from the last character of the window.' },
     facts: { 'Criado por': 'R. Nigel Horspool', 'Ano': '1980', 'Regra': 'Salto pelo último caractere da janela' },
     summary: 'Boyer-Moore simplificado: decide o salto pelo último caractere da janela.',
     description:
@@ -731,6 +736,7 @@ export default [
     id: 'shift-or',
     name: 'Shift-Or (Baeza-Yates–Gonnet)',
     difficulty: 'Avançado',
+    en: { name: 'Shift-Or (Baeza-Yates–Gonnet)', summary: 'Represents every partial match as a bit and advances with machine operations.' },
     facts: { 'Criado por': 'Ricardo Baeza-Yates e Gaston Gonnet', 'Ano': '1989', 'Também chamado': 'Shift-And, Bitap', 'Técnica': 'Paralelismo de bits' },
     summary: 'Representa todos os casamentos parciais em bits e avança com operações de máquina.',
     description:

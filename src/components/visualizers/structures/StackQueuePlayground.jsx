@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { OpButton, Playground, ValueInput, randomInt, tone, useAnimatedState } from './common'
+import { useI18n } from '../../../i18n'
 
 const LIMIT = 9
 
 export default function StackQueuePlayground({ algorithm }) {
+  const { t } = useI18n()
   const isStack = algorithm.id === 'stack'
   const s = useAnimatedState([12, 7, 31], isStack
     ? 'Uma pilha: só o topo é acessível. Empilhe e desempilhe para ver o LIFO em ação.'
@@ -44,27 +46,27 @@ export default function StackQueuePlayground({ algorithm }) {
     <Playground
       note={s.note}
       controls={<>
-        <ValueInput value={value} onChange={setValue} onEnter={add} placeholder="aleat." />
+        <ValueInput value={value} onChange={setValue} onEnter={add} placeholder={t('pg.randomPh')} />
         <OpButton primary onClick={add} disabled={s.busy}>{isStack ? 'push' : 'enqueue'}</OpButton>
         <OpButton onClick={remove} disabled={s.busy}>{isStack ? 'pop' : 'dequeue'}</OpButton>
         <OpButton onClick={peek} disabled={s.busy}>{isStack ? 'peek' : 'front'}</OpButton>
       </>}
-      legend={[['bg-emerald-500', 'Entrando'], ['bg-rose-500', 'Saindo'], ['bg-ink', 'Consultado']]}
+      legend={[['bg-emerald-500', t('pg.entering')], ['bg-rose-500', t('pg.leaving')], ['bg-ink', t('pg.queried')]]}
     >
       {isStack ? (
         <div className="flex flex-col items-center">
-          <span className="text-[11px] text-faint mb-2">topo ↓</span>
+          <span className="text-[11px] text-faint mb-2">{t('pg.top')}</span>
           <div className="flex flex-col-reverse gap-1.5 px-3 pb-3 pt-1 border-x-2 border-b-2 border-ink/25 rounded-b-xl min-h-[60px] min-w-[96px] items-center justify-start">
             {items.map(box)}
           </div>
         </div>
       ) : (
         <div className="flex items-center gap-3">
-          <span className="text-[11px] text-faint">← sai<br />(frente)</span>
+          <span className="text-[11px] text-faint whitespace-pre">{t('pg.front')}</span>
           <div className="flex gap-1.5 px-3 py-3 border-y-2 border-ink/25 min-w-[120px] min-h-[68px] items-center">
             {items.map(box)}
           </div>
-          <span className="text-[11px] text-faint">entra ←<br />(fim)</span>
+          <span className="text-[11px] text-faint whitespace-pre">{t('pg.back')}</span>
         </div>
       )}
     </Playground>

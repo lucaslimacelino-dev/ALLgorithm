@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { OpButton, Playground, TreeSvg, ValueInput, layoutBinary, randomInt, useAnimatedState } from './common'
+import { useI18n } from '../../../i18n'
 
 // Árvore imutável: cada operação devolve novos nós, para podermos mostrar o "antes" e o "depois".
 const h = n => (n ? n.h : 0)
@@ -50,6 +51,7 @@ const findNode = (n, k) => (!n || n.key === k ? n : findNode(k < n.key ? n.left 
 const fromValues = vals => vals.reduce((t, v) => avlInsert(t, v, []), null)
 
 export default function AvlPlayground() {
+  const { t } = useI18n()
   const s = useAnimatedState(fromValues([40, 20, 60, 10, 30]), 'Os números pequenos acima de cada nó são o fator de balanceamento (altura esquerda − altura direita). Na AVL, ele fica sempre entre −1 e +1.')
   const [value, setValue] = useState('')
   const tree = s.state
@@ -78,12 +80,12 @@ export default function AvlPlayground() {
     <Playground
       note={s.note}
       controls={<>
-        <ValueInput value={value} onChange={setValue} onEnter={insert} placeholder="aleat." />
-        <OpButton primary onClick={insert} disabled={s.busy}>Inserir</OpButton>
-        <OpButton onClick={sequence} disabled={s.busy}>Inserir 1…7 em ordem</OpButton>
-        <OpButton onClick={() => s.play([{ state: null, hl: {}, note: 'Árvore vazia.' }])} disabled={s.busy}>Limpar</OpButton>
+        <ValueInput value={value} onChange={setValue} onEnter={insert} placeholder={t('pg.randomPh')} />
+        <OpButton primary onClick={insert} disabled={s.busy}>{t('pg.insert')}</OpButton>
+        <OpButton onClick={sequence} disabled={s.busy}>{t('pg.insertSequence')}</OpButton>
+        <OpButton onClick={() => s.play([{ state: null, hl: {}, note: 'Árvore vazia.' }])} disabled={s.busy}>{t('viz.clear')}</OpButton>
       </>}
-      legend={[['bg-emerald-500', 'Nó inserido'], ['bg-rose-500', 'Desbalanceado'], ['bg-amber-400', 'Nó após a rotação']]}
+      legend={[['bg-emerald-500', t('pg.inserted')], ['bg-rose-500', t('pg.unbalanced')], ['bg-amber-400', t('pg.afterRotation')]]}
     >
       <TreeSvg
         layout={layoutBinary(tree)}

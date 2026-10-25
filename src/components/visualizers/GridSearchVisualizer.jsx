@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react'
 import { makeMaze, makeRandomWalls, runGridSearch } from '../../lib/gridSearch'
 import { Legend, PlayerControls, usePlayer } from './Player'
+import { useI18n } from '../../i18n'
 
 const ROWS = 15
 const COLS = 31
@@ -10,6 +11,7 @@ const GOAL = (ROWS - 2) * COLS + (COLS - 2)
 const clearEnds = walls => { walls.delete(START); walls.delete(GOAL); return walls }
 
 export default function GridSearchVisualizer({ algorithm }) {
+  const { t } = useI18n()
   const [walls, setWalls] = useState(() => clearEnds(makeRandomWalls(ROWS, COLS)))
   const grid = useMemo(() => ({ rows: ROWS, cols: COLS, walls }), [walls])
   const result = useMemo(() => runGridSearch(algorithm.id, grid, START, GOAL), [algorithm.id, grid])
@@ -52,8 +54,8 @@ export default function GridSearchVisualizer({ algorithm }) {
   }
 
   const status = showPath
-    ? (result.path ? `${result.order.length} células visitadas · caminho de ${result.path.length - 1} passos` : `${result.order.length} células visitadas · sem caminho`)
-    : `${visited} células visitadas`
+    ? `${t('viz.cellsVisited', { v: result.order.length })} · ${result.path ? t('viz.pathOf', { p: result.path.length - 1 }) : t('viz.noPath')}`
+    : t('viz.cellsVisited', { v: visited })
 
   return (
     <figure className="card overflow-hidden">
@@ -73,22 +75,22 @@ export default function GridSearchVisualizer({ algorithm }) {
             />
           ))}
         </div>
-        <p className="mt-3 text-xs text-faint">Clique e arraste na grade para desenhar ou apagar paredes.</p>
+        <p className="mt-3 text-xs text-faint">{t('viz.drawHint')}</p>
       </div>
 
       <PlayerControls player={player}>
-        <button onClick={() => replaceWalls(makeMaze(ROWS, COLS))} className="btn-ghost !h-9">Labirinto</button>
-        <button onClick={() => replaceWalls(makeRandomWalls(ROWS, COLS))} className="btn-ghost !h-9">Aleatório</button>
-        <button onClick={() => replaceWalls(new Set())} className="btn-ghost !h-9">Limpar</button>
+        <button onClick={() => replaceWalls(makeMaze(ROWS, COLS))} className="btn-ghost !h-9">{t('viz.maze')}</button>
+        <button onClick={() => replaceWalls(makeRandomWalls(ROWS, COLS))} className="btn-ghost !h-9">{t('viz.random')}</button>
+        <button onClick={() => replaceWalls(new Set())} className="btn-ghost !h-9">{t('viz.clear')}</button>
       </PlayerControls>
 
       <Legend
         items={[
-          ['bg-emerald-500', 'Início'],
-          ['bg-rose-500', 'Destino'],
-          ['bg-amber-300', 'Fronteira'],
-          ['bg-accent/20', 'Visitado'],
-          ['bg-accent', 'Caminho'],
+          ['bg-emerald-500', t('viz.start')],
+          ['bg-rose-500', t('viz.goal')],
+          ['bg-amber-300', t('viz.frontier')],
+          ['bg-accent/20', t('viz.visited')],
+          ['bg-accent', t('viz.path')],
         ]}
         status={status}
       />

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useI18n } from '../../../i18n'
 
 // Estado animado: cada operação gera uma lista de quadros { state, hl, note } exibidos em sequência.
 export function useAnimatedState(initialState, initialNote) {
@@ -120,6 +121,7 @@ export function layoutForest(roots, childrenOf, idOf) {
 }
 
 export function TreeSvg({ layout, label, sublabel, toneOf = () => 'idle', ringOf = () => false, colW = 56, rowH = 64, r = 17, minWidth = 360 }) {
+  const { t } = useI18n()
   const { nodes, edges, columns } = layout
   const pos = new Map(nodes.map(n => [n.id, n]))
   const depth = Math.max(0, ...nodes.map(n => n.depth))
@@ -128,7 +130,7 @@ export function TreeSvg({ layout, label, sublabel, toneOf = () => 'idle', ringOf
   const px = n => n.x * colW + colW / 2
   const py = n => n.depth * rowH + rowH / 2
 
-  if (!nodes.length) return <p className="text-sm text-faint italic">vazia</p>
+  if (!nodes.length) return <p className="text-sm text-faint italic">{t('common.empty')}</p>
 
   return (
     <svg viewBox={`0 0 ${width} ${height}`} className="w-full" style={{ maxHeight: 360, minWidth: Math.min(minWidth, width) }} role="img">

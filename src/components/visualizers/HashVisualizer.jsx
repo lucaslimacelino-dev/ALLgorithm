@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Legend, PlayerControls, StepNote, usePlayer } from './Player'
+import { useI18n } from '../../i18n'
 
 const BUCKETS = 7
 const KEYS = ['Ana', 'Bruno', 'Carla', 'Davi', 'Eva', 'Felipe', 'Gabi', 'Hugo', 'Iris', 'João', 'Lia']
@@ -30,6 +31,7 @@ function searchFrames(key) {
 }
 
 export default function HashVisualizer() {
+  const { t } = useI18n()
   const [key, setKey] = useState('Felipe')
   const frames = useMemo(() => searchFrames(key), [key])
   const player = usePlayer(frames.length)
@@ -48,7 +50,7 @@ export default function HashVisualizer() {
     <figure className="card overflow-hidden">
       <div className="px-4 sm:px-6 pt-6 pb-5 border-b border-line">
         <div className="mb-5 flex flex-wrap items-center gap-1.5 text-sm">
-          <span className="text-muted mr-1">Procurar:</span>
+          <span className="text-muted mr-1">{t('viz.searchFor')}</span>
           {[...KEYS, ...ABSENT].map(k => (
             <button
               key={k}
@@ -68,7 +70,7 @@ export default function HashVisualizer() {
               </span>
               <span className="text-faint text-xs">→</span>
               <div className="flex flex-wrap gap-1.5">
-                {chain.length === 0 && <span className="text-xs text-faint italic">vazio</span>}
+                {chain.length === 0 && <span className="text-xs text-faint italic">{t('common.empty')}</span>}
                 {chain.map((k, i) => (
                   <span key={k} className={`h-9 px-3 inline-flex items-center rounded-md border text-[13px] transition-colors duration-200 ${itemClass(b, i)}`}>{k}</span>
                 ))}
@@ -81,8 +83,8 @@ export default function HashVisualizer() {
       <StepNote>{frame.note}</StepNote>
       <PlayerControls player={player} />
       <Legend
-        items={[['bg-accent', 'Balde calculado pelo hash'], ['bg-amber-400', 'Comparando'], ['bg-ink', 'Encontrado']]}
-        status={`${KEYS.length} chaves em ${BUCKETS} baldes`}
+        items={[['bg-accent', t('viz.bucketByHash')], ['bg-amber-400', t('viz.comparing')], ['bg-ink', t('viz.found')]]}
+        status={t('viz.keysInBuckets', { k: KEYS.length, b: BUCKETS })}
       />
     </figure>
   )

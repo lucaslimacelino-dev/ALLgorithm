@@ -3,9 +3,9 @@ import { categoryList } from './categories'
 
 // Para adicionar um algoritmo, basta incluí-lo em src/data/algorithms/<categoria>.js.
 // Aqui ficam só os campos leves (gerados no build); o conteúdo completo vem de loadAlgorithmContent.
-export const categories = categoryList.map(c => ({ ...c, items: algorithmIndex[c.id] ?? [] }))
+export const categories = categoryList.map(c => ({ ...c, items: (algorithmIndex[c.id] ?? []).map(a => ({ ...a, category: c.id })) }))
 
-export const algorithms = categories.flatMap(c => c.items.map(a => ({ ...a, category: c.id })))
+export const algorithms = categories.flatMap(c => c.items)
 
 export const getAlgorithm = id => algorithms.find(a => a.id === id)
 

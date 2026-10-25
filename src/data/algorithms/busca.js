@@ -3,6 +3,7 @@ export default [
     id: 'linear-search',
     name: 'Busca Linear',
     difficulty: 'Iniciante',
+    en: { name: 'Linear Search', summary: 'Checks the elements one by one until it finds the target or reaches the end.' },
     facts: { 'Criado por': 'Método clássico', 'Requer ordenação': 'Não', 'Estrutura': 'Qualquer sequência' },
     summary: 'Verifica os elementos um a um até encontrar o alvo ou chegar ao fim.',
     description:
@@ -89,6 +90,7 @@ export default [
     id: 'binary-search',
     name: 'Busca Binária',
     difficulty: 'Iniciante',
+    en: { name: 'Binary Search', summary: 'In a sorted list, compares with the middle and discards half at each step.' },
     facts: { 'Primeira menção': 'John Mauchly', 'Ano': '1946', 'Requer ordenação': 'Sim' },
     summary: 'Em uma lista ordenada, compara com o meio e descarta metade a cada passo.',
     description:
@@ -194,6 +196,7 @@ export default [
     id: 'interpolation-search',
     name: 'Busca por Interpolação',
     difficulty: 'Intermediário',
+    en: { name: 'Interpolation Search', summary: 'Estimates the target position from its value, like opening a dictionary near the right letter.' },
     facts: { 'Descrita por': 'W. W. Peterson', 'Ano': '1957', 'Também chamada': 'Busca preditiva', 'Requer ordenação': 'Sim, com valores bem distribuídos' },
     summary: 'Estima a posição do alvo pelo seu valor, como abrir o dicionário perto da letra certa.',
     description:
@@ -308,6 +311,7 @@ export default [
     id: 'exponential-search',
     name: 'Busca Exponencial',
     difficulty: 'Intermediário',
+    en: { name: 'Exponential Search', summary: 'Doubles a bound (1, 2, 4, 8…) until it passes the target, then runs a binary search.' },
     facts: { 'Criado por': 'Jon Bentley e Andrew Yao', 'Ano': '1976', 'Também chamada': 'Busca ilimitada, galloping', 'Requer ordenação': 'Sim' },
     summary: 'Dobra o limite (1, 2, 4, 8…) até passar do alvo e então faz uma busca binária.',
     description:
@@ -444,6 +448,7 @@ export default [
     id: 'rotated-binary-search',
     name: 'Busca Binária em Sequência Cíclica',
     difficulty: 'Intermediário',
+    en: { name: 'Binary Search in a Cyclic Sequence', summary: 'Finds the smallest element of a sorted list that has been "rotated".' },
     facts: { 'Também chamada': 'Busca em array rotacionado', 'Requer': 'Lista ordenada e rotacionada, sem repetidos' },
     summary: 'Encontra o menor elemento de uma lista ordenada que foi "girada".',
     description:
@@ -544,6 +549,7 @@ export default [
     id: 'hash-search',
     name: 'Busca em Tabela Hash',
     difficulty: 'Intermediário',
+    en: { name: 'Hash Table Search', summary: 'Computes from the key which "bucket" holds the item and looks only there.' },
     facts: { 'Hashing proposto por': 'Hans Peter Luhn (IBM)', 'Ano': '1953', 'Requer ordenação': 'Não' },
     summary: 'Calcula, a partir da chave, em qual "balde" o item está e olha só ali.',
     description:
@@ -725,6 +731,7 @@ export default [
     id: 'bst-search',
     name: 'Busca em Árvore Binária',
     difficulty: 'Intermediário',
+    en: { name: 'Binary Search Tree Search', summary: 'Walks down the tree, going left if the target is smaller and right if it is larger.' },
     facts: { 'Criado por': 'Windley, Booth, Colin e Hibbard', 'Ano': '≈ 1960', 'Requer': 'Árvore binária de busca' },
     summary: 'Desce pela árvore indo à esquerda se o alvo é menor e à direita se é maior.',
     description:
@@ -884,6 +891,7 @@ export default [
     id: 'bfs',
     name: 'Busca em Largura (BFS)',
     difficulty: 'Intermediário',
+    en: { name: 'Breadth-First Search (BFS)', summary: 'Explores the graph in layers: first the neighbors, then the neighbors of neighbors.' },
     facts: { 'Criado por': 'Konrad Zuse; Edward F. Moore', 'Ano': '1945; 1959', 'Estrutura auxiliar': 'Fila', 'Caminho mínimo': 'Sim (grafos sem peso)' },
     summary: 'Explora o grafo em camadas: primeiro os vizinhos, depois os vizinhos dos vizinhos.',
     description:
@@ -1038,6 +1046,7 @@ export default [
     id: 'dfs',
     name: 'Busca em Profundidade (DFS)',
     difficulty: 'Intermediário',
+    en: { name: 'Depth-First Search (DFS)', summary: 'Follows a path to the end before backing up and trying the next one.' },
     facts: { 'Origem': 'Charles Pierre Trémaux', 'Ano': 'Século XIX', 'Estrutura auxiliar': 'Pilha (ou recursão)', 'Caminho mínimo': 'Não' },
     summary: 'Segue um caminho até o fim antes de voltar e tentar o próximo.',
     description:
@@ -1168,6 +1177,7 @@ export default [
     id: 'best-first-search',
     name: 'Busca pela Melhor Escolha',
     difficulty: 'Avançado',
+    en: { name: 'Best-First Search', summary: 'Always expands the node that looks closest to the goal, according to a heuristic.' },
     facts: { 'Primeiro uso': 'Graph Traverser (Doran e Michie)', 'Ano': '1966', 'Estrutura auxiliar': 'Fila de prioridades', 'Caminho mínimo': 'Não garantido' },
     summary: 'Expande sempre o nó que parece mais perto do destino, segundo uma heurística.',
     description:
@@ -1435,6 +1445,7 @@ export default [
     id: 'a-star',
     name: 'Busca A*',
     difficulty: 'Avançado',
+    en: { name: 'A* Search', summary: 'Combines the cost so far with an estimate of what is left: fast and optimal.' },
     facts: { 'Criado por': 'Hart, Nilsson e Raphael', 'Ano': '1968', 'Estrutura auxiliar': 'Fila de prioridades', 'Caminho mínimo': 'Sim (com heurística admissível)' },
     summary: 'Combina o custo já percorrido com uma estimativa do que falta: rápido e ótimo.',
     description:

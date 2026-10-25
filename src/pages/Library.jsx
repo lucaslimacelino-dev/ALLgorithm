@@ -6,9 +6,11 @@ import DifficultyBadge from '../components/DifficultyBadge'
 import { algorithms, categories, difficulties, mainComplexity, preloadAlgorithm } from '../data'
 import { matchScore } from '../lib/search'
 import { usePageTitle } from '../lib/usePageTitle'
+import { useI18n } from '../i18n'
 
 export default function Library() {
-  usePageTitle('Índice de algoritmos')
+  const { t, loc, locale } = useI18n()
+  usePageTitle(t('library.pageTitle'))
   const [params, setParams] = useSearchParams()
   const query = params.get('q') ?? ''
   const level = params.get('nivel') ?? ''
@@ -24,10 +26,10 @@ export default function Library() {
     categories
       .map(cat => ({
         ...cat,
-        items: cat.items.filter(a => (!level || a.difficulty === level) && matchScore(a, query) >= 0),
+        items: cat.items.filter(a => (!level || a.difficulty === level) && matchScore(a, query, locale) >= 0),
       }))
       .filter(cat => cat.items.length > 0)
-  ), [query, level])
+  ), [query, level, locale])
 
   const resultCount = groups.reduce((acc, g) => acc + g.items.length, 0)
   const filtering = query || level
@@ -42,15 +44,15 @@ export default function Library() {
           <div className="absolute inset-0 bg-glow pointer-events-none" />
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-12 pb-10">
             <nav className="text-[13px] text-faint" aria-label="Trilha">
-              <Link to="/" className="hover:text-ink">Início</Link>
+              <Link to="/" className="hover:text-ink">{t('crumb.home')}</Link>
               <span className="mx-2">/</span>
-              <span className="text-muted">Biblioteca</span>
+              <span className="text-muted">{t('crumb.library')}</span>
             </nav>
             <h1 className="mt-5 title text-4xl sm:text-5xl tracking-[-0.035em]">
-              Índice de <span className="font-display italic font-normal tracking-normal">algoritmos</span>
+              {t('library.title')} <span className="font-display italic font-normal tracking-normal">{t('library.titleEm')}</span>
             </h1>
             <p className="mt-4 max-w-2xl text-[17px] text-muted">
-              Todos os artigos da enciclopédia, organizados por categoria e ordenados do mais simples ao mais avançado.
+              {t('library.subtitle')}
             </p>
 
             {/* Filtros */}
@@ -63,11 +65,11 @@ export default function Library() {
                   type="search"
                   value={query}
                   onChange={e => updateParam('q', e.target.value)}
-                  placeholder="Filtrar por nome, aplicação ou categoria…"
+                  placeholder={t('library.filter')}
                   className="w-full h-11 pl-11 pr-4 rounded-full bg-surface border border-line shadow-soft text-sm text-ink placeholder:text-faint focus:outline-none focus:ring-4 focus:ring-accent/10"
                 />
               </div>
-              <div className="inline-flex p-1 rounded-full border border-line bg-surface shadow-soft self-start overflow-x-auto max-w-full" role="group" aria-label="Nível">
+              <div className="inline-flex p-1 rounded-full border border-line bg-surface shadow-soft self-start overflow-x-auto max-w-full" role="group" aria-label={t('library.level')}>
                 {['', ...difficulties].map(d => (
                   <button
                     key={d || 'todos'}
@@ -76,15 +78,15 @@ export default function Library() {
                     className={`shrink-0 h-9 px-4 rounded-full text-[13px] inline-flex items-center gap-2
                       ${level === d ? 'bg-ink text-paper' : 'text-muted hover:text-ink'}`}
                   >
-                    {d ? <DifficultyBadge level={d} className="!text-inherit !text-[13px]" /> : 'Todos'}
+                    {d ? <DifficultyBadge level={d} className="!text-inherit !text-[13px]" /> : t('library.all')}
                   </button>
                 ))}
               </div>
             </div>
             <p className="mt-4 text-[13px] text-faint">
               {filtering
-                ? <>{resultCount} de {algorithms.length} artigos · <button onClick={() => setParams({}, { replace: true })} className="link">limpar filtros</button></>
-                : <>{algorithms.length} artigos em {categories.length} {categories.length === 1 ? 'categoria' : 'categorias'}</>}
+                ? <>{t('library.filtered', { r: resultCount, t: algorithms.length })} · <button onClick={() => setParams({}, { replace: true })} className="link">{t('library.clear')}</button></>
+                : <>{t('library.count', { n: algorithms.length, c: categories.length })}</>}
             </p>
           </div>
         </div>
@@ -92,12 +94,12 @@ export default function Library() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 grid gap-10 grid-cols-[minmax(0,1fr)] lg:grid-cols-[200px_minmax(0,1fr)]">
           {/* Categorias */}
           <aside className="hidden lg:block lg:sticky lg:top-24 lg:self-start">
-            <h2 className="kicker mb-3">Categorias</h2>
+            <h2 className="kicker mb-3">{t('library.categories')}</h2>
             <ul className="space-y-0.5">
               {categories.map(cat => (
                 <li key={cat.id}>
                   <a href={`#${cat.id}`} className="flex justify-between items-center px-3 h-9 rounded-lg text-sm text-muted hover:text-ink hover:bg-subtle">
-                    {cat.title}
+                    {loc(cat).title}
                     <span className="font-mono text-xs text-faint">{cat.items.length}</span>
                   </a>
                 </li>
@@ -110,10 +112,10 @@ export default function Library() {
               <section key={cat.id} id={cat.id} className="scroll-mt-24">
                 <div className="flex items-end justify-between gap-4 mb-5">
                   <div>
-                    <h2 className="title text-2xl">{cat.title}</h2>
-                    <p className="mt-1 text-sm text-muted">{cat.description}</p>
+                    <h2 className="title text-2xl">{loc(cat).title}</h2>
+                    <p className="mt-1 text-sm text-muted">{loc(cat).description}</p>
                   </div>
-                  <span className="hidden sm:block shrink-0 text-[13px] text-faint">{cat.items.length} artigos</span>
+                  <span className="hidden sm:block shrink-0 text-[13px] text-faint">{t('library.articles', { n: cat.items.length })}</span>
                 </div>
 
                 <ul className="card divide-y divide-line overflow-hidden">
@@ -125,8 +127,8 @@ export default function Library() {
                       >
                         <span className="font-mono text-xs text-faint tabular-nums">{String(i + 1).padStart(2, '0')}</span>
                         <span className="min-w-0">
-                          <span className="block text-[15px] font-medium text-ink">{a.name}</span>
-                          <span className="block mt-0.5 text-[13.5px] text-muted sm:truncate">{a.summary}</span>
+                          <span className="block text-[15px] font-medium text-ink">{loc(a).name}</span>
+                          <span className="block mt-0.5 text-[13.5px] text-muted sm:truncate">{loc(a).summary}</span>
                         </span>
                         <DifficultyBadge level={a.difficulty} className="col-start-2 sm:col-start-auto" />
                         <span className="hidden sm:block font-mono text-xs text-muted text-right">{mainComplexity(a)}</span>
@@ -140,8 +142,8 @@ export default function Library() {
 
             {groups.length === 0 && (
               <div className="card py-20 text-center">
-                <p className="title text-xl">Nenhum artigo encontrado</p>
-                <p className="mt-2 text-sm text-muted">Tente outro termo ou remova o filtro de nível.</p>
+                <p className="title text-xl">{t('library.noneTitle')}</p>
+                <p className="mt-2 text-sm text-muted">{t('library.noneText')}</p>
               </div>
             )}
           </div>

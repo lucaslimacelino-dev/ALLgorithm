@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { arraySearches, makeData } from '../../lib/searchFrames'
 import { Legend, PlayerControls, StepNote, usePlayer } from './Player'
+import { useI18n } from '../../i18n'
 
 const SIZE = 16
 
@@ -20,6 +21,7 @@ function missingValue(arr) {
 }
 
 export default function ArraySearchVisualizer({ algorithm }) {
+  const { t } = useI18n()
   const config = arraySearches[algorithm.id]
   const [arr, setArr] = useState(() => makeData(config.data, SIZE))
   const [target, setTarget] = useState(() => pickTarget(arr))
@@ -47,9 +49,9 @@ export default function ArraySearchVisualizer({ algorithm }) {
       <div className="px-4 sm:px-6 pt-6 pb-5 border-b border-line">
         {!config.noTarget && (
           <div className="mb-5 flex flex-wrap items-center gap-2 text-sm">
-            <span className="text-muted">Procurando</span>
+            <span className="text-muted">{t('viz.searching')}</span>
             <span className="inline-flex h-8 min-w-[2.5rem] px-2.5 items-center justify-center rounded-full bg-ink text-paper font-mono text-[13px]">{target}</span>
-            <span className="text-faint text-xs ml-1">Clique em um número para mudar o alvo.</span>
+            <span className="text-faint text-xs ml-1">{t('viz.clickNumber')}</span>
           </div>
         )}
         <div className="grid grid-cols-8 sm:grid-cols-[repeat(16,minmax(0,1fr))] gap-1.5">
@@ -72,19 +74,19 @@ export default function ArraySearchVisualizer({ algorithm }) {
 
       <PlayerControls player={player}>
         {!config.noTarget && (
-          <button onClick={() => chooseTarget(missingValue(arr))} className="btn-ghost !h-9">Alvo ausente</button>
+          <button onClick={() => chooseTarget(missingValue(arr))} className="btn-ghost !h-9">{t('viz.missingTarget')}</button>
         )}
-        <button onClick={newData} className="btn-ghost !h-9">Novos dados</button>
+        <button onClick={newData} className="btn-ghost !h-9">{t('viz.newData')}</button>
       </PlayerControls>
 
       <Legend
         items={[
-          ['bg-surface border border-line', 'Ainda considerado'],
-          ['bg-amber-400', 'Sondando'],
-          ['bg-ink', config.noTarget ? 'Menor elemento' : 'Encontrado'],
-          ['bg-subtle border border-line opacity-50', 'Descartado'],
+          ['bg-surface border border-line', t('viz.inRange')],
+          ['bg-amber-400', t('viz.probing')],
+          ['bg-ink', config.noTarget ? t('viz.minimum') : t('viz.found')],
+          ['bg-subtle border border-line opacity-50', t('viz.discarded')],
         ]}
-        status={`passo ${player.step}/${player.last}`}
+        status={t('player.step', { s: player.step, t: player.last })}
       />
     </figure>
   )

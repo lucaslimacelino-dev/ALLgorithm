@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { stringSearches } from '../../lib/stringFrames'
 import { Legend, PlayerControls, StepNote, usePlayer } from './Player'
+import { useI18n } from '../../i18n'
 
 const MAX_TEXT = 32
 const MAX_PATTERN = 10
@@ -16,11 +17,12 @@ function Cell({ ch, className = '', index }) {
 }
 
 function Aux({ aux }) {
+  const { t } = useI18n()
   if (!aux) return null
   if (aux.kind === 'lps') {
     return (
       <div className="text-xs">
-        <p className="text-muted mb-1.5">Tabela LPS (maior prefixo que também é sufixo)</p>
+        <p className="text-muted mb-1.5">{t('viz.lps')}</p>
         <div className="flex gap-1 font-mono">{aux.values.map((v, i) => <span key={i} className="w-8 h-7 rounded-md bg-subtle flex items-center justify-center">{v}</span>)}</div>
       </div>
     )
@@ -29,8 +31,8 @@ function Aux({ aux }) {
     const eq = aux.pattern === aux.window
     return (
       <div className="flex gap-6 text-xs">
-        <div><p className="text-muted">hash(padrão)</p><p className="font-mono text-base text-ink">{aux.pattern}</p></div>
-        <div><p className="text-muted">hash(janela)</p><p className={`font-mono text-base ${eq ? 'text-emerald-600 dark:text-emerald-400' : 'text-ink'}`}>{aux.window}</p></div>
+        <div><p className="text-muted">{t('viz.hashPattern')}</p><p className="font-mono text-base text-ink">{aux.pattern}</p></div>
+        <div><p className="text-muted">{t('viz.hashWindow')}</p><p className={`font-mono text-base ${eq ? 'text-emerald-600 dark:text-emerald-400' : 'text-ink'}`}>{aux.window}</p></div>
       </div>
     )
   }
@@ -39,7 +41,7 @@ function Aux({ aux }) {
     <div className="flex flex-wrap gap-x-8 gap-y-3 text-xs">
       {aux.kind === 'bits' && (
         <div>
-          <p className="text-muted mb-1.5">Estado D (bit j = 0: prefixo de tamanho j + 1 casando)</p>
+          <p className="text-muted mb-1.5">{t('viz.stateD')}</p>
           <div className="flex gap-1 font-mono">
             {aux.bits.map((b, j) => (
               <span key={j} className={`w-8 h-7 rounded-md flex items-center justify-center ${b === '0' ? 'bg-emerald-500 text-white' : 'bg-subtle text-muted'}`}>{b}</span>
@@ -48,7 +50,7 @@ function Aux({ aux }) {
         </div>
       )}
       <div>
-        <p className="text-muted mb-1.5">{aux.kind === 'bits' ? 'Máscaras' : aux.title}</p>
+        <p className="text-muted mb-1.5">{aux.kind === 'bits' ? t('viz.masks') : aux.title}</p>
         <div className="flex flex-wrap gap-1 font-mono">
           {table.map(([c, v]) => (
             <span key={c} className="h-7 px-2 rounded-md bg-subtle inline-flex items-center gap-1.5"><span className="text-ink">{c}</span><span className="text-muted">{v}</span></span>
@@ -60,6 +62,7 @@ function Aux({ aux }) {
 }
 
 export default function StringSearchVisualizer({ algorithm }) {
+  const { t } = useI18n()
   const config = stringSearches[algorithm.id]
   const [text, setText] = useState(config.preset[0])
   const [pattern, setPattern] = useState(config.preset[1])
@@ -89,11 +92,11 @@ export default function StringSearchVisualizer({ algorithm }) {
       <div className="px-4 sm:px-6 pt-5 pb-5 border-b border-line">
         <div className="flex flex-wrap gap-2 mb-5">
           <label className="flex items-center gap-2 text-xs text-muted">
-            Texto
+            {t('viz.text')}
             <input value={text} maxLength={MAX_TEXT} onChange={edit(setText)} className="w-56 sm:w-72 h-9 px-3 rounded-full border border-line bg-surface font-mono text-sm text-ink focus:outline-none focus:ring-4 focus:ring-accent/10" />
           </label>
           <label className="flex items-center gap-2 text-xs text-muted">
-            Padrão
+            {t('viz.pattern')}
             <input value={pattern} maxLength={MAX_PATTERN} onChange={edit(setPattern)} className="w-36 h-9 px-3 rounded-full border border-line bg-surface font-mono text-sm text-ink focus:outline-none focus:ring-4 focus:ring-accent/10" />
           </label>
         </div>
@@ -106,7 +109,7 @@ export default function StringSearchVisualizer({ algorithm }) {
             </div>
           </div>
         ) : (
-          <p className="text-sm text-muted">O padrão precisa ter pelo menos 1 caractere e não pode ser maior que o texto.</p>
+          <p className="text-sm text-muted">{t('viz.patternInvalid')}</p>
         )}
 
         {valid && frame?.aux && <div className="mt-5 pt-4 border-t border-line"><Aux aux={frame.aux} /></div>}
@@ -115,14 +118,14 @@ export default function StringSearchVisualizer({ algorithm }) {
       <StepNote>{frame?.note ?? '—'}</StepNote>
 
       <PlayerControls player={player}>
-        <button onClick={() => { player.reset(); setText(config.preset[0]); setPattern(config.preset[1]) }} className="btn-ghost !h-9">Exemplo</button>
+        <button onClick={() => { player.reset(); setText(config.preset[0]); setPattern(config.preset[1]) }} className="btn-ghost !h-9">{t('viz.example')}</button>
       </PlayerControls>
 
       <Legend
         items={isBits
-          ? [['bg-amber-400', 'Letra lida'], ['bg-emerald-500', 'Bit zerado (prefixo casando)'], ['bg-accent/20', 'Ocorrência']]
-          : [['bg-emerald-500', 'Caracteres iguais'], ['bg-rose-500', 'Diferentes'], ['bg-accent/20', 'Ocorrência encontrada']]}
-        status={frame ? (isBits ? `passo ${player.step}/${player.last} · ${frame.found.length} ocorrências` : `passo ${player.step}/${player.last} · ${frame.comparisons} comparações`) : ''}
+          ? [['bg-amber-400', t('viz.letterRead')], ['bg-emerald-500', t('viz.bitZero')], ['bg-accent/20', t('viz.match')]]
+          : [['bg-emerald-500', t('viz.charsEqual')], ['bg-rose-500', t('viz.charsDiffer')], ['bg-accent/20', t('viz.matchFound')]]}
+        status={frame ? `${t('player.step', { s: player.step, t: player.last })} · ${isBits ? t('viz.matches', { n: frame.found.length }) : t('viz.comparisons', { c: frame.comparisons })}` : ''}
       />
     </figure>
   )

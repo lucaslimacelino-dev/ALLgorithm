@@ -3,6 +3,7 @@ export default [
     id: 'topological-sort',
     name: 'Ordenação Topológica',
     difficulty: 'Intermediário',
+    en: { name: 'Topological Sort', summary: 'Puts tasks in an order that respects every dependency.' },
     facts: { 'Algoritmo mostrado': 'Kahn', 'Ano': '1962', 'Requer': 'Grafo dirigido acíclico (DAG)' },
     summary: 'Coloca tarefas em uma ordem que respeita todas as dependências.',
     description:
@@ -168,6 +169,7 @@ export default [
     id: 'dijkstra',
     name: 'Algoritmo de Dijkstra',
     difficulty: 'Intermediário',
+    en: { name: 'Dijkstra\'s Algorithm', summary: 'Finds shortest paths from a source, always settling the closest vertex next.' },
     facts: { 'Criado por': 'Edsger W. Dijkstra', 'Ano': '1956 (publicado em 1959)', 'Restrição': 'Pesos não negativos' },
     summary: 'Encontra os caminhos mais curtos a partir de uma origem, fixando sempre o vértice mais próximo.',
     description:
@@ -341,6 +343,7 @@ export default [
     id: 'bellman-ford',
     name: 'Algoritmo de Bellman-Ford',
     difficulty: 'Intermediário',
+    en: { name: 'Bellman-Ford Algorithm', summary: 'Shortest paths that work even with negative weights — and detect negative cycles.' },
     facts: { 'Criado por': 'Richard Bellman; Lester Ford Jr.', 'Ano': '1958; 1956', 'Pesos negativos': 'Aceita (e detecta ciclos negativos)' },
     summary: 'Caminhos mínimos que funcionam mesmo com pesos negativos — e detectam ciclos negativos.',
     description:
@@ -492,6 +495,7 @@ export default [
     id: 'floyd-warshall',
     name: 'Algoritmo de Floyd-Warshall',
     difficulty: 'Intermediário',
+    en: { name: 'Floyd-Warshall Algorithm', summary: 'Computes the shortest distance between every pair of vertices with three nested loops.' },
     facts: { 'Criado por': 'Robert Floyd; Stephen Warshall', 'Ano': '1962', 'Resolve': 'Caminhos mínimos entre todos os pares' },
     summary: 'Calcula a menor distância entre todos os pares de vértices com três laços aninhados.',
     description:
@@ -623,6 +627,7 @@ export default [
     id: 'prim',
     name: 'Algoritmo de Prim',
     difficulty: 'Intermediário',
+    en: { name: 'Prim\'s Algorithm', summary: 'Grows a tree from one vertex, always through the lightest edge leaving it.' },
     facts: { 'Criado por': 'Vojtěch Jarník; Robert Prim', 'Ano': '1930; 1957', 'Redescoberto por': 'Edsger Dijkstra (1959)' },
     summary: 'Faz uma árvore crescer a partir de um vértice, sempre pela aresta mais leve que sai dela.',
     description:
@@ -794,6 +799,7 @@ export default [
     id: 'kruskal',
     name: 'Algoritmo de Kruskal',
     difficulty: 'Intermediário',
+    en: { name: 'Kruskal\'s Algorithm', summary: 'Sorts edges by weight and adds them from lightest to heaviest, avoiding cycles.' },
     facts: { 'Criado por': 'Joseph Kruskal', 'Ano': '1956', 'Estrutura auxiliar': 'Union-Find' },
     summary: 'Ordena as arestas pelo peso e as adiciona da mais leve à mais pesada, evitando ciclos.',
     description:
@@ -958,6 +964,7 @@ export default [
     id: 'boruvka',
     name: 'Algoritmo de Borůvka',
     difficulty: 'Avançado',
+    en: { name: 'Borůvka\'s Algorithm', summary: 'In rounds, every component picks its lightest outgoing edge — all at the same time.' },
     facts: { 'Criado por': 'Otakar Borůvka', 'Ano': '1926', 'Motivação': 'Rede elétrica da Morávia' },
     summary: 'Em rodadas, cada componente escolhe sua aresta mais leve para fora — todos ao mesmo tempo.',
     description:
@@ -1144,6 +1151,7 @@ export default [
     id: 'ford-fulkerson',
     name: 'Método de Ford-Fulkerson',
     difficulty: 'Avançado',
+    en: { name: 'Ford-Fulkerson Method', summary: 'Sends flow along paths with spare capacity until none is left: the maximum flow of a network.' },
     facts: { 'Criado por': 'L. R. Ford Jr. e D. R. Fulkerson', 'Ano': '1956', 'Teorema associado': 'Fluxo máximo = corte mínimo' },
     summary: 'Envia fluxo por caminhos com folga até não existir nenhum: o fluxo máximo de uma rede.',
     description:
@@ -1347,6 +1355,7 @@ export default [
     id: 'edmonds-karp',
     name: 'Algoritmo de Edmonds-Karp',
     difficulty: 'Avançado',
+    en: { name: 'Edmonds-Karp Algorithm', summary: 'Ford-Fulkerson always using the shortest augmenting path: guaranteed polynomial time.' },
     facts: { 'Criado por': 'Jack Edmonds e Richard Karp', 'Ano': '1972', 'Antecedente': 'Yefim Dinitz (1970)', 'Busca usada': 'BFS (caminho mais curto)' },
     summary: 'Ford-Fulkerson usando sempre o caminho aumentante mais curto: tempo polinomial garantido.',
     description:
@@ -1546,6 +1555,7 @@ export default [
     id: 'clarke-wright',
     name: 'Algoritmo das Economias (Clarke-Wright)',
     difficulty: 'Avançado',
+    en: { name: 'Savings Algorithm (Clarke-Wright)', summary: 'Plans delivery routes by joining, in order, the pairs of customers that save the most distance.' },
     facts: { 'Criado por': 'G. Clarke e J. W. Wright', 'Ano': '1964', 'Problema': 'Roteamento de veículos (VRP)', 'Tipo': 'Heurística (não garante o ótimo)' },
     summary: 'Planeja rotas de entrega juntando, em ordem, os pares de clientes que mais economizam distância.',
     description:
@@ -1761,6 +1771,7 @@ export default [
     id: 'force-directed',
     name: 'Desenho de Grafos por Molas',
     difficulty: 'Avançado',
+    en: { name: 'Force-Directed Graph Drawing', summary: 'Draws a graph by simulating physics: vertices repel and edges pull like springs.' },
     facts: { 'Modelo mostrado': 'Fruchterman-Reingold (1991)', 'Precursor': 'Peter Eades (1984)', 'Tipo': 'Simulação física iterativa' },
     summary: 'Desenha um grafo simulando física: vértices se repelem e arestas puxam como molas.',
     description:

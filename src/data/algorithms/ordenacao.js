@@ -3,6 +3,7 @@ export default [
     id: 'bogosort',
     name: 'Bogosort',
     difficulty: 'Iniciante',
+    en: { name: 'Bogosort', summary: 'Shuffles the list at random until, by pure luck, it ends up sorted.' },
     facts: { 'Criado por': 'Folclore da computação', 'Estável': 'Não', 'In-place': 'Sim' },
     summary: 'Embaralha a lista aleatoriamente até que, por pura sorte, ela fique ordenada.',
     description:
@@ -137,6 +138,7 @@ export default [
     id: 'bubble-sort',
     name: 'Bubble Sort',
     difficulty: 'Iniciante',
+    en: { name: 'Bubble Sort', summary: 'Compares neighbors and swaps those out of order until nothing changes.' },
     facts: { 'Primeira análise': 'Edward H. Friend', 'Ano': '1956', 'Estável': 'Sim', 'In-place': 'Sim' },
     summary: 'Compara vizinhos e troca os que estão fora de ordem até nada mais mudar.',
     description:
@@ -252,6 +254,7 @@ export default [
     id: 'selection-sort',
     name: 'Selection Sort',
     difficulty: 'Iniciante',
+    en: { name: 'Selection Sort', summary: 'Finds the smallest remaining element and puts it in the next position.' },
     facts: { 'Criado por': 'Método clássico', 'Estável': 'Não', 'In-place': 'Sim' },
     summary: 'Procura o menor elemento restante e o coloca na próxima posição.',
     description:
@@ -354,6 +357,7 @@ export default [
     id: 'insertion-sort',
     name: 'Insertion Sort',
     difficulty: 'Iniciante',
+    en: { name: 'Insertion Sort', summary: 'Inserts each element into its place in the sorted part, like cards in your hand.' },
     facts: { 'Criado por': 'Método clássico', 'Estável': 'Sim', 'In-place': 'Sim' },
     summary: 'Insere cada elemento na posição certa da parte já ordenada, como cartas na mão.',
     description:
@@ -463,6 +467,7 @@ export default [
     id: 'gnome-sort',
     name: 'Gnome Sort',
     difficulty: 'Iniciante',
+    en: { name: 'Gnome Sort', summary: 'Moves forward while in order; when not, swaps with the previous one and steps back.' },
     facts: { 'Criado por': 'Hamid Sarbazi-Azad', 'Ano': '2000', 'Estável': 'Sim', 'In-place': 'Sim' },
     summary: 'Avança enquanto está em ordem; quando não está, troca com o anterior e recua um passo.',
     description:
@@ -567,6 +572,7 @@ export default [
     id: 'cocktail-sort',
     name: 'Cocktail Shaker Sort',
     difficulty: 'Iniciante',
+    en: { name: 'Cocktail Shaker Sort', summary: 'A back-and-forth bubble sort: moves the largest to the end and the smallest to the start.' },
     facts: { 'Criado por': 'Variação do bubble sort', 'Estável': 'Sim', 'In-place': 'Sim' },
     summary: 'Um bubble sort de ida e volta: leva o maior para o fim e o menor para o início.',
     description:
@@ -706,6 +712,7 @@ export default [
     id: 'comb-sort',
     name: 'Comb Sort',
     difficulty: 'Intermediário',
+    en: { name: 'Comb Sort', summary: 'A bubble sort with a "comb": compares distant elements and gradually shrinks the gap.' },
     facts: { 'Criado por': 'W. Dobosiewicz e A. Borowy', 'Ano': '1980', 'Estável': 'Não', 'In-place': 'Sim' },
     summary: 'Um bubble sort com "pente": compara elementos distantes e vai diminuindo a distância.',
     description:
@@ -834,6 +841,7 @@ export default [
     id: 'shell-sort',
     name: 'Shell Sort',
     difficulty: 'Intermediário',
+    en: { name: 'Shell Sort', summary: 'Insertion sort in stages: sorts distant elements first and then closes the gap.' },
     facts: { 'Criado por': 'Donald Shell', 'Ano': '1959', 'Estável': 'Não', 'In-place': 'Sim' },
     summary: 'Insertion sort em etapas: ordena elementos distantes primeiro e vai aproximando.',
     description:
@@ -952,6 +960,7 @@ export default [
     id: 'merge-sort',
     name: 'Merge Sort',
     difficulty: 'Intermediário',
+    en: { name: 'Merge Sort', summary: 'Splits the list in half, sorts each half and merges the results.' },
     facts: { 'Criado por': 'John von Neumann', 'Ano': '1945', 'Estável': 'Sim', 'In-place': 'Não' },
     summary: 'Divide a lista ao meio, ordena cada metade e intercala os resultados.',
     description:
@@ -1082,6 +1091,7 @@ export default [
     id: 'quick-sort',
     name: 'Quick Sort',
     difficulty: 'Intermediário',
+    en: { name: 'Quick Sort', summary: 'Picks a pivot, splits smaller and larger elements, and sorts each side recursively.' },
     facts: { 'Criado por': 'Tony Hoare', 'Ano': '1959', 'Estável': 'Não', 'In-place': 'Sim' },
     summary: 'Escolhe um pivô, separa menores e maiores e ordena cada lado recursivamente.',
     description:
@@ -1222,6 +1232,7 @@ export default [
     id: 'heap-sort',
     name: 'Heap Sort',
     difficulty: 'Intermediário',
+    en: { name: 'Heap Sort', summary: 'Builds a max-heap and repeatedly removes the largest element.' },
     facts: { 'Criado por': 'J. W. J. Williams', 'Ano': '1964', 'Estável': 'Não', 'In-place': 'Sim' },
     summary: 'Monta um heap de máximo e retira o maior elemento repetidamente.',
     description:
@@ -1364,6 +1375,7 @@ export default [
     id: 'counting-sort',
     name: 'Counting Sort',
     difficulty: 'Intermediário',
+    en: { name: 'Counting Sort', summary: 'Counts how many times each value appears and rebuilds the list in order.' },
     facts: { 'Criado por': 'Harold H. Seward', 'Ano': '1954', 'Estável': 'Sim', 'In-place': 'Não' },
     summary: 'Conta quantas vezes cada valor aparece e reconstrói a lista em ordem.',
     description:
@@ -1464,6 +1476,7 @@ export default [
     id: 'pigeonhole-sort',
     name: 'Pigeonhole Sort',
     difficulty: 'Intermediário',
+    en: { name: 'Pigeonhole Sort', summary: 'Puts each item in its "pigeonhole" by key and collects all holes in order.' },
     facts: { 'Baseado em': 'Princípio da casa dos pombos', 'Estável': 'Sim', 'In-place': 'Não' },
     summary: 'Coloca cada item na sua "casa de pombo" pela chave e recolhe todas as casas em ordem.',
     description:
@@ -1585,6 +1598,7 @@ export default [
     id: 'bucket-sort',
     name: 'Bucket Sort',
     difficulty: 'Intermediário',
+    en: { name: 'Bucket Sort', summary: 'Distributes values into buckets by range, sorts each bucket and joins them.' },
     facts: { 'Criado por': 'Método clássico', 'Estável': 'Depende do algoritmo interno', 'In-place': 'Não' },
     summary: 'Distribui os valores em baldes por faixa, ordena cada balde e junta tudo.',
     description:
@@ -1687,6 +1701,7 @@ export default [
     id: 'radix-sort',
     name: 'Radix Sort',
     difficulty: 'Intermediário',
+    en: { name: 'Radix Sort', summary: 'Sorts digit by digit, from the least to the most significant.' },
     facts: { 'Origem': 'Herman Hollerith', 'Ano': '1887', 'Estável': 'Sim (LSD)', 'In-place': 'Não' },
     summary: 'Ordena dígito a dígito, do menos significativo ao mais significativo.',
     description:
@@ -1802,6 +1817,7 @@ export default [
     id: 'pancake-sort',
     name: 'Pancake Sort',
     difficulty: 'Intermediário',
+    en: { name: 'Pancake Sort', summary: 'Sorts using only "spatula flips": reversing a prefix of the list.' },
     facts: { 'Problema proposto por': 'Jacob E. Goodman', 'Ano': '1975', 'Estável': 'Não', 'In-place': 'Sim' },
     summary: 'Ordena usando só "viradas de espátula": inverter o início da lista.',
     description:
@@ -1919,6 +1935,7 @@ export default [
     id: 'smoothsort',
     name: 'Smoothsort',
     difficulty: 'Avançado',
+    en: { name: 'Smoothsort', summary: 'A heapsort variant with Leonardo heaps: reaches O(n) on nearly sorted data.' },
     facts: { 'Criado por': 'Edsger W. Dijkstra', 'Ano': '1981', 'Estável': 'Não', 'In-place': 'Sim' },
     summary: 'Variação do heapsort com heaps de Leonardo: chega a O(n) em dados quase ordenados.',
     description:

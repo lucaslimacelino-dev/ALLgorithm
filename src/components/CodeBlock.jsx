@@ -2,8 +2,10 @@ import { useMemo, useState } from 'react'
 import { languages } from '../data'
 import { useLanguage } from '../context/LanguageContext'
 import { dedent, tokenize } from '../lib/highlight'
+import { useI18n } from '../i18n'
 
 export default function CodeBlock({ code }) {
+  const { t } = useI18n()
   const { language, setLanguage } = useLanguage()
   const [copied, setCopied] = useState(false)
 
@@ -48,7 +50,7 @@ export default function CodeBlock({ code }) {
               ? <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               : <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />}
           </svg>
-          {copied ? 'Copiado' : 'Copiar'}
+          {copied ? t('code.copied') : t('common.copy')}
         </button>
       </div>
 

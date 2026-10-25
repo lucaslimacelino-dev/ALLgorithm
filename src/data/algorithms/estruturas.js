@@ -3,6 +3,7 @@ export default [
     id: 'stack',
     name: 'Pilha (Stack)',
     difficulty: 'Iniciante',
+    en: { name: 'Stack', summary: 'Last in, first out (LIFO), like a stack of plates.' },
     facts: { 'Princípio': 'LIFO — último a entrar, primeiro a sair', 'Formalizada por': 'F. L. Bauer e K. Samelson', 'Ano': '1957' },
     summary: 'O último a entrar é o primeiro a sair (LIFO), como uma pilha de pratos.',
     description:
@@ -169,6 +170,7 @@ export default [
     id: 'queue',
     name: 'Fila (Queue)',
     difficulty: 'Iniciante',
+    en: { name: 'Queue', summary: 'First in, first out (FIFO), like a line at the bank.' },
     facts: { 'Princípio': 'FIFO — primeiro a entrar, primeiro a sair', 'Teoria das filas': 'Agner K. Erlang (1909)', 'Implementação mostrada': 'Array circular' },
     summary: 'O primeiro a entrar é o primeiro a sair (FIFO), como a fila de um banco.',
     description:
@@ -355,6 +357,7 @@ export default [
     id: 'linked-list',
     name: 'Lista Ligada',
     difficulty: 'Iniciante',
+    en: { name: 'Linked List', summary: 'Nodes scattered in memory, each one pointing to the next.' },
     facts: { 'Criada por': 'Newell, Shaw e Simon', 'Ano': '1955–1956', 'Primeiro uso': 'Linguagem IPL' },
     summary: 'Nós espalhados na memória, cada um apontando para o próximo.',
     description:
@@ -594,6 +597,7 @@ export default [
     id: 'binary-heap',
     name: 'Heap Binário',
     difficulty: 'Intermediário',
+    en: { name: 'Binary Heap', summary: 'A complete tree stored in an array, with the smallest (or largest) always at the root.' },
     facts: { 'Criado por': 'J. W. J. Williams', 'Ano': '1964', 'Variação mostrada': 'Heap de mínimo' },
     summary: 'Árvore completa guardada em um array, com o menor (ou o maior) sempre na raiz.',
     description:
@@ -801,6 +805,7 @@ export default [
     id: 'trie',
     name: 'Trie (Árvore de Prefixos)',
     difficulty: 'Intermediário',
+    en: { name: 'Trie (Prefix Tree)', summary: 'A tree where each edge is a letter: words with the same prefix share the path.' },
     facts: { 'Proposta por': 'René de la Briandais', 'Ano': '1959', 'Nome dado por': 'Edward Fredkin (1960)' },
     summary: 'Árvore em que cada aresta é uma letra: palavras com o mesmo prefixo compartilham o caminho.',
     description:
@@ -1044,6 +1049,7 @@ export default [
     id: 'union-find',
     name: 'Union-Find (Conjuntos Disjuntos)',
     difficulty: 'Avançado',
+    en: { name: 'Union-Find (Disjoint Sets)', summary: 'Keeps groups of elements and answers "same group?" in nearly constant time.' },
     facts: { 'Criado por': 'Bernard Galler e Michael Fischer', 'Ano': '1964', 'Análise de complexidade': 'Robert Tarjan (1975)' },
     summary: 'Mantém grupos de elementos e responde "estão no mesmo grupo?" quase em tempo constante.',
     description:
@@ -1211,6 +1217,7 @@ export default [
     id: 'avl-tree',
     name: 'Árvore AVL',
     difficulty: 'Avançado',
+    en: { name: 'AVL Tree', summary: 'A search tree that rebalances itself with rotations, guaranteeing O(log n) height.' },
     facts: { 'Criada por': 'G. Adelson-Velsky e E. Landis', 'Ano': '1962', 'Regra': 'Alturas das subárvores diferem no máximo em 1' },
     summary: 'Árvore de busca que se reequilibra com rotações, garantindo altura O(log n).',
     description:

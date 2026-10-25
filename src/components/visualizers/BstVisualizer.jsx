@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Legend, PlayerControls, StepNote, usePlayer } from './Player'
+import { useI18n } from '../../i18n'
 
 const BALANCED = [50, 30, 72, 18, 41, 63, 88, 9, 25, 36, 47, 58, 69, 80, 95]
 
@@ -60,6 +61,7 @@ const randomValues = () => {
 }
 
 export default function BstVisualizer() {
+  const { t } = useI18n()
   const [values, setValues] = useState(BALANCED)
   const tree = useMemo(() => buildTree(values), [values])
   const [target, setTarget] = useState(63)
@@ -94,9 +96,9 @@ export default function BstVisualizer() {
     <figure className="card overflow-hidden">
       <div className="px-4 sm:px-6 pt-6 pb-4 border-b border-line">
         <div className="mb-4 flex flex-wrap items-center gap-2 text-sm">
-          <span className="text-muted">Procurando</span>
+          <span className="text-muted">{t('viz.searching')}</span>
           <span className="inline-flex h-8 min-w-[2.5rem] px-2.5 items-center justify-center rounded-full bg-ink text-paper font-mono text-[13px]">{target}</span>
-          <span className="text-faint text-xs ml-1">Clique em um nó para mudar o alvo.</span>
+          <span className="text-faint text-xs ml-1">{t('viz.clickNode')}</span>
         </div>
         <div className="overflow-x-auto">
           <svg viewBox={`0 0 ${width} ${height}`} className="w-full min-w-[520px]" style={{ maxHeight: 340 }} role="img" aria-label="Árvore binária de busca">
@@ -120,14 +122,14 @@ export default function BstVisualizer() {
       <StepNote>{frame.note}</StepNote>
 
       <PlayerControls player={player}>
-        <button onClick={missing} className="btn-ghost !h-9">Alvo ausente</button>
-        <button onClick={() => reshape(BALANCED)} className="btn-ghost !h-9">Balanceada</button>
-        <button onClick={() => reshape(randomValues())} className="btn-ghost !h-9">Aleatória</button>
+        <button onClick={missing} className="btn-ghost !h-9">{t('viz.missingTarget')}</button>
+        <button onClick={() => reshape(BALANCED)} className="btn-ghost !h-9">{t('viz.balanced')}</button>
+        <button onClick={() => reshape(randomValues())} className="btn-ghost !h-9">{t('viz.randomTree')}</button>
       </PlayerControls>
 
       <Legend
-        items={[['bg-amber-400', 'Comparando'], ['bg-accent/20', 'Caminho percorrido'], ['bg-ink', 'Encontrado']]}
-        status={`profundidade da árvore: ${tree.depth + 1} níveis`}
+        items={[['bg-amber-400', t('viz.comparing')], ['bg-accent/20', t('viz.pathTaken')], ['bg-ink', t('viz.found')]]}
+        status={t('viz.treeDepth', { d: tree.depth + 1 })}
       />
     </figure>
   )

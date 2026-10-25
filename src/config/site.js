@@ -1,9 +1,7 @@
 // Para renomear o site, altere apenas este arquivo (e o <title> em index.html).
+// O slogan e a descrição, por dependerem do idioma, ficam em src/i18n/messages.js.
 export const SITE = {
   name: 'ALLgorithm',
   namePrefix: 'ALL',
   nameSuffix: 'gorithm',
-  tagline: 'A enciclopédia visual de algoritmos',
-  description:
-    'Biblioteca gratuita de algoritmos: do Bubble Sort ao PageRank, com visualizações, código em várias linguagens, aplicações reais e curiosidades.',
 }

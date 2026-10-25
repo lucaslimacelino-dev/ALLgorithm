@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useI18n } from '../../i18n'
 
 const W = 640, H = 345, PAD = 30
 
@@ -9,6 +10,8 @@ const presets = {
   'Árvore': { n: 15, edges: range(14).map(i => [Math.floor(i / 2), i + 1]) },
   'Duas comunidades': { n: 10, edges: [...range(5).flatMap(i => range(5).filter(j => j > i).map(j => [i, j])), ...range(5).flatMap(i => range(5).filter(j => j > i).map(j => [i + 5, j + 5])), [4, 5]] },
 }
+
+const presetLabel = { 'Cubo': 'viz.force.cube', 'Grade 4×4': 'viz.force.grid', 'Árvore': 'viz.force.tree', 'Duas comunidades': 'viz.force.communities' }
 
 const scatter = n => range(n).map(() => ({ x: PAD + Math.random() * (W - 2 * PAD), y: PAD + Math.random() * (H - 2 * PAD) }))
 
@@ -50,6 +53,7 @@ function step(pos, edges, temp, fixed) {
 }
 
 export default function ForceLayoutVisualizer() {
+  const { t } = useI18n()
   const [preset, setPreset] = useState('Cubo')
   const { n, edges } = presets[preset]
   const [pos, setPos] = useState(() => scatter(n))
@@ -105,7 +109,7 @@ export default function ForceLayoutVisualizer() {
   return (
     <figure className="card overflow-hidden">
       <div className="px-2 sm:px-4 pt-4 pb-2 border-b border-line">
-        <svg ref={svg} viewBox={`0 0 ${W} ${H}`} className="w-full touch-none select-none" onPointerMove={onMove} onPointerUp={onUp} onPointerLeave={onUp} role="img" aria-label="Simulação de desenho de grafo por forças">
+        <svg ref={svg} viewBox={`0 0 ${W} ${H}`} className="w-full touch-none select-none" onPointerMove={onMove} onPointerUp={onUp} onPointerLeave={onUp} role="img" aria-label={t('viz.force.running')}>
           {edges.map(([a, b]) => (
             <line key={`${a}-${b}`} x1={pos[a]?.x} y1={pos[a]?.y} x2={pos[b]?.x} y2={pos[b]?.y} stroke="rgb(var(--faint) / 0.7)" strokeWidth="1.6" />
           ))}
@@ -117,18 +121,18 @@ export default function ForceLayoutVisualizer() {
       </div>
       <div className="min-h-[52px] px-4 sm:px-6 py-3 border-b border-line bg-subtle/50 text-sm text-ink/85 flex items-center">
         {running
-          ? 'Nós se repelem como cargas elétricas; arestas puxam como molas. A "temperatura" limita o movimento e esfria a cada passo.'
-          : 'Equilíbrio atingido: as forças se cancelaram. Arraste um nó para perturbar o sistema, ou embaralhe.'}
+          ? t('viz.force.running')
+          : t('viz.force.stable')}
       </div>
       <div className="px-4 sm:px-6 py-4 flex flex-wrap items-center gap-2">
         {Object.keys(presets).map(name => (
-          <button key={name} onClick={() => setPreset(name)} className={`${preset === name ? 'btn-primary' : 'btn-ghost'} !h-9 !px-4`}>{name}</button>
+          <button key={name} onClick={() => setPreset(name)} className={`${preset === name ? 'btn-primary' : 'btn-ghost'} !h-9 !px-4`}>{t(presetLabel[name])}</button>
         ))}
-        <button onClick={() => restart(n)} className="btn-ghost !h-9 !px-4">Embaralhar</button>
+        <button onClick={() => restart(n)} className="btn-ghost !h-9 !px-4">{t('viz.force.shuffle')}</button>
       </div>
       <figcaption className="px-4 sm:px-6 pb-4 flex justify-between text-xs text-muted">
-        <span>Arraste os nós com o mouse ou o dedo.</span>
-        <span className="font-mono tabular-nums">{running ? `temperatura ${temp.current.toFixed(1)} · movimento ${energy.toFixed(0)}` : 'estável'}</span>
+        <span>{t('viz.force.drag')}</span>
+        <span className="font-mono tabular-nums">{running ? t('viz.force.status', { t: temp.current.toFixed(1), e: energy.toFixed(0) }) : t('viz.force.stableShort')}</span>
       </figcaption>
     </figure>
   )

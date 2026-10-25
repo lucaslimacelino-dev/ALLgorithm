@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { OpButton, Playground, TreeSvg, ValueInput, layoutForest, useAnimatedState } from './common'
+import { useI18n } from '../../../i18n'
 
 const INITIAL = ['carro', 'casa', 'casaco', 'caso', 'gato', 'galo']
 const LIMIT = 12
@@ -24,6 +25,7 @@ const sortedKids = n => [...n.kids.values()].sort((a, b) => a.ch.localeCompare(b
 const clean = s => s.trim().toLowerCase().replace(/[^a-zà-ú]/g, '')
 
 export default function TriePlayground() {
+  const { t } = useI18n()
   const s = useAnimatedState({ words: INITIAL, partial: '' }, 'Cada aresta é uma letra; palavras com o mesmo prefixo compartilham o caminho. Nós com anel marcam o fim de uma palavra.')
   const [text, setText] = useState('')
   const { words, partial } = s.state
@@ -73,12 +75,12 @@ export default function TriePlayground() {
     <Playground
       note={s.note}
       controls={<>
-        <ValueInput type="text" width="w-36" value={text} onChange={setText} onEnter={insert} placeholder="palavra" />
-        <OpButton primary onClick={insert} disabled={s.busy}>Inserir</OpButton>
-        <OpButton onClick={search} disabled={s.busy}>Buscar prefixo</OpButton>
-        <OpButton onClick={() => s.play([{ state: { words: INITIAL, partial: '' }, hl: {}, note: 'Trie reiniciada.' }])} disabled={s.busy}>Reiniciar</OpButton>
+        <ValueInput type="text" width="w-36" value={text} onChange={setText} onEnter={insert} placeholder={t('pg.word')} />
+        <OpButton primary onClick={insert} disabled={s.busy}>{t('pg.insert')}</OpButton>
+        <OpButton onClick={search} disabled={s.busy}>{t('pg.searchPrefix')}</OpButton>
+        <OpButton onClick={() => s.play([{ state: { words: INITIAL, partial: '' }, hl: {}, note: 'Trie reiniciada.' }])} disabled={s.busy}>{t('pg.reset')}</OpButton>
       </>}
-      legend={[['bg-accent/20 border border-accent/40', 'Caminho'], ['bg-emerald-500', 'Nó criado'], ['bg-ink', 'Palavra encontrada']]}
+      legend={[['bg-accent/20 border border-accent/40', t('viz.path')], ['bg-emerald-500', t('pg.nodeCreated')], ['bg-ink', t('pg.wordFound')]]}
     >
       <TreeSvg
         layout={layoutForest([root], sortedKids, n => n.id)}

@@ -21,6 +21,13 @@ Link do projeto: https://fasterithm-web.vercel.app
 - `src/components/visualizers/` — visualizações e playgrounds interativos
 - `src/pages/` — Início, Biblioteca (`/algoritmos`) e página do algoritmo (`/algoritmos/:id`)
 
+### Idiomas (português e inglês)
+- Textos da interface: `src/i18n/messages.js` (use `t('chave')` nos componentes, via `useI18n()`).
+- Conteúdo traduzido de um algoritmo: campo `en` no próprio objeto, com os mesmos nomes de campo
+  (`name`, `summary`, `description`, `steps`, `usedIn`, `realWorld`, `curiosities`…).
+- Um artigo conta como traduzido quando `en.steps` existe; até lá, o modo inglês mostra o texto
+  original com um aviso. Categorias têm o campo `en` em `src/data/categories.js`.
+
 ### Desempenho
 O site carrega de início só um índice leve (nome, resumo, nível, complexidade…), gerado no build
 pelo plugin `algorithm-index` em `vite.config.js` a partir dos próprios arquivos de dados.

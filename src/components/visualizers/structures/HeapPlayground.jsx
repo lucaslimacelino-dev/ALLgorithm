@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { OpButton, Playground, TreeSvg, ValueInput, layoutBinary, randomInt, tone, useAnimatedState } from './common'
+import { useI18n } from '../../../i18n'
 
 const LIMIT = 15
 
@@ -50,6 +51,7 @@ function extractFrames(arr) {
 }
 
 export default function HeapPlayground() {
+  const { t } = useI18n()
   const s = useAnimatedState([3, 8, 5, 12, 10, 9], 'Heap de mínimo: cada pai é menor que os filhos, então o menor elemento fica sempre na raiz.')
   const [value, setValue] = useState('')
   const heap = s.state
@@ -65,12 +67,12 @@ export default function HeapPlayground() {
     <Playground
       note={s.note}
       controls={<>
-        <ValueInput value={value} onChange={setValue} onEnter={insert} placeholder="aleat." />
-        <OpButton primary onClick={insert} disabled={s.busy}>Inserir</OpButton>
-        <OpButton onClick={() => s.play(extractFrames(heap))} disabled={s.busy}>Extrair mínimo</OpButton>
-        {heap.length > 0 && <span className="text-xs text-muted ml-1">mínimo: <span className="font-mono text-ink">{heap[0]}</span></span>}
+        <ValueInput value={value} onChange={setValue} onEnter={insert} placeholder={t('pg.randomPh')} />
+        <OpButton primary onClick={insert} disabled={s.busy}>{t('pg.insert')}</OpButton>
+        <OpButton onClick={() => s.play(extractFrames(heap))} disabled={s.busy}>{t('pg.extractMin')}</OpButton>
+        {heap.length > 0 && <span className="text-xs text-muted ml-1">{t('pg.minimum')} <span className="font-mono text-ink">{heap[0]}</span></span>}
       </>}
-      legend={[['bg-emerald-500', 'Subindo / filho escolhido'], ['bg-amber-400', 'Comparando'], ['bg-rose-500', 'Removendo'], ['bg-ink', 'Posição final']]}
+      legend={[['bg-emerald-500', t('pg.heapUp')], ['bg-amber-400', t('viz.comparing')], ['bg-rose-500', t('pg.removing')], ['bg-ink', t('pg.finalPos')]]}
     >
       <div className="w-full flex flex-col items-center gap-5">
         <TreeSvg layout={layoutBinary(toTree(heap))} label={n => heap[n.key]} toneOf={n => s.hl[n.key] ?? 'idle'} />
@@ -82,7 +84,7 @@ export default function HeapPlayground() {
             </div>
           ))}
         </div>
-        <p className="text-[11px] text-faint -mt-2">O mesmo heap guardado como array: os filhos de i ficam em 2i+1 e 2i+2.</p>
+        <p className="text-[11px] text-faint -mt-2">{t('pg.heapArray')}</p>
       </div>
     </Playground>
   )

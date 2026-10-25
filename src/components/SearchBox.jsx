@@ -2,6 +2,7 @@ import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getCategory } from '../data'
 import { searchAlgorithms } from '../lib/search'
+import { useI18n } from '../i18n'
 import DifficultyBadge from './DifficultyBadge'
 
 const sizes = {
@@ -9,7 +10,8 @@ const sizes = {
   sm: { input: 'h-9 pl-9 pr-9 text-[13.5px] rounded-full !bg-subtle/70 !border-transparent focus:!border-line focus:!bg-surface', icon: 'left-3.5 w-[15px] h-[15px]' },
 }
 
-export default function SearchBox({ size = 'lg', shortcut = false, placeholder = 'Buscar algoritmo ou aplicação…' }) {
+export default function SearchBox({ size = 'lg', shortcut = false, placeholder }) {
+  const { t, loc, locale } = useI18n()
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState(0)
@@ -17,7 +19,7 @@ export default function SearchBox({ size = 'lg', shortcut = false, placeholder =
   const navigate = useNavigate()
   const listId = useId()
 
-  const results = useMemo(() => searchAlgorithms(query).slice(0, 8), [query])
+  const results = useMemo(() => searchAlgorithms(query, locale).slice(0, 8), [query, locale])
   const showList = open && query.trim().length > 0
 
   // Atalho "/" para focar a busca.
@@ -73,7 +75,7 @@ export default function SearchBox({ size = 'lg', shortcut = false, placeholder =
         onFocus={() => setOpen(true)}
         onBlur={() => setOpen(false)}
         onKeyDown={onKeyDown}
-        placeholder={placeholder}
+        placeholder={placeholder ?? t('search.placeholder')}
         className={`w-full bg-surface border border-line text-ink placeholder:text-faint focus:outline-none focus:ring-4 focus:ring-accent/10 transition ${s.input}`}
       />
       {shortcut && !query && (
@@ -88,7 +90,7 @@ export default function SearchBox({ size = 'lg', shortcut = false, placeholder =
           className="absolute z-50 left-0 right-0 mt-2 rounded-2xl border border-line bg-surface shadow-lift overflow-hidden animate-fade-in text-left"
         >
           {results.length === 0 ? (
-            <p className="px-4 py-4 text-sm text-muted">Nenhum algoritmo encontrado para “{query}”.</p>
+            <p className="px-4 py-4 text-sm text-muted">{t('search.none', { q: query })}</p>
           ) : (
             <ul className="p-1.5 max-h-96 overflow-y-auto">
               {results.map((a, i) => (
@@ -99,8 +101,8 @@ export default function SearchBox({ size = 'lg', shortcut = false, placeholder =
                     className={`w-full flex items-center justify-between gap-4 px-4 py-2.5 text-left rounded-lg ${i === active ? 'bg-subtle' : ''}`}
                   >
                     <span className="min-w-0">
-                      <span className="block text-[14.5px] font-medium text-ink truncate">{a.name}</span>
-                      <span className="block text-xs text-muted truncate">{getCategory(a.category).title} · {a.summary}</span>
+                      <span className="block text-[14.5px] font-medium text-ink truncate">{loc(a).name}</span>
+                      <span className="block text-xs text-muted truncate">{loc(getCategory(a.category)).title} · {loc(a).summary}</span>
                     </span>
                     <DifficultyBadge level={a.difficulty} className="shrink-0 hidden sm:inline-flex" />
                   </button>
@@ -109,7 +111,7 @@ export default function SearchBox({ size = 'lg', shortcut = false, placeholder =
             </ul>
           )}
           <button onClick={() => go(libraryPath)} className="w-full px-4 py-2.5 text-xs text-accent text-left border-t border-line hover:bg-subtle">
-            Ver todos os resultados na biblioteca →
+            {t('search.all')}
           </button>
         </div>
       )}

@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { graphAlgorithms, graphs, savingsData } from '../../lib/graphFrames'
 import { Legend, PlayerControls, StepNote, usePlayer } from './Player'
+import { useI18n } from '../../i18n'
 
 const nodeTone = {
   idle: { fill: 'rgb(var(--surface))', stroke: 'rgb(var(--line))', text: 'rgb(var(--ink))' },
@@ -92,13 +93,14 @@ function Aux({ aux }) {
   return null
 }
 
-const legends = {
-  default: [['bg-amber-400', 'Em análise'], ['bg-ink', 'Concluído'], ['bg-accent', 'Árvore / caminho'], ['bg-emerald-500', 'Melhorou'], ['bg-rose-500', 'Descartado']],
-  flow: [['bg-amber-400', 'Caminho aumentante'], ['bg-emerald-500', 'Fluxo enviado'], ['bg-rose-500', 'Aresta reversa / corte mínimo']],
-  savings: [['bg-accent', 'Rotas'], ['bg-amber-400', 'Par avaliado']],
-}
+const legends = t => ({
+  default: [['bg-amber-400', t('viz.analyzing')], ['bg-ink', t('viz.done')], ['bg-accent', t('viz.treePath')], ['bg-emerald-500', t('viz.improved')], ['bg-rose-500', t('viz.discarded')]],
+  flow: [['bg-amber-400', t('viz.augmenting')], ['bg-emerald-500', t('viz.flowSent')], ['bg-rose-500', t('viz.reverseCut')]],
+  savings: [['bg-accent', t('viz.routes')], ['bg-amber-400', t('viz.pairEvaluated')]],
+})
 
 export default function GraphVisualizer({ algorithm }) {
+  const { t } = useI18n()
   const config = graphAlgorithms[algorithm.id]
   const frames = useMemo(() => config.run(), [config])
   const player = usePlayer(frames.length, { speedScale: 1.6 })
@@ -118,7 +120,7 @@ export default function GraphVisualizer({ algorithm }) {
   return (
     <figure className="card overflow-hidden">
       <div className="px-2 sm:px-4 pt-4 pb-2 border-b border-line">
-        <svg viewBox="0 0 640 345" className="w-full" role="img" aria-label={`Grafo de exemplo do ${algorithm.name}`}>
+        <svg viewBox="0 0 640 345" className="w-full" role="img" aria-label={t('viz.graphOf', { name: algorithm.name })}>
           <defs>
             {Object.entries(edgeTone).map(([t, s]) => (
               <marker key={t} id={`arrow-${t}`} viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -166,7 +168,7 @@ export default function GraphVisualizer({ algorithm }) {
 
       <StepNote>{frame.note}</StepNote>
       <PlayerControls player={player} />
-      <Legend items={legends[config.graph === 'flow' ? 'flow' : isSavings ? 'savings' : 'default']} status={`passo ${player.step}/${player.last}`} />
+      <Legend items={legends(t)[config.graph === 'flow' ? 'flow' : isSavings ? 'savings' : 'default']} status={t('player.step', { s: player.step, t: player.last })} />
     </figure>
   )
 }

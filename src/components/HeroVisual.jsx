@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { buildFrames } from '../lib/sortingFrames'
+import { useI18n } from '../i18n'
 
 const SIZE = 28
 const randomArray = () => Array.from({ length: SIZE }, () => 8 + Math.floor(Math.random() * 92))
@@ -7,6 +8,7 @@ const reducedMotion = () => typeof matchMedia === 'function' && matchMedia('(pre
 
 // Animação decorativa da página inicial: um quick sort em loop.
 export default function HeroVisual() {
+  const { t } = useI18n()
   const [input, setInput] = useState(randomArray)
   const frames = useMemo(() => buildFrames('quick-sort', input), [input])
   const [step, setStep] = useState(() => (reducedMotion() ? frames.length - 1 : 0))
@@ -36,7 +38,7 @@ export default function HeroVisual() {
           <span className={`w-1.5 h-1.5 rounded-full ${finished ? 'bg-emerald-500' : 'bg-amber-400 animate-pulse'}`} />
           quick_sort(arr)
         </span>
-        <span className="font-mono text-faint tabular-nums">{finished ? 'ordenado' : `passo ${step}`}</span>
+        <span className="font-mono text-faint tabular-nums">{finished ? t('viz.sorted') : t('viz.step', { s: step })}</span>
       </div>
       <div className="mt-5 flex items-end gap-[3px] h-48 sm:h-56">
         {frame.arr.map((v, i) => (
@@ -44,9 +46,9 @@ export default function HeroVisual() {
         ))}
       </div>
       <div className="mt-5 pt-4 border-t border-line grid grid-cols-3 text-xs">
-        <div><p className="text-faint">Melhor</p><p className="mt-0.5 font-mono text-ink">O(n log n)</p></div>
-        <div><p className="text-faint">Médio</p><p className="mt-0.5 font-mono text-ink">O(n log n)</p></div>
-        <div><p className="text-faint">Pior</p><p className="mt-0.5 font-mono text-ink">O(n²)</p></div>
+        <div><p className="text-faint">{t('viz.best')}</p><p className="mt-0.5 font-mono text-ink">O(n log n)</p></div>
+        <div><p className="text-faint">{t('viz.avg')}</p><p className="mt-0.5 font-mono text-ink">O(n log n)</p></div>
+        <div><p className="text-faint">{t('viz.worst')}</p><p className="mt-0.5 font-mono text-ink">O(n²)</p></div>
       </div>
     </div>
   )
