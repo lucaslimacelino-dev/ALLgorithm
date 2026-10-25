@@ -26,6 +26,10 @@ export const categoryList = [
     id: 'matematica', icon: '∑', title: 'Teoria dos Números', description: 'Primos, divisores e fatoração: a matemática que sustenta a criptografia moderna.',
     en: { title: 'Number Theory', description: 'Primes, divisors and factorization: the mathematics behind modern cryptography.' },
   },
+  {
+    id: 'numericos', icon: '√', title: 'Métodos Numéricos', description: 'Raízes, sistemas lineares, curvas e autovalores: o cálculo que roda por trás da ciência e da engenharia.',
+    en: { title: 'Numerical Methods', description: 'Roots, linear systems, curves and eigenvalues: the computation behind science and engineering.' },
+  },
 ]
 
 // Campos incluídos no índice carregado com o site (busca, biblioteca, página inicial).

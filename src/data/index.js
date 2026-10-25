@@ -46,7 +46,7 @@ export const difficultyColor = {
 
 // Categorias planejadas, exibidas como "em preparação" na página inicial.
 export const upcomingCategories = [
-  'Métodos Numéricos', 'Compressão', 'Geometria Computacional', 'Computação Gráfica',
+  'Compressão', 'Geometria Computacional', 'Computação Gráfica',
   'Criptografia', 'Programação Dinâmica', 'Otimização', 'Backtracking', 'Algoritmos Evolutivos',
   'Sistemas Distribuídos', 'Processamento de Sinais', 'Análise Sintática', 'Algoritmos Quânticos',
 ]

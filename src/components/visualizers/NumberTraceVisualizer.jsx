@@ -1,25 +1,28 @@
 import { useMemo, useState } from 'react'
 import { numberAlgorithms } from '../../lib/numberFrames'
+import { numericTraces } from '../../lib/numericFrames'
 import { useI18n } from '../../i18n'
 import { Legend, PlayerControls, StepNote, usePlayer } from './Player'
 
+// Entradas: [nome, padrão, mínimo, máximo, aceitaDecimal?]
+const toNumber = v => Number(String(v).replace(',', '.'))
 const defaults = config => Object.fromEntries(config.inputs.map(([name, value]) => [name, String(value)]))
 
 // Tabela de execução: cada passo do algoritmo acrescenta uma linha, com a explicação abaixo.
 export default function NumberTraceVisualizer({ algorithm }) {
   const { t } = useI18n()
-  const config = numberAlgorithms[algorithm.id]
+  const config = numberAlgorithms[algorithm.id] ?? numericTraces[algorithm.id]
   const [draft, setDraft] = useState(() => defaults(config))
   const [inputs, setInputs] = useState(() => defaults(config))
   const [error, setError] = useState(null)
 
-  const trace = useMemo(() => config.run(Object.fromEntries(Object.entries(inputs).map(([k, v]) => [k, Number(v)]))), [config, inputs])
+  const trace = useMemo(() => config.run(Object.fromEntries(Object.entries(inputs).map(([k, v]) => [k, toNumber(v)]))), [config, inputs])
   const player = usePlayer(trace.steps.length)
 
   const apply = next => {
-    for (const [name, , min, max] of config.inputs) {
-      const v = Number(next[name])
-      if (!Number.isInteger(v) || v < min || v > max) {
+    for (const [name, , min, max, decimal] of config.inputs) {
+      const v = toNumber(next[name])
+      if (!Number.isFinite(v) || (!decimal && !Number.isInteger(v)) || v < min || v > max) {
         setError(t('viz.invalidInput', { min, max: max.toLocaleString() }))
         return
       }
@@ -41,14 +44,14 @@ export default function NumberTraceVisualizer({ algorithm }) {
           className="flex flex-wrap items-end gap-2 mb-5"
           onSubmit={e => { e.preventDefault(); apply(draft) }}
         >
-          {config.inputs.map(([name]) => (
+          {config.inputs.map(([name, , , , decimal]) => (
             <label key={name} className="flex flex-col gap-1 text-xs text-muted">
               <span className="font-mono">{name}</span>
               <input
-                inputMode="numeric"
+                inputMode={decimal ? 'decimal' : 'numeric'}
                 value={draft[name]}
-                onChange={e => setDraft(d => ({ ...d, [name]: e.target.value.replace(/[^\d]/g, '') }))}
-                className="w-36 h-9 px-3 rounded-full border border-line bg-surface font-mono text-sm text-ink focus:outline-none focus:ring-4 focus:ring-accent/10"
+                onChange={e => setDraft(d => ({ ...d, [name]: e.target.value.replace(decimal ? /[^\d.,-]/g : /[^\d]/g, '') }))}
+                className="w-28 sm:w-36 h-9 px-3 rounded-full border border-line bg-surface font-mono text-sm text-ink focus:outline-none focus:ring-4 focus:ring-accent/10"
               />
             </label>
           ))}

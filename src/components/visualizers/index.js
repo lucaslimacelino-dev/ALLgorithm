@@ -5,6 +5,7 @@ import { gridSearches } from '../../lib/gridSearch'
 import { stringSearches } from '../../lib/stringFrames'
 import { graphAlgorithms } from '../../lib/graphFrames'
 import { numberAlgorithms } from '../../lib/numberFrames'
+import { numericTraces } from '../../lib/numericFrames'
 
 // Cada visualizador é um pedaço separado do bundle, carregado só quando o artigo é aberto.
 const SortingVisualizer = lazy(() => import('./SortingVisualizer'))
@@ -13,6 +14,8 @@ const GridSearchVisualizer = lazy(() => import('./GridSearchVisualizer'))
 const StringSearchVisualizer = lazy(() => import('./StringSearchVisualizer'))
 const GraphVisualizer = lazy(() => import('./GraphVisualizer'))
 const NumberTraceVisualizer = lazy(() => import('./NumberTraceVisualizer'))
+const RootFindingVisualizer = lazy(() => import('./RootFindingVisualizer'))
+const CurveVisualizer = lazy(() => import('./CurveVisualizer'))
 
 const byId = {
   'bst-search': lazy(() => import('./BstVisualizer')),
@@ -26,6 +29,13 @@ const byId = {
   'avl-tree': lazy(() => import('./structures/AvlPlayground')),
   'force-directed': lazy(() => import('./ForceLayoutVisualizer')),
   'sieve-of-eratosthenes': lazy(() => import('./SieveVisualizer')),
+  'newton-method': RootFindingVisualizer,
+  'secant-method': RootFindingVisualizer,
+  'false-position': RootFindingVisualizer,
+  'gauss-jordan': lazy(() => import('./MatrixVisualizer')),
+  'gram-schmidt': lazy(() => import('./GramSchmidtVisualizer')),
+  'de-casteljau': CurveVisualizer,
+  'de-boor': CurveVisualizer,
 }
 
 // Devolve o componente de visualização do algoritmo, ou null se ele ainda não tiver um.
@@ -36,6 +46,6 @@ export function getVisualizer(id) {
   if (id in gridSearches) return GridSearchVisualizer
   if (id in stringSearches) return StringSearchVisualizer
   if (id in graphAlgorithms) return GraphVisualizer
-  if (id in numberAlgorithms) return NumberTraceVisualizer
+  if (id in numberAlgorithms || id in numericTraces) return NumberTraceVisualizer
   return null
 }
