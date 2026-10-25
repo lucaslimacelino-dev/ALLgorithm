@@ -6,6 +6,7 @@ import { stringSearches } from '../../lib/stringFrames'
 import { graphAlgorithms } from '../../lib/graphFrames'
 import { numberAlgorithms } from '../../lib/numberFrames'
 import { numericTraces } from '../../lib/numericFrames'
+import { compressionTraces } from '../../lib/compressionFrames'
 
 // Cada visualizador é um pedaço separado do bundle, carregado só quando o artigo é aberto.
 const SortingVisualizer = lazy(() => import('./SortingVisualizer'))
@@ -16,6 +17,7 @@ const GraphVisualizer = lazy(() => import('./GraphVisualizer'))
 const NumberTraceVisualizer = lazy(() => import('./NumberTraceVisualizer'))
 const RootFindingVisualizer = lazy(() => import('./RootFindingVisualizer'))
 const CurveVisualizer = lazy(() => import('./CurveVisualizer'))
+const CodeTreeVisualizer = lazy(() => import('./CodeTreeVisualizer'))
 
 const byId = {
   'bst-search': lazy(() => import('./BstVisualizer')),
@@ -36,6 +38,11 @@ const byId = {
   'gram-schmidt': lazy(() => import('./GramSchmidtVisualizer')),
   'de-casteljau': CurveVisualizer,
   'de-boor': CurveVisualizer,
+  'huffman-coding': CodeTreeVisualizer,
+  'shannon-fano': CodeTreeVisualizer,
+  'lz77': lazy(() => import('./Lz77Visualizer')),
+  'arithmetic-coding': lazy(() => import('./ArithmeticVisualizer')),
+  'burrows-wheeler': lazy(() => import('./BwtVisualizer')),
 }
 
 // Devolve o componente de visualização do algoritmo, ou null se ele ainda não tiver um.
@@ -46,6 +53,6 @@ export function getVisualizer(id) {
   if (id in gridSearches) return GridSearchVisualizer
   if (id in stringSearches) return StringSearchVisualizer
   if (id in graphAlgorithms) return GraphVisualizer
-  if (id in numberAlgorithms || id in numericTraces) return NumberTraceVisualizer
+  if (id in numberAlgorithms || id in numericTraces || id in compressionTraces) return NumberTraceVisualizer
   return null
 }

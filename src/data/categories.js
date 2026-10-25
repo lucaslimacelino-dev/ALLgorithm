@@ -30,6 +30,10 @@ export const categoryList = [
     id: 'numericos', icon: '√', title: 'Métodos Numéricos', description: 'Raízes, sistemas lineares, curvas e autovalores: o cálculo que roda por trás da ciência e da engenharia.',
     en: { title: 'Numerical Methods', description: 'Roots, linear systems, curves and eigenvalues: the computation behind science and engineering.' },
   },
+  {
+    id: 'compressao', icon: '⇲', title: 'Compressão', description: 'Do RLE ao DEFLATE: como ZIP, PNG, GIF e bzip2 fazem os dados ocuparem menos espaço.',
+    en: { title: 'Compression', description: 'From RLE to DEFLATE: how ZIP, PNG, GIF and bzip2 make data take up less space.' },
+  },
 ]
 
 // Campos incluídos no índice carregado com o site (busca, biblioteca, página inicial).
