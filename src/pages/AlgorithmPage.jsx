@@ -2,7 +2,9 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import CodeBlock from '../components/CodeBlock'
+import SortingVisualizer from '../components/SortingVisualizer'
 import { algorithms, getAlgorithm, getCategory, difficultyColor } from '../data'
+import { hasSortingVisualizer } from '../lib/sortingFrames'
 
 function Section({ id, title, children }) {
   return (
@@ -30,7 +32,10 @@ export default function AlgorithmPage() {
   const prev = algorithms[index - 1]
   const next = algorithms[index + 1]
 
+  const hasVisualizer = hasSortingVisualizer(algorithm.id)
+
   const sections = [
+    ...(hasVisualizer ? [['visualizacao', 'Visualização']] : []),
     ['como-funciona', 'Como funciona'],
     ['implementacao', 'Implementação'],
     ['onde-e-usado', 'Onde é usado'],
@@ -80,6 +85,12 @@ export default function AlgorithmPage() {
               ))}
             </div>
           </header>
+
+          {hasVisualizer && (
+            <Section id="visualizacao" title="Visualização">
+              <SortingVisualizer algorithmId={algorithm.id} />
+            </Section>
+          )}
 
           <Section id="como-funciona" title="Como funciona">
             <ol className="space-y-3">
