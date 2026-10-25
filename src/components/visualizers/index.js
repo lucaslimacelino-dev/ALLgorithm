@@ -1,6 +1,8 @@
 import { hasSortingVisualizer } from '../../lib/sortingFrames'
 import { arraySearches } from '../../lib/searchFrames'
 import { gridSearches } from '../../lib/gridSearch'
+import { stringSearches } from '../../lib/stringFrames'
+import StringSearchVisualizer from './StringSearchVisualizer'
 import SortingVisualizer from './SortingVisualizer'
 import ArraySearchVisualizer from './ArraySearchVisualizer'
 import GridSearchVisualizer from './GridSearchVisualizer'
@@ -31,5 +33,6 @@ export function getVisualizer(id) {
   if (hasSortingVisualizer(id)) return SortingVisualizer
   if (id in arraySearches) return ArraySearchVisualizer
   if (id in gridSearches) return GridSearchVisualizer
+  if (id in stringSearches) return StringSearchVisualizer
   return null
 }

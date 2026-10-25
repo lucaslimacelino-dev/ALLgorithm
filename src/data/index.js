@@ -1,6 +1,7 @@
 import ordenacao from './algorithms/ordenacao'
 import busca from './algorithms/busca'
 import estruturas from './algorithms/estruturas'
+import strings from './algorithms/strings'
 
 // Grupos na ordem em que aparecem no site (dos mais simples aos mais avançados).
 // Para adicionar um algoritmo, basta incluí-lo no arquivo da categoria correspondente.
@@ -8,6 +9,7 @@ export const categories = [
   { id: 'ordenacao', title: 'Ordenação', icon: '⇅', description: 'Colocar dados em ordem — a base de buscas, rankings e bancos de dados.', items: ordenacao },
   { id: 'busca', title: 'Busca', icon: '◎', description: 'Encontrar um elemento em listas, árvores, tabelas e grafos — do jeito mais rápido possível.', items: busca },
   { id: 'estruturas', title: 'Estruturas de Dados', icon: '⬡', description: 'Formas de organizar dados na memória — e o custo de cada operação sobre elas.', items: estruturas },
+  { id: 'strings', title: 'Busca em Strings', icon: '❝', description: 'Encontrar um padrão dentro de um texto sem reler o que já foi lido.', items: strings },
 ]
 
 export const algorithms = categories.flatMap(c => c.items.map(a => ({ ...a, category: c.id })))
@@ -35,7 +37,7 @@ export const difficultyColor = {
 
 // Categorias planejadas, exibidas como "em preparação" na página inicial.
 export const upcomingCategories = [
-  'Busca em Strings', 'Grafos', 'Teoria dos Números',
+  'Grafos', 'Teoria dos Números',
   'Métodos Numéricos', 'Compressão', 'Geometria Computacional', 'Computação Gráfica',
   'Criptografia', 'Programação Dinâmica', 'Otimização', 'Backtracking', 'Algoritmos Evolutivos',
   'Sistemas Distribuídos', 'Processamento de Sinais', 'Análise Sintática', 'Algoritmos Quânticos',
