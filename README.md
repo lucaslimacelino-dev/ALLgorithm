@@ -20,7 +20,11 @@ Link do projeto: https://fasterithm-web.vercel.app
 - `src/pages/` — Início, Biblioteca (`/algoritmos`) e página do algoritmo (`/algoritmos/:id`)
 
 ### Adicionando um algoritmo
-Inclua um objeto no arquivo da categoria com os campos `id`, `name`, `difficulty`, `summary`, `description`, `complexity`, `steps`, `usedIn`, `realWorld`, `curiosities` e `code` (`python`, `javascript`, `java`, `cpp`).
+Inclua um objeto no arquivo da categoria com os campos `id`, `name`, `difficulty`, `summary`, `description`, `complexity`, `steps`, `usedIn`, `realWorld`, `curiosities` e `code` (`python`, `javascript`, `java`, `cpp`). O campo opcional `facts` (ex.: `{ 'Criado por': 'Tony Hoare', 'Ano': '1959' }`) aparece no quadro-resumo do artigo.
+
+## Design
+- Tema claro e escuro com cores em variáveis CSS (`src/index.css`)
+- Tipografia: Geist (texto), Geist Mono (código) e Instrument Serif (detalhes editoriais)
 
 ## Tecnologias
 - React + React Router

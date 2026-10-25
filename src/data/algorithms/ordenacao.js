@@ -3,6 +3,7 @@ export default [
     id: 'bogosort',
     name: 'Bogosort',
     difficulty: 'Iniciante',
+    facts: { 'Criado por': 'Folclore da computação', 'Estável': 'Não', 'In-place': 'Sim' },
     summary: 'Embaralha a lista aleatoriamente até que, por pura sorte, ela fique ordenada.',
     description:
       'O Bogosort (também chamado de "ordenação do macaco") verifica se a lista está ordenada e, se não estiver, embaralha tudo e tenta de novo. Não tem nenhum uso prático: ele existe para mostrar, por contraste, por que a escolha do algoritmo importa. Com só 10 elementos, precisa em média de mais de 3 milhões de embaralhadas.',
@@ -136,6 +137,7 @@ export default [
     id: 'bubble-sort',
     name: 'Bubble Sort',
     difficulty: 'Iniciante',
+    facts: { 'Primeira análise': 'Edward H. Friend', 'Ano': '1956', 'Estável': 'Sim', 'In-place': 'Sim' },
     summary: 'Compara vizinhos e troca os que estão fora de ordem até nada mais mudar.',
     description:
       'O Bubble Sort percorre a lista várias vezes comparando pares de elementos adjacentes e trocando-os quando estão na ordem errada. A cada passada, o maior elemento ainda não ordenado "borbulha" até o fim da lista — daí o nome. É lento para grandes volumes, mas é o ponto de partida clássico para entender ordenação.',
@@ -250,6 +252,7 @@ export default [
     id: 'selection-sort',
     name: 'Selection Sort',
     difficulty: 'Iniciante',
+    facts: { 'Criado por': 'Método clássico', 'Estável': 'Não', 'In-place': 'Sim' },
     summary: 'Procura o menor elemento restante e o coloca na próxima posição.',
     description:
       'O Selection Sort divide a lista em uma parte ordenada (à esquerda) e uma não ordenada. A cada rodada, procura o menor elemento da parte não ordenada e o troca com o primeiro elemento dela. Faz sempre o mesmo número de comparações, mas no máximo n − 1 trocas — o que o torna interessante quando escrever na memória é caro.',
@@ -351,6 +354,7 @@ export default [
     id: 'insertion-sort',
     name: 'Insertion Sort',
     difficulty: 'Iniciante',
+    facts: { 'Criado por': 'Método clássico', 'Estável': 'Sim', 'In-place': 'Sim' },
     summary: 'Insere cada elemento na posição certa da parte já ordenada, como cartas na mão.',
     description:
       'O Insertion Sort constrói a lista ordenada um elemento por vez: pega o próximo elemento e o desloca para a esquerda até encontrar sua posição entre os já ordenados — exatamente como a maioria das pessoas organiza cartas de baralho na mão. É lento em listas grandes e bagunçadas, mas extremamente rápido em listas pequenas ou quase ordenadas, por isso aparece dentro dos algoritmos de ordenação das linguagens modernas.',
@@ -459,6 +463,7 @@ export default [
     id: 'gnome-sort',
     name: 'Gnome Sort',
     difficulty: 'Iniciante',
+    facts: { 'Criado por': 'Hamid Sarbazi-Azad', 'Ano': '2000', 'Estável': 'Sim', 'In-place': 'Sim' },
     summary: 'Avança enquanto está em ordem; quando não está, troca com o anterior e recua um passo.',
     description:
       'O Gnome Sort (originalmente chamado de "Stupid Sort") usa um único índice que anda pela lista: se o elemento atual está em ordem com o anterior, avança; se não, troca os dois e recua uma posição. É parecido com o insertion sort, mas feito apenas com trocas de vizinhos e com um único laço — é um dos algoritmos de ordenação mais curtos de escrever.',
@@ -562,6 +567,7 @@ export default [
     id: 'cocktail-sort',
     name: 'Cocktail Shaker Sort',
     difficulty: 'Iniciante',
+    facts: { 'Criado por': 'Variação do bubble sort', 'Estável': 'Sim', 'In-place': 'Sim' },
     summary: 'Um bubble sort de ida e volta: leva o maior para o fim e o menor para o início.',
     description:
       'O Cocktail Shaker Sort é uma variação do bubble sort que percorre a lista nos dois sentidos, alternadamente, como quem chacoalha uma coqueteleira. Na ida, o maior elemento vai para o fim; na volta, o menor vai para o início. Isso resolve o problema das "tartarugas" do bubble sort: valores pequenos perdidos no fim da lista, que no bubble sort andam só uma posição por passada.',
@@ -700,6 +706,7 @@ export default [
     id: 'comb-sort',
     name: 'Comb Sort',
     difficulty: 'Intermediário',
+    facts: { 'Criado por': 'W. Dobosiewicz e A. Borowy', 'Ano': '1980', 'Estável': 'Não', 'In-place': 'Sim' },
     summary: 'Um bubble sort com "pente": compara elementos distantes e vai diminuindo a distância.',
     description:
       'O Comb Sort melhora o bubble sort comparando elementos separados por um intervalo (gap) que começa grande e é dividido por 1,3 a cada passada, como os dentes de um pente cada vez mais fino. Elementos pequenos perdidos no fim da lista são levados para a frente em poucos saltos. Quando o intervalo chega a 1, ele termina com passadas de bubble sort comum sobre uma lista já quase ordenada.',
@@ -827,6 +834,7 @@ export default [
     id: 'shell-sort',
     name: 'Shell Sort',
     difficulty: 'Intermediário',
+    facts: { 'Criado por': 'Donald Shell', 'Ano': '1959', 'Estável': 'Não', 'In-place': 'Sim' },
     summary: 'Insertion sort em etapas: ordena elementos distantes primeiro e vai aproximando.',
     description:
       'O Shell Sort aplica o insertion sort várias vezes, em elementos separados por um intervalo (gap) que vai diminuindo. Com intervalos grandes, os elementos dão "saltos" longos até perto da posição final; quando o intervalo chega a 1, sobra um insertion sort comum sobre uma lista quase ordenada — justamente o caso em que ele é rapidíssimo. Seu desempenho depende da sequência de intervalos escolhida.',
@@ -944,6 +952,7 @@ export default [
     id: 'merge-sort',
     name: 'Merge Sort',
     difficulty: 'Intermediário',
+    facts: { 'Criado por': 'John von Neumann', 'Ano': '1945', 'Estável': 'Sim', 'In-place': 'Não' },
     summary: 'Divide a lista ao meio, ordena cada metade e intercala os resultados.',
     description:
       'O Merge Sort é o exemplo clássico de "dividir para conquistar": divide a lista em duas metades, ordena cada uma recursivamente e depois intercala (merge) as duas metades ordenadas em uma só. Garante O(n log n) em qualquer caso e é estável, mas precisa de memória extra proporcional ao tamanho da lista.',
@@ -1073,6 +1082,7 @@ export default [
     id: 'quick-sort',
     name: 'Quick Sort',
     difficulty: 'Intermediário',
+    facts: { 'Criado por': 'Tony Hoare', 'Ano': '1959', 'Estável': 'Não', 'In-place': 'Sim' },
     summary: 'Escolhe um pivô, separa menores e maiores e ordena cada lado recursivamente.',
     description:
       'O Quick Sort escolhe um elemento como pivô e reorganiza a lista de forma que os menores fiquem à esquerda e os maiores à direita dele (partição). O pivô já fica na posição final, e o processo se repete em cada lado. Na média é O(n log n) e, na prática, costuma ser o algoritmo de comparação mais rápido, por acessar a memória de forma sequencial e trabalhar no próprio array.',
@@ -1212,6 +1222,7 @@ export default [
     id: 'heap-sort',
     name: 'Heap Sort',
     difficulty: 'Intermediário',
+    facts: { 'Criado por': 'J. W. J. Williams', 'Ano': '1964', 'Estável': 'Não', 'In-place': 'Sim' },
     summary: 'Monta um heap de máximo e retira o maior elemento repetidamente.',
     description:
       'O Heap Sort transforma a lista em um heap de máximo — uma árvore binária guardada no próprio array, em que cada pai é maior que seus filhos. O maior elemento fica sempre na raiz: basta trocá-lo com o último, encolher o heap e restaurar a propriedade. Garante O(n log n) no pior caso sem usar memória extra, embora costume ser mais lento que o quicksort na prática.',
@@ -1353,6 +1364,7 @@ export default [
     id: 'counting-sort',
     name: 'Counting Sort',
     difficulty: 'Intermediário',
+    facts: { 'Criado por': 'Harold H. Seward', 'Ano': '1954', 'Estável': 'Sim', 'In-place': 'Não' },
     summary: 'Conta quantas vezes cada valor aparece e reconstrói a lista em ordem.',
     description:
       'O Counting Sort (também chamado de "count sort") não compara elementos entre si. Ele cria um contador para cada valor possível, conta quantas vezes cada um aparece e depois escreve os valores em ordem, repetindo cada um pelo número de ocorrências. É linear quando o intervalo de valores (k) não é muito maior que a quantidade de elementos (n).',
@@ -1452,6 +1464,7 @@ export default [
     id: 'pigeonhole-sort',
     name: 'Pigeonhole Sort',
     difficulty: 'Intermediário',
+    facts: { 'Baseado em': 'Princípio da casa dos pombos', 'Estável': 'Sim', 'In-place': 'Não' },
     summary: 'Coloca cada item na sua "casa de pombo" pela chave e recolhe todas as casas em ordem.',
     description:
       'O Pigeonhole Sort cria uma "casa" para cada valor de chave possível, coloca cada item na casa correspondente e depois recolhe os itens percorrendo as casas em ordem. Parece o counting sort, mas guarda os próprios itens, não só contagens — por isso consegue ordenar registros (como pessoas por idade) mantendo a ordem original dos empates.',
@@ -1572,6 +1585,7 @@ export default [
     id: 'bucket-sort',
     name: 'Bucket Sort',
     difficulty: 'Intermediário',
+    facts: { 'Criado por': 'Método clássico', 'Estável': 'Depende do algoritmo interno', 'In-place': 'Não' },
     summary: 'Distribui os valores em baldes por faixa, ordena cada balde e junta tudo.',
     description:
       'O Bucket Sort divide o intervalo de valores em faixas (baldes), distribui cada elemento no balde da sua faixa, ordena cada balde separadamente e concatena os baldes em ordem. Quando os dados estão bem distribuídos, cada balde fica com poucos elementos e o tempo total é praticamente linear.',
@@ -1673,6 +1687,7 @@ export default [
     id: 'radix-sort',
     name: 'Radix Sort',
     difficulty: 'Intermediário',
+    facts: { 'Origem': 'Herman Hollerith', 'Ano': '1887', 'Estável': 'Sim (LSD)', 'In-place': 'Não' },
     summary: 'Ordena dígito a dígito, do menos significativo ao mais significativo.',
     description:
       'O Radix Sort ordena números (ou strings) olhando um dígito por vez. Na versão LSD, começa pelo dígito das unidades e aplica uma ordenação estável (como o counting sort) a cada posição: unidades, dezenas, centenas… Como cada passada preserva a ordem da anterior, ao final a lista está totalmente ordenada — sem nenhuma comparação entre elementos.',
@@ -1787,6 +1802,7 @@ export default [
     id: 'pancake-sort',
     name: 'Pancake Sort',
     difficulty: 'Intermediário',
+    facts: { 'Problema proposto por': 'Jacob E. Goodman', 'Ano': '1975', 'Estável': 'Não', 'In-place': 'Sim' },
     summary: 'Ordena usando só "viradas de espátula": inverter o início da lista.',
     description:
       'Imagine uma pilha de panquecas de tamanhos diferentes e uma espátula: a única operação permitida é enfiar a espátula em algum ponto e virar todas as panquecas acima dela. O Pancake Sort ordena a pilha assim: leva a maior panqueca para o topo com uma virada e depois a leva para o fundo com outra, repetindo com a pilha restante. O interessante aqui não é o tempo, mas o número de viradas — no máximo 2n − 3.',
@@ -1903,6 +1919,7 @@ export default [
     id: 'smoothsort',
     name: 'Smoothsort',
     difficulty: 'Avançado',
+    facts: { 'Criado por': 'Edsger W. Dijkstra', 'Ano': '1981', 'Estável': 'Não', 'In-place': 'Sim' },
     summary: 'Variação do heapsort com heaps de Leonardo: chega a O(n) em dados quase ordenados.',
     description:
       'Criado por Edsger Dijkstra em 1981, o Smoothsort é uma variação do heapsort que, em vez de um único heap, mantém uma floresta de "heaps de Leonardo" — árvores cujos tamanhos são números de Leonardo (1, 1, 3, 5, 9, 15, 25…). Ele preserva a garantia O(n log n) do heapsort, mas se aproxima de O(n) quando a entrada já está quase ordenada: a transição entre os dois casos é "suave", daí o nome.',

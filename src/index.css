@@ -3,23 +3,98 @@
 @tailwind utilities;
 
 @layer base {
-  html { scroll-behavior: smooth; }
-  body { @apply bg-zinc-950 text-zinc-100 font-body antialiased; }
+  :root {
+    --paper: 252 252 251;
+    --surface: 255 255 255;
+    --subtle: 245 245 243;
+    --line: 233 233 230;
+    --ink: 17 17 19;
+    --muted: 104 104 112;
+    --faint: 160 160 168;
+    --accent: 37 84 214;
 
-  ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-track { @apply bg-zinc-900; }
-  ::-webkit-scrollbar-thumb { @apply bg-brand-700 rounded-full; }
+    --code-bg: 250 250 249;
+    --tok-plain: 31 35 40;
+    --tok-keyword: 175 30 45;
+    --tok-string: 10 48 105;
+    --tok-number: 5 80 174;
+    --tok-comment: 120 125 135;
+    --tok-fn: 111 66 193;
+    --tok-type: 149 56 0;
+  }
+
+  .dark {
+    --paper: 10 10 12;
+    --surface: 18 18 21;
+    --subtle: 25 25 29;
+    --line: 38 38 44;
+    --ink: 237 237 239;
+    --muted: 150 150 160;
+    --faint: 98 98 108;
+    --accent: 125 160 255;
+
+    --code-bg: 14 14 17;
+    --tok-plain: 230 237 243;
+    --tok-keyword: 255 123 114;
+    --tok-string: 165 214 255;
+    --tok-number: 121 192 255;
+    --tok-comment: 125 133 144;
+    --tok-fn: 210 168 255;
+    --tok-type: 255 166 87;
+  }
+
+  html { scroll-behavior: smooth; color-scheme: light; -webkit-text-size-adjust: 100%; }
+  html.dark { color-scheme: dark; }
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+    font-feature-settings: "ss01", "cv11";
+    text-rendering: optimizeLegibility;
+  }
+  ::selection { background: rgb(var(--accent) / 0.18); }
+
+  a, button { transition: color .18s ease, background-color .18s ease, border-color .18s ease, opacity .18s ease, box-shadow .25s ease, transform .25s cubic-bezier(.22, 1, .36, 1); }
+  :focus-visible { outline: 2px solid rgb(var(--accent) / 0.6); outline-offset: 2px; border-radius: 6px; }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgb(var(--line)); border-radius: 8px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
 }
 
-@layer utilities {
-  .delay-100 { animation-delay: 100ms; }
-  .delay-200 { animation-delay: 200ms; }
-  .delay-300 { animation-delay: 300ms; }
-  .delay-400 { animation-delay: 400ms; }
-  .delay-500 { animation-delay: 500ms; }
+@layer components {
+  .kicker { @apply text-[13px] font-medium text-faint; }
+  .eyebrow { @apply inline-flex items-center gap-2 rounded-full border border-line bg-surface/80 px-3 py-1 text-xs font-medium text-muted shadow-soft backdrop-blur; }
+  .title { @apply font-semibold tracking-[-0.025em] text-ink; }
+  .prose-body { @apply text-[16.5px] leading-[1.75] text-ink/80; }
+  .link { @apply text-accent underline decoration-accent/25 underline-offset-4 hover:decoration-accent; }
+  .btn-primary { @apply inline-flex items-center justify-center gap-2 h-10 px-5 rounded-full bg-ink text-paper text-sm font-medium hover:opacity-85 active:scale-[0.98]; }
+  .btn-ghost { @apply inline-flex items-center justify-center gap-2 h-10 px-4 rounded-full border border-line bg-surface text-sm text-ink hover:bg-subtle active:scale-[0.98]; }
+  .card { @apply rounded-2xl border border-line bg-surface shadow-soft; }
+  .card-hover { @apply hover:shadow-lift hover:-translate-y-0.5 hover:border-ink/15; }
+}
 
-  .dot-bg {
-    background-image: radial-gradient(circle, rgba(20,184,126,0.12) 1px, transparent 1px);
-    background-size: 28px 28px;
+/* Fora de @layer: os nomes são montados dinamicamente (tok-${tipo}) e não podem ser removidos no build. */
+.tok-plain   { color: rgb(var(--tok-plain)); }
+.tok-keyword { color: rgb(var(--tok-keyword)); }
+.tok-string  { color: rgb(var(--tok-string)); }
+.tok-number  { color: rgb(var(--tok-number)); }
+.tok-comment { color: rgb(var(--tok-comment)); font-style: italic; }
+.tok-fn      { color: rgb(var(--tok-fn)); }
+.tok-type    { color: rgb(var(--tok-type)); }
+
+@layer utilities {
+  .bg-grid {
+    background-image:
+      linear-gradient(rgb(var(--line) / 0.7) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--line) / 0.7) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 30%, transparent 75%);
+  }
+  .bg-glow {
+    background: radial-gradient(ellipse 60% 50% at 50% -10%, rgb(var(--accent) / 0.10), transparent 70%);
   }
 }

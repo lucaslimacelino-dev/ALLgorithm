@@ -21,7 +21,15 @@ export const languages = [
 export const difficulties = ['Iniciante', 'Intermediário', 'Avançado']
 
 export const difficultyColor = {
-  'Iniciante':     'text-brand-400 bg-brand-500/10 border-brand-500/20',
-  'Intermediário': 'text-amber-400 bg-amber-500/10 border-amber-500/20',
-  'Avançado':      'text-rose-400 bg-rose-500/10 border-rose-500/20',
+  'Iniciante':     'bg-emerald-500',
+  'Intermediário': 'bg-amber-500',
+  'Avançado':      'bg-rose-500',
 }
+
+// Categorias planejadas, exibidas como "em preparação" na página inicial.
+export const upcomingCategories = [
+  'Busca', 'Estruturas de Dados', 'Busca em Strings', 'Grafos', 'Teoria dos Números',
+  'Métodos Numéricos', 'Compressão', 'Geometria Computacional', 'Computação Gráfica',
+  'Criptografia', 'Programação Dinâmica', 'Otimização', 'Backtracking', 'Algoritmos Evolutivos',
+  'Sistemas Distribuídos', 'Processamento de Sinais', 'Análise Sintática', 'Algoritmos Quânticos',
+]

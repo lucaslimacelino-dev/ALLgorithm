@@ -3,16 +3,6 @@ import { languages } from '../data'
 import { useLanguage } from '../context/LanguageContext'
 import { dedent, tokenize } from '../lib/highlight'
 
-const tokenColor = {
-  keyword: 'text-violet-400',
-  string:  'text-amber-300',
-  number:  'text-orange-300',
-  comment: 'text-zinc-500 italic',
-  fn:      'text-sky-300',
-  type:    'text-teal-300',
-  plain:   'text-zinc-200',
-}
-
 export default function CodeBlock({ code }) {
   const { language, setLanguage } = useLanguage()
   const [copied, setCopied] = useState(false)
@@ -30,18 +20,20 @@ export default function CodeBlock({ code }) {
   }
 
   return (
-    <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 overflow-hidden">
+    <div className="card overflow-hidden">
       {/* Abas de linguagem */}
-      <div className="flex items-center justify-between gap-2 border-b border-zinc-800 px-2 py-2">
-        <div className="flex gap-1 overflow-x-auto">
+      <div className="flex items-center justify-between gap-2 border-b border-line pl-2 pr-2">
+        <div role="tablist" className="flex overflow-x-auto">
           {languages.map(l => (
             <button
               key={l.id}
+              role="tab"
+              aria-selected={language === l.id}
               onClick={() => setLanguage(l.id)}
-              className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold font-body transition-colors
+              className={`shrink-0 my-2 mr-1 h-8 px-3.5 rounded-full text-[13px]
                 ${language === l.id
-                  ? 'bg-brand-500 text-zinc-950'
-                  : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800'}`}
+                  ? 'bg-ink text-paper font-medium'
+                  : 'text-muted hover:text-ink hover:bg-subtle'}`}
             >
               {l.label}
             </button>
@@ -49,20 +41,25 @@ export default function CodeBlock({ code }) {
         </div>
         <button
           onClick={handleCopy}
-          className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-body text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 transition-colors"
+          className="shrink-0 inline-flex items-center gap-1.5 h-8 px-3 rounded-full text-xs text-muted hover:text-ink hover:bg-subtle"
         >
-          {copied ? 'Copiado ✓' : 'Copiar'}
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            {copied
+              ? <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              : <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />}
+          </svg>
+          {copied ? 'Copiado' : 'Copiar'}
         </button>
       </div>
 
       {/* Código */}
-      <div className="flex overflow-x-auto text-[13px] leading-6 font-mono">
-        <div aria-hidden className="select-none shrink-0 py-4 pl-4 pr-3 text-right text-zinc-600">
+      <div className="flex overflow-x-auto text-[13px] leading-6 font-mono bg-[rgb(var(--code-bg))]">
+        <div aria-hidden className="select-none shrink-0 py-4 pl-4 pr-4 text-right text-faint/60">
           {Array.from({ length: lineCount }, (_, i) => <div key={i}>{i + 1}</div>)}
         </div>
-        <pre className="py-4 pr-6 pl-1">
+        <pre className="py-4 pr-6 pl-4">
           <code>
-            {tokens.map((t, i) => <span key={i} className={tokenColor[t.type]}>{t.text}</span>)}
+            {tokens.map((t, i) => <span key={i} className={`tok-${t.type}`}>{t.text}</span>)}
           </code>
         </pre>
       </div>

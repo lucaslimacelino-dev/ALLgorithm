@@ -1,62 +1,80 @@
-import { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { SITE } from '../config/site'
+import { useTheme } from '../lib/useTheme'
+import SearchBox from './SearchBox'
+
+// Símbolo ∀ ("para todo"), um aceno ao "ALL" do nome.
+export function LogoMark({ className = 'w-[22px] h-[22px]' }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M5 4.5 L12 19.5 L19 4.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.9 10.75 H16.1" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+    </svg>
+  )
+}
 
 export function Logo() {
   return (
-    <Link to="/" className="flex items-center gap-2 shrink-0">
-      <div className="w-7 h-7 rounded-lg bg-brand-500 flex items-center justify-center">
-        <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-          <path d="M2 11 L5 7.5 L8 9.5 L12 3" stroke="#09090b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      </div>
-      <span className="font-display text-base font-bold tracking-tight">
-        <span className="text-brand-400">{SITE.namePrefix}</span>
-        <span className="text-zinc-100">{SITE.nameSuffix}</span>
+    <Link to="/" className="group flex items-center gap-2 shrink-0" aria-label={`${SITE.name} — página inicial`}>
+      <span className="text-ink group-hover:text-accent">
+        <LogoMark />
+      </span>
+      <span className="text-[17px] font-semibold tracking-[-0.03em] text-ink">
+        {SITE.namePrefix}<span className="font-normal text-ink/70">{SITE.nameSuffix}</span>
       </span>
     </Link>
   )
 }
 
+function ThemeToggle() {
+  const { dark, toggle } = useTheme()
+  return (
+    <button
+      onClick={toggle}
+      aria-label={dark ? 'Usar tema claro' : 'Usar tema escuro'}
+      title={dark ? 'Tema claro' : 'Tema escuro'}
+      className="w-9 h-9 rounded-full flex items-center justify-center text-muted hover:text-ink hover:bg-subtle"
+    >
+      {dark ? (
+        <svg className="w-[17px] h-[17px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+          <circle cx="12" cy="12" r="4" />
+          <path strokeLinecap="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41" />
+        </svg>
+      ) : (
+        <svg className="w-[17px] h-[17px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+        </svg>
+      )}
+    </button>
+  )
+}
+
+const navItem = active =>
+  `px-3.5 h-8 inline-flex items-center rounded-full text-[13.5px] ${active ? 'bg-subtle text-ink font-medium' : 'text-muted hover:text-ink'}`
+
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
-  const { pathname } = useLocation()
+  const { pathname, hash } = useLocation()
   const isHome = pathname === '/'
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20)
-    window.addEventListener('scroll', onScroll)
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled || !isHome
-          ? 'bg-zinc-950/95 backdrop-blur-md border-b border-zinc-800/60'
-          : 'bg-transparent'
-      }`}
-    >
-      <nav className="max-w-7xl mx-auto px-5 h-16 flex items-center justify-between gap-4">
+    <header className="sticky top-0 z-50 border-b border-line/70 bg-paper/75 backdrop-blur-xl backdrop-saturate-150">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-[60px] flex items-center gap-6">
         <Logo />
-        <div className="flex items-center gap-5">
-          <NavLink
-            to="/algoritmos"
-            className={({ isActive }) =>
-              `text-sm font-body transition-colors ${isActive ? 'text-brand-400' : 'text-zinc-400 hover:text-zinc-100'}`}
-          >
-            Biblioteca
-          </NavLink>
-          {isHome && (
-            <Link
-              to="/algoritmos"
-              className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-500 hover:bg-brand-400 text-zinc-950 text-sm font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
-            >
-              Explorar
-            </Link>
-          )}
-        </div>
-      </nav>
+
+        {!isHome && (
+          <div className="hidden md:block flex-1 max-w-sm">
+            <SearchBox size="sm" shortcut placeholder="Buscar algoritmos" />
+          </div>
+        )}
+
+        <nav className="ml-auto flex items-center gap-1">
+          <NavLink to="/algoritmos" className={({ isActive }) => navItem(isActive)}>Biblioteca</NavLink>
+          <Link to="/#categorias" className={`hidden sm:inline-flex ${navItem(isHome && hash === '#categorias')}`}>Categorias</Link>
+          <Link to="/#sobre" className={`hidden sm:inline-flex ${navItem(isHome && hash === '#sobre')}`}>Sobre</Link>
+          <span className="w-px h-4 bg-line mx-1.5" />
+          <ThemeToggle />
+        </nav>
+      </div>
     </header>
   )
 }
