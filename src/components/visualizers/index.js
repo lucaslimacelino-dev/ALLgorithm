@@ -1,12 +1,4 @@
 import { lazy } from 'react'
-import { hasSortingVisualizer } from '../../lib/sortingFrames'
-import { arraySearches } from '../../lib/searchFrames'
-import { gridSearches } from '../../lib/gridSearch'
-import { stringSearches } from '../../lib/stringFrames'
-import { graphAlgorithms } from '../../lib/graphFrames'
-import { numberAlgorithms } from '../../lib/numberFrames'
-import { numericTraces } from '../../lib/numericFrames'
-import { compressionTraces } from '../../lib/compressionFrames'
 
 // Cada visualizador é um pedaço separado do bundle, carregado só quando o artigo é aberto.
 const SortingVisualizer = lazy(() => import('./SortingVisualizer'))
@@ -18,6 +10,8 @@ const NumberTraceVisualizer = lazy(() => import('./NumberTraceVisualizer'))
 const RootFindingVisualizer = lazy(() => import('./RootFindingVisualizer'))
 const CurveVisualizer = lazy(() => import('./CurveVisualizer'))
 const CodeTreeVisualizer = lazy(() => import('./CodeTreeVisualizer'))
+const GeometryVisualizer = lazy(() => import('./GeometryVisualizer'))
+const RasterVisualizer = lazy(() => import('./RasterVisualizer'))
 
 const byId = {
   'bst-search': lazy(() => import('./BstVisualizer')),
@@ -43,16 +37,31 @@ const byId = {
   'lz77': lazy(() => import('./Lz77Visualizer')),
   'arithmetic-coding': lazy(() => import('./ArithmeticVisualizer')),
   'burrows-wheeler': lazy(() => import('./BwtVisualizer')),
+  'shoelace-formula': GeometryVisualizer,
+  'segment-intersection': GeometryVisualizer,
+  'point-in-polygon': GeometryVisualizer,
+  'gift-wrapping': GeometryVisualizer,
+  'graham-scan': GeometryVisualizer,
+  'closest-pair': GeometryVisualizer,
+  'cohen-sutherland': GeometryVisualizer,
+  'painters-algorithm': GeometryVisualizer,
+  'bresenham-line': RasterVisualizer,
+  'midpoint-circle': RasterVisualizer,
+  'flood-fill': RasterVisualizer,
+  'ray-tracing': lazy(() => import('./RayTracerVisualizer')),
 }
 
+// Visualizadores compartilhados por famílias de algoritmos. As listas de ids ficam aqui (e não
+// importadas dos módulos de quadros) para que esses módulos não entrem no pacote principal.
+const shared = [
+  [SortingVisualizer, ['bogosort', 'bubble-sort', 'selection-sort', 'insertion-sort', 'gnome-sort', 'cocktail-sort', 'comb-sort', 'shell-sort', 'merge-sort', 'quick-sort', 'heap-sort', 'counting-sort', 'pigeonhole-sort', 'bucket-sort', 'radix-sort', 'pancake-sort', 'smoothsort']],
+  [ArraySearchVisualizer, ['linear-search', 'binary-search', 'interpolation-search', 'exponential-search', 'rotated-binary-search']],
+  [GridSearchVisualizer, ['bfs', 'dfs', 'best-first-search', 'a-star']],
+  [StringSearchVisualizer, ['naive-string-search', 'kmp', 'rabin-karp', 'boyer-moore', 'horspool', 'shift-or']],
+  [GraphVisualizer, ['dijkstra', 'bellman-ford', 'floyd-warshall', 'kruskal', 'prim', 'boruvka', 'topological-sort', 'ford-fulkerson', 'edmonds-karp', 'clarke-wright']],
+  [NumberTraceVisualizer, ['euclid', 'trial-division', 'fast-exponentiation', 'karatsuba', 'miller-rabin', 'fermat-factorization', 'pollard-rho', 'pollard-p-1', 'quadratic-sieve', 'lenstra-ecm', 'aks', 'rounding', 'babylonian-sqrt', 'nth-root-digits', 'gauss-legendre', 'power-iteration', 'run-length-encoding', 'delta-encoding', 'incremental-encoding', 'move-to-front', 'lz78', 'lzw', 'deflate']],
+]
+for (const [component, ids] of shared) for (const id of ids) byId[id] ??= component
+
 // Devolve o componente de visualização do algoritmo, ou null se ele ainda não tiver um.
-export function getVisualizer(id) {
-  if (byId[id]) return byId[id]
-  if (hasSortingVisualizer(id)) return SortingVisualizer
-  if (id in arraySearches) return ArraySearchVisualizer
-  if (id in gridSearches) return GridSearchVisualizer
-  if (id in stringSearches) return StringSearchVisualizer
-  if (id in graphAlgorithms) return GraphVisualizer
-  if (id in numberAlgorithms || id in numericTraces || id in compressionTraces) return NumberTraceVisualizer
-  return null
-}
+export const getVisualizer = id => byId[id] ?? null

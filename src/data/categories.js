@@ -34,9 +34,14 @@ export const categoryList = [
     id: 'compressao', icon: '⇲', title: 'Compressão', description: 'Do RLE ao DEFLATE: como ZIP, PNG, GIF e bzip2 fazem os dados ocuparem menos espaço.',
     en: { title: 'Compression', description: 'From RLE to DEFLATE: how ZIP, PNG, GIF and bzip2 make data take up less space.' },
   },
+  {
+    id: 'geometria', icon: '△', title: 'Geometria e Computação Gráfica', description: 'Envoltórios, interseções e polígonos; linhas, círculos, recorte e traçado de raios: da geometria à imagem na tela.',
+    en: { title: 'Geometry & Computer Graphics', description: 'Hulls, intersections and polygons; lines, circles, clipping and ray tracing: from geometry to the image on screen.' },
+  },
 ]
 
 // Campos incluídos no índice carregado com o site (busca, biblioteca, página inicial).
 // O restante (código, passos, aplicações…) é carregado só quando o artigo é aberto.
 // As traduções ficam no campo "en" de cada algoritmo, com os mesmos nomes de campo.
-export const indexFields = ['id', 'name', 'difficulty', 'summary', 'description', 'usedIn', 'complexity', 'operations', 'curiosities']
+// Textos longos (descrição, curiosidades) ficam de fora: a página inicial os carrega sob demanda.
+export const indexFields = ['id', 'name', 'difficulty', 'summary', 'usedIn', 'complexity', 'operations']

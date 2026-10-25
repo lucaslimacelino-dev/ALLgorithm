@@ -305,7 +305,9 @@ function ArticleSkeleton({ algorithm: original, error, onRetry }) {
         <div className="h-4 mb-8" />
         <h1 className="title text-[40px] sm:text-[52px] leading-[1.05] tracking-[-0.04em]">{algorithm.name}</h1>
         <p className="mt-4 font-display italic text-2xl leading-snug text-muted">{algorithm.summary}</p>
-        <p className="mt-7 prose-body max-w-3xl">{algorithm.description}</p>
+        <div className="mt-8 max-w-3xl space-y-3" aria-hidden="true">
+          {[100, 96, 88, 60].map(w => <div key={w} className="h-4 rounded bg-subtle animate-pulse" style={{ width: w + '%' }} />)}
+        </div>
         {error ? (
           <div className="mt-12 card p-6 max-w-xl">
             <p className="text-sm text-ink">{t('article.loadError')}</p>

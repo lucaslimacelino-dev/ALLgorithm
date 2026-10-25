@@ -26,7 +26,9 @@ function algorithmIndex() {
         this.addWatchFile(file)
         const items = (await load(file)).default
         const pick = obj => Object.fromEntries(indexFields.filter(f => f in obj).map(f => [f, obj[f]]))
-        index[cat] = items.map(a => ({ ...pick(a), ...(a.en ? { en: pick(a.en) } : {}) }))
+        // hasCuriosities: permite escolher o "Você sabia?" do idioma sem carregar os textos
+        const pickEn = en => ({ ...pick(en), ...(en.curiosities ? { hasCuriosities: true } : {}) })
+        index[cat] = items.map(a => ({ ...pick(a), ...(a.en ? { en: pickEn(a.en) } : {}) }))
       }
       return `export default ${JSON.stringify(index)}`
     },

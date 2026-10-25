@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
@@ -8,7 +9,7 @@ import { SITE } from '../config/site'
 import { usePageTitle } from '../lib/usePageTitle'
 import { useI18n } from '../i18n'
 import { upcomingNames } from '../i18n/messages'
-import { algorithms, categories, getAlgorithm, getCategory, languages, mainComplexity, preloadAlgorithm, upcomingCategories } from '../data'
+import { algorithms, categories, getAlgorithm, getCategory, languages, loadAlgorithmContent, mainComplexity, preloadAlgorithm, upcomingCategories } from '../data'
 
 const popular = ['quick-sort', 'merge-sort', 'heap-sort', 'bubble-sort'].map(getAlgorithm).filter(Boolean)
 
@@ -33,11 +34,21 @@ export default function Landing() {
   const anatomy = [1, 2, 3, 4, 5, 6].map(i => t(`landing.anatomy.${i}`, { languages: languageList }).split('|'))
 
   // "Você sabia?" só usa curiosidades já escritas no idioma atual.
-  const triviaPool = algorithms.filter(a => locale === 'pt' || a[locale]?.curiosities)
+  const triviaPool = algorithms.filter(a => locale === 'pt' || a[locale]?.hasCuriosities)
   const trivia = triviaPool.length ? triviaPool[(day * 7 + 3) % triviaPool.length] : null
-  const triviaFacts = trivia && loc(trivia).curiosities
-  const triviaText = trivia && triviaFacts[day % triviaFacts.length]
-  const featuredText = locale === 'pt' || featured[locale]?.description ? loc(featured).description : loc(featured).summary
+
+  // Descrição do destaque e curiosidade vêm do conteúdo completo, baixado depois da página.
+  const [full, setFull] = useState({})
+  useEffect(() => {
+    for (const a of [featured, trivia]) {
+      if (a && !full[a.id]) loadAlgorithmContent(a.id).then(c => setFull(m => ({ ...m, [c.id]: c }))).catch(() => {})
+    }
+  }, [trivia?.id]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const featuredFull = full[featured.id]
+  const featuredText = featuredFull && (locale === 'pt' || featuredFull[locale]?.description) ? loc(featuredFull).description : loc(featured).summary
+  const triviaFacts = trivia && full[trivia.id] && loc(full[trivia.id]).curiosities
+  const triviaText = triviaFacts ? triviaFacts[day % triviaFacts.length] : null
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -115,7 +126,13 @@ export default function Landing() {
           {trivia && (
             <aside className="rounded-2xl bg-ink text-paper p-7 sm:p-9 flex flex-col">
               <p className="text-[13px] font-medium text-paper/50">{t('landing.didYouKnow')}</p>
-              <p className="mt-4 font-display text-2xl sm:text-[28px] leading-snug flex-1">{triviaText}</p>
+              {triviaText ? (
+                <p className="mt-4 font-display text-2xl sm:text-[28px] leading-snug flex-1">{triviaText}</p>
+              ) : (
+                <div className="mt-5 flex-1 space-y-3" aria-hidden="true">
+                  {[100, 92, 70].map(w => <div key={w} className="h-5 rounded bg-paper/10 animate-pulse" style={{ width: w + '%' }} />)}
+                </div>
+              )}
               <Link to={`/algoritmos/${trivia.id}`} className="mt-8 text-sm text-paper/70 hover:text-paper">
                 {t('landing.fromArticle')} <span className="underline underline-offset-4 decoration-paper/30">{loc(trivia).name}</span> →
               </Link>
