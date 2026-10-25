@@ -6,10 +6,23 @@ import ArraySearchVisualizer from './ArraySearchVisualizer'
 import GridSearchVisualizer from './GridSearchVisualizer'
 import BstVisualizer from './BstVisualizer'
 import HashVisualizer from './HashVisualizer'
+import StackQueuePlayground from './structures/StackQueuePlayground'
+import LinkedListPlayground from './structures/LinkedListPlayground'
+import HeapPlayground from './structures/HeapPlayground'
+import TriePlayground from './structures/TriePlayground'
+import UnionFindPlayground from './structures/UnionFindPlayground'
+import AvlPlayground from './structures/AvlPlayground'
 
 const byId = {
   'bst-search': BstVisualizer,
   'hash-search': HashVisualizer,
+  'stack': StackQueuePlayground,
+  'queue': StackQueuePlayground,
+  'linked-list': LinkedListPlayground,
+  'binary-heap': HeapPlayground,
+  'trie': TriePlayground,
+  'union-find': UnionFindPlayground,
+  'avl-tree': AvlPlayground,
 }
 
 // Devolve o componente de visualização do algoritmo, ou null se ele ainda não tiver um.

@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import DifficultyBadge from '../components/DifficultyBadge'
-import { algorithms, categories, difficulties } from '../data'
+import { algorithms, categories, difficulties, mainComplexity } from '../data'
 import { matchScore } from '../lib/search'
 import { usePageTitle } from '../lib/usePageTitle'
 
@@ -129,7 +129,7 @@ export default function Library() {
                           <span className="block mt-0.5 text-[13.5px] text-muted sm:truncate">{a.summary}</span>
                         </span>
                         <DifficultyBadge level={a.difficulty} className="col-start-2 sm:col-start-auto" />
-                        <span className="hidden sm:block font-mono text-xs text-muted text-right">{a.complexity.average}</span>
+                        <span className="hidden sm:block font-mono text-xs text-muted text-right">{mainComplexity(a)}</span>
                         <span className="hidden sm:block text-faint group-hover:text-ink group-hover:translate-x-0.5 transition-transform">→</span>
                       </Link>
                     </li>

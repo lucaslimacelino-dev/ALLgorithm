@@ -51,14 +51,25 @@ function Infobox({ algorithm, category }) {
           </div>
         ))}
       </dl>
-      <dl className="mt-4 grid grid-cols-2 gap-2">
-        {complexityLabels.map(([key, label]) => (
-          <div key={key} className="rounded-xl bg-subtle px-3 py-2.5">
-            <dt className="text-[11.5px] text-muted">{label}</dt>
-            <dd className="mt-0.5 font-mono text-[13px] text-ink">{algorithm.complexity[key]}</dd>
-          </div>
-        ))}
-      </dl>
+      {algorithm.operations ? (
+        <dl className="mt-4 rounded-xl bg-subtle px-3 py-1 divide-y divide-line">
+          {algorithm.operations.map(([op, cost]) => (
+            <div key={op} className="flex items-baseline justify-between gap-3 py-2">
+              <dt className="text-[12.5px] text-muted">{op}</dt>
+              <dd className="font-mono text-[13px] text-ink whitespace-nowrap">{cost}</dd>
+            </div>
+          ))}
+        </dl>
+      ) : (
+        <dl className="mt-4 grid grid-cols-2 gap-2">
+          {complexityLabels.map(([key, label]) => (
+            <div key={key} className="rounded-xl bg-subtle px-3 py-2.5">
+              <dt className="text-[11.5px] text-muted">{label}</dt>
+              <dd className="mt-0.5 font-mono text-[13px] text-ink">{algorithm.complexity[key]}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
     </aside>
   )
 }

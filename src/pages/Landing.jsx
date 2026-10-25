@@ -6,7 +6,7 @@ import HeroVisual from '../components/HeroVisual'
 import DifficultyBadge from '../components/DifficultyBadge'
 import { SITE } from '../config/site'
 import { usePageTitle } from '../lib/usePageTitle'
-import { algorithms, categories, getAlgorithm, getCategory, languages, upcomingCategories } from '../data'
+import { algorithms, categories, getAlgorithm, getCategory, languages, mainComplexity, upcomingCategories } from '../data'
 
 const popular = ['quick-sort', 'merge-sort', 'heap-sort', 'bubble-sort'].map(getAlgorithm).filter(Boolean)
 
@@ -108,7 +108,7 @@ export default function Landing() {
               <span className="text-faint">·</span>
               <DifficultyBadge level={featured.difficulty} className="!text-[13px]" />
               <span className="text-faint">·</span>
-              <span className="font-mono text-xs">{featured.complexity.average}</span>
+              <span className="font-mono text-xs">{mainComplexity(featured)}</span>
             </div>
             <p className="mt-5 prose-body line-clamp-4">{featured.description}</p>
             <span className="mt-auto pt-7 text-sm font-medium text-ink inline-flex items-center gap-1.5">
