@@ -4,10 +4,9 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import CodeBlock from '../components/CodeBlock'
 import DifficultyBadge from '../components/DifficultyBadge'
-import SortingVisualizer from '../components/SortingVisualizer'
+import { getVisualizer } from '../components/visualizers'
 import { SITE } from '../config/site'
 import { algorithms, getAlgorithm, getCategory } from '../data'
-import { hasSortingVisualizer } from '../lib/sortingFrames'
 import { usePageTitle } from '../lib/usePageTitle'
 
 const complexityLabels = [
@@ -94,10 +93,10 @@ function Article({ algorithm }) {
   const index = algorithms.findIndex(a => a.id === algorithm.id)
   const prev = algorithms[index - 1]
   const next = algorithms[index + 1]
-  const hasVisualizer = hasSortingVisualizer(algorithm.id)
+  const Visualizer = getVisualizer(algorithm.id)
 
   const sections = [
-    ...(hasVisualizer ? [['visualizacao', 'Visualização']] : []),
+    ...(Visualizer ? [['visualizacao', 'Visualização']] : []),
     ['como-funciona', 'Como funciona'],
     ['implementacao', 'Implementação'],
     ['onde-e-usado', 'Onde é usado'],
@@ -188,9 +187,9 @@ function Article({ algorithm }) {
         </header>
 
         <div className="mt-16 space-y-16 max-w-4xl">
-          {hasVisualizer && (
+          {Visualizer && (
             <Section id="visualizacao" number={number('visualizacao')} title="Visualização">
-              <SortingVisualizer algorithmId={algorithm.id} name={algorithm.name} />
+              <Visualizer algorithm={algorithm} />
             </Section>
           )}
 
