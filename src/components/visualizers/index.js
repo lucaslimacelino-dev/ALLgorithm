@@ -3,6 +3,9 @@ import { arraySearches } from '../../lib/searchFrames'
 import { gridSearches } from '../../lib/gridSearch'
 import { stringSearches } from '../../lib/stringFrames'
 import StringSearchVisualizer from './StringSearchVisualizer'
+import { graphAlgorithms } from '../../lib/graphFrames'
+import GraphVisualizer from './GraphVisualizer'
+import ForceLayoutVisualizer from './ForceLayoutVisualizer'
 import SortingVisualizer from './SortingVisualizer'
 import ArraySearchVisualizer from './ArraySearchVisualizer'
 import GridSearchVisualizer from './GridSearchVisualizer'
@@ -25,6 +28,7 @@ const byId = {
   'trie': TriePlayground,
   'union-find': UnionFindPlayground,
   'avl-tree': AvlPlayground,
+  'force-directed': ForceLayoutVisualizer,
 }
 
 // Devolve o componente de visualização do algoritmo, ou null se ele ainda não tiver um.
@@ -34,5 +38,6 @@ export function getVisualizer(id) {
   if (id in arraySearches) return ArraySearchVisualizer
   if (id in gridSearches) return GridSearchVisualizer
   if (id in stringSearches) return StringSearchVisualizer
+  if (id in graphAlgorithms) return GraphVisualizer
   return null
 }
