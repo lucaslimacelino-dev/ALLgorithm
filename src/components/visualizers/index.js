@@ -12,6 +12,8 @@ const CurveVisualizer = lazy(() => import('./CurveVisualizer'))
 const CodeTreeVisualizer = lazy(() => import('./CodeTreeVisualizer'))
 const GeometryVisualizer = lazy(() => import('./GeometryVisualizer'))
 const RasterVisualizer = lazy(() => import('./RasterVisualizer'))
+const ClassicCipherVisualizer = lazy(() => import('./ClassicCipherVisualizer'))
+const DigestVisualizer = lazy(() => import('./DigestVisualizer'))
 
 const byId = {
   'bst-search': lazy(() => import('./BstVisualizer')),
@@ -49,6 +51,13 @@ const byId = {
   'midpoint-circle': RasterVisualizer,
   'flood-fill': RasterVisualizer,
   'ray-tracing': lazy(() => import('./RayTracerVisualizer')),
+  'caesar-cipher': ClassicCipherVisualizer,
+  'vigenere-cipher': ClassicCipherVisualizer,
+  'md4': DigestVisualizer,
+  'md5': DigestVisualizer,
+  'sha-1': DigestVisualizer,
+  'ripemd-160': DigestVisualizer,
+  'aes': lazy(() => import('./AesVisualizer')),
 }
 
 // Visualizadores compartilhados por famílias de algoritmos. As listas de ids ficam aqui (e não
@@ -59,7 +68,7 @@ const shared = [
   [GridSearchVisualizer, ['bfs', 'dfs', 'best-first-search', 'a-star']],
   [StringSearchVisualizer, ['naive-string-search', 'kmp', 'rabin-karp', 'boyer-moore', 'horspool', 'shift-or']],
   [GraphVisualizer, ['dijkstra', 'bellman-ford', 'floyd-warshall', 'kruskal', 'prim', 'boruvka', 'topological-sort', 'ford-fulkerson', 'edmonds-karp', 'clarke-wright']],
-  [NumberTraceVisualizer, ['euclid', 'trial-division', 'fast-exponentiation', 'karatsuba', 'miller-rabin', 'fermat-factorization', 'pollard-rho', 'pollard-p-1', 'quadratic-sieve', 'lenstra-ecm', 'aks', 'rounding', 'babylonian-sqrt', 'nth-root-digits', 'gauss-legendre', 'power-iteration', 'run-length-encoding', 'delta-encoding', 'incremental-encoding', 'move-to-front', 'lz78', 'lzw', 'deflate']],
+  [NumberTraceVisualizer, ['euclid', 'trial-division', 'fast-exponentiation', 'karatsuba', 'miller-rabin', 'fermat-factorization', 'pollard-rho', 'pollard-p-1', 'quadratic-sieve', 'lenstra-ecm', 'aks', 'rounding', 'babylonian-sqrt', 'nth-root-digits', 'gauss-legendre', 'power-iteration', 'run-length-encoding', 'delta-encoding', 'incremental-encoding', 'move-to-front', 'lz78', 'lzw', 'deflate', 'one-time-pad', 'rc4', 'hmac', 'des', 'blowfish', 'idea']],
 ]
 for (const [component, ids] of shared) for (const id of ids) byId[id] ??= component
 

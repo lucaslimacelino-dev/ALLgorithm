@@ -38,6 +38,10 @@ export const categoryList = [
     id: 'geometria', icon: '△', title: 'Geometria e Computação Gráfica', description: 'Envoltórios, interseções e polígonos; linhas, círculos, recorte e traçado de raios: da geometria à imagem na tela.',
     en: { title: 'Geometry & Computer Graphics', description: 'Hulls, intersections and polygons; lines, circles, clipping and ray tracing: from geometry to the image on screen.' },
   },
+  {
+    id: 'criptografia', icon: '⚿', title: 'Criptografia', description: 'Cifras clássicas, cifras de bloco e de fluxo, funções de hash e autenticação: como proteger e verificar dados.',
+    en: { title: 'Cryptography', description: 'Classical ciphers, block and stream ciphers, hash functions and authentication: how data is protected and verified.' },
+  },
 ]
 
 // Campos incluídos no índice carregado com o site (busca, biblioteca, página inicial).
