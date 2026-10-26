@@ -3,6 +3,7 @@ import { numberAlgorithms } from '../../lib/numberFrames'
 import { numericTraces } from '../../lib/numericFrames'
 import { compressionTraces } from '../../lib/compressionFrames'
 import { cryptoTraces } from '../../lib/cipherFrames'
+import { publicKeyTraces } from '../../lib/publicKeyFrames'
 import { useI18n } from '../../i18n'
 import { Legend, PlayerControls, StepNote, usePlayer } from './Player'
 
@@ -15,7 +16,7 @@ const defaults = config => Object.fromEntries(config.inputs.map(([name, value]) 
 // Tabela de execução: cada passo do algoritmo acrescenta uma linha, com a explicação abaixo.
 export default function NumberTraceVisualizer({ algorithm }) {
   const { t } = useI18n()
-  const config = numberAlgorithms[algorithm.id] ?? numericTraces[algorithm.id] ?? compressionTraces[algorithm.id] ?? cryptoTraces[algorithm.id]
+  const config = numberAlgorithms[algorithm.id] ?? numericTraces[algorithm.id] ?? compressionTraces[algorithm.id] ?? cryptoTraces[algorithm.id] ?? publicKeyTraces[algorithm.id]
   const [draft, setDraft] = useState(() => defaults(config))
   const [inputs, setInputs] = useState(() => defaults(config))
   const [error, setError] = useState(null)

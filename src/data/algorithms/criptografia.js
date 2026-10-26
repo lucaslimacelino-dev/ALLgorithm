@@ -2372,4 +2372,883 @@ export default [
       `,
     },
   },
+  {
+    id: 'rsa',
+    name: 'RSA',
+    difficulty: 'Intermediário',
+    en: { name: 'RSA', summary: 'The first practical public-key cryptosystem: anyone can encrypt with (n, e), only the holder of d can decrypt — because factoring n is hard.' },
+    facts: { 'Criado por': 'Ron Rivest, Adi Shamir e Leonard Adleman', 'Ano': '1977', 'Tipo': 'Criptografia de chave pública e assinatura', 'Base de segurança': 'Dificuldade de fatorar n = p·q', 'Tamanho da chave': '2048 a 4096 bits (recomendado)', 'Situação': 'Seguro com chaves grandes; vulnerável a computadores quânticos' },
+    summary: 'O primeiro sistema prático de chave pública: qualquer um cifra com (n, e), só quem tem d decifra — porque fatorar n é difícil.',
+    description:
+      'O RSA resolve um problema que parecia impossível: duas pessoas se comunicarem em segredo sem nunca terem combinado uma chave. Cada pessoa escolhe dois primos grandes p e q, calcula n = p·q e φ(n) = (p − 1)(q − 1), escolhe um expoente público e (normalmente 65537) e calcula o expoente privado d, o inverso de e módulo φ(n), com o algoritmo de Euclides estendido. A chave pública (n, e) pode ser divulgada; d fica em segredo. Para cifrar, calcula-se c = mᵉ mod n; para decifrar, m = cᵈ mod n — o teorema de Euler garante que as duas operações se anulam. Descobrir d a partir de (n, e) exige φ(n), que exige fatorar n: com números de 2048 bits, isso está fora do alcance de qualquer computador clássico. Invertendo os papéis — "cifrar" com d — obtém-se uma assinatura digital que qualquer um verifica com e.',
+    complexity: { best: 'O(k³) por operação (k = bits da chave)', average: 'O(k³)', worst: 'O(k⁴) para gerar as chaves', space: 'O(k)' },
+    steps: [
+      'Escolha dois primos grandes e distintos p e q (com testes como Miller-Rabin) e calcule n = p·q.',
+      'Calcule φ(n) = (p − 1)(q − 1) e escolha e com mdc(e, φ(n)) = 1 — em geral, e = 65537.',
+      'Calcule d = e⁻¹ mod φ(n) com o algoritmo de Euclides estendido. Publique (n, e); guarde d.',
+      'Cifrar: c = mᵉ mod n. Decifrar: m = cᵈ mod n (por exponenciação rápida).',
+      'Assinar: s = mᵈ mod n (sobre o hash da mensagem). Verificar: sᵉ mod n = m. Na prática, use preenchimentos seguros (OAEP para cifrar, PSS para assinar).',
+    ],
+    usedIn: ['Certificados TLS/HTTPS (assinaturas)', 'Assinatura de código e de atualizações', 'E-mail seguro (PGP, S/MIME)', 'SSH (chaves RSA)', 'Cartões inteligentes e documentos eletrônicos'],
+    realWorld: [
+      { title: 'O cadeado do navegador', text: 'A maioria dos certificados que provam que um site é quem diz ser ainda é assinada com RSA. O navegador verifica a cadeia de assinaturas até uma autoridade certificadora em que confia.' },
+      { title: 'Assinatura digital de documentos', text: 'No Brasil, os certificados ICP-Brasil (e-CPF, e-CNPJ) usam RSA para assinar documentos com validade jurídica. A assinatura é feita sobre o hash do documento.' },
+      { title: 'A ameaça quântica', text: 'O algoritmo de Shor fatoraria n em tempo polinomial em um computador quântico grande. Por isso o NIST padronizou, em 2024, algoritmos pós-quânticos (como o ML-KEM, baseado em reticulados) para substituir RSA e curvas elípticas.' },
+    ],
+    curiosities: [
+      'Clifford Cocks, do serviço de inteligência britânico GCHQ, descobriu o mesmo sistema em 1973 — quatro anos antes de Rivest, Shamir e Adleman —, mas o trabalho ficou secreto até 1997.',
+      'Em 1977, a coluna de Martin Gardner na Scientific American desafiou os leitores a decifrar uma mensagem RSA com chave de 129 dígitos. Ela só foi quebrada em 1994, por 600 voluntários, e dizia "THE MAGIC WORDS ARE SQUEAMISH OSSIFRAGE".',
+      'O maior número RSA do desafio público já fatorado (RSA-250, com 829 bits) levou cerca de 2.700 anos de CPU, em 2020.',
+    ],
+    code: {
+      python: String.raw`
+        # Didático: primos minúsculos e sem preenchimento. Em produção, use uma biblioteca
+        # (ex.: o pacote cryptography) com chaves de 2048+ bits e OAEP/PSS.
+        p, q, e = 61, 53, 17
+        n, phi = p * q, (p - 1) * (q - 1)
+        d = pow(e, -1, phi)                 # inverso modular (Euclides estendido)
+        print(f"n = {n}, d = {d}")          # n = 3233, d = 2753
+
+        m = 65
+        c = pow(m, e, n)                    # cifrar com a chave pública
+        print(f"cifrado: {c}")              # cifrado: 2790
+        print(f"decifrado: {pow(c, d, n)}") # decifrado: 65
+
+        assinatura = pow(m, d, n)           # assinar com a chave privada
+        valida = pow(assinatura, e, n) == m # qualquer um verifica com (n, e)
+        print(f"assinatura: {assinatura} — {'válida' if valida else 'inválida'}")  # assinatura: 588 — válida
+      `,
+      javascript: String.raw`
+        // Didático: primos minúsculos e sem preenchimento. Em produção, use crypto.generateKeyPairSync("rsa")
+        // com chaves de 2048+ bits e OAEP/PSS.
+        function modPow(b, e, m) {
+          let r = 1n;
+          for (b %= m; e > 0n; e >>= 1n, b = (b * b) % m) if (e & 1n) r = (r * b) % m;
+          return r;
+        }
+        function modInverso(a, m) { // Euclides estendido
+          let [r0, r1, s0, s1] = [a, m, 1n, 0n];
+          while (r1) { const q = r0 / r1; [r0, r1] = [r1, r0 - q * r1]; [s0, s1] = [s1, s0 - q * s1]; }
+          return ((s0 % m) + m) % m;
+        }
+
+        const p = 61n, q = 53n, e = 17n;
+        const n = p * q, phi = (p - 1n) * (q - 1n), d = modInverso(e, phi);
+        console.log("n = " + n + ", d = " + d);              // n = 3233, d = 2753
+        const m = 65n;
+        const c = modPow(m, e, n);                            // cifrar com a chave pública
+        console.log("cifrado: " + c);                         // cifrado: 2790
+        console.log("decifrado: " + modPow(c, d, n));         // decifrado: 65
+        const assinatura = modPow(m, d, n);                   // assinar com a chave privada
+        const valida = modPow(assinatura, e, n) === m;        // qualquer um verifica com (n, e)
+        console.log("assinatura: " + assinatura + " — " + (valida ? "válida" : "inválida")); // assinatura: 588 — válida
+      `,
+      java: String.raw`
+        import java.math.BigInteger;
+
+        public class RSA {
+            public static void main(String[] args) {
+                // Didático: primos minúsculos e sem preenchimento. Em produção, use
+                // KeyPairGenerator.getInstance("RSA") com 2048+ bits e Cipher "RSA/ECB/OAEPWithSHA-256AndMGF1Padding".
+                BigInteger p = BigInteger.valueOf(61), q = BigInteger.valueOf(53), e = BigInteger.valueOf(17);
+                BigInteger n = p.multiply(q);
+                BigInteger phi = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
+                BigInteger d = e.modInverse(phi); // Euclides estendido
+                System.out.println("n = " + n + ", d = " + d);                 // n = 3233, d = 2753
+                BigInteger m = BigInteger.valueOf(65);
+                BigInteger c = m.modPow(e, n);                                 // cifrar com a chave pública
+                System.out.println("cifrado: " + c);                           // cifrado: 2790
+                System.out.println("decifrado: " + c.modPow(d, n));            // decifrado: 65
+                BigInteger assinatura = m.modPow(d, n);                        // assinar com a chave privada
+                boolean valida = assinatura.modPow(e, n).equals(m);            // qualquer um verifica com (n, e)
+                System.out.println("assinatura: " + assinatura + " — " + (valida ? "válida" : "inválida")); // assinatura: 588 — válida
+            }
+        }
+      `,
+      cpp: String.raw`
+        // Didático: primos minúsculos e sem preenchimento. Em produção, use o OpenSSL (EVP_PKEY)
+        // com chaves de 2048+ bits e OAEP/PSS.
+        #include <cstdint>
+        #include <cstdio>
+        using namespace std;
+
+        uint64_t modPow(uint64_t b, uint64_t e, uint64_t m) {
+            uint64_t r = 1;
+            for (b %= m; e; e >>= 1, b = (unsigned __int128)b * b % m)
+                if (e & 1) r = (unsigned __int128)r * b % m;
+            return r;
+        }
+
+        int64_t modInverso(int64_t a, int64_t m) { // Euclides estendido
+            int64_t r0 = a, r1 = m, s0 = 1, s1 = 0;
+            while (r1) {
+                int64_t q = r0 / r1, t = r0 - q * r1;
+                r0 = r1; r1 = t;
+                t = s0 - q * s1; s0 = s1; s1 = t;
+            }
+            return (s0 % m + m) % m;
+        }
+
+        int main() {
+            uint64_t p = 61, q = 53, e = 17;
+            uint64_t n = p * q, phi = (p - 1) * (q - 1), d = modInverso(e, phi);
+            printf("n = %llu, d = %llu\n", (unsigned long long)n, (unsigned long long)d);  // n = 3233, d = 2753
+            uint64_t m = 65, c = modPow(m, e, n);                                          // cifrar com a chave pública
+            printf("cifrado: %llu\n", (unsigned long long)c);                              // cifrado: 2790
+            printf("decifrado: %llu\n", (unsigned long long)modPow(c, d, n));              // decifrado: 65
+            uint64_t assinatura = modPow(m, d, n);                                         // assinar com a chave privada
+            bool valida = modPow(assinatura, e, n) == m;                                   // verificar com (n, e)
+            printf("assinatura: %llu — %s\n", (unsigned long long)assinatura, valida ? "válida" : "inválida"); // assinatura: 588 — válida
+        }
+      `,
+    },
+  },
+  {
+    id: 'diffie-hellman',
+    name: 'Troca de Chaves Diffie-Hellman',
+    difficulty: 'Intermediário',
+    en: { name: 'Diffie-Hellman Key Exchange', summary: 'Two people agree on a shared secret over a public channel that an eavesdropper hears in full — the idea that started public-key cryptography.' },
+    facts: { 'Criado por': 'Whitfield Diffie e Martin Hellman (com Ralph Merkle)', 'Ano': '1976', 'Tipo': 'Acordo de chaves', 'Base de segurança': 'Problema do logaritmo discreto', 'Prêmios': 'Prêmio Turing 2015', 'Situação': 'Seguro (2048+ bits ou curvas elípticas); vulnerável a computadores quânticos' },
+    summary: 'Duas pessoas combinam um segredo por um canal público que um espião escuta por inteiro — a ideia que inaugurou a criptografia de chave pública.',
+    description:
+      'Antes de 1976, para conversar em segredo era preciso combinar a chave antes, pessoalmente ou por um mensageiro de confiança. A troca de chaves Diffie-Hellman mostrou que isso não é necessário. Alice e Bob combinam em público um primo p e um gerador g. Cada um escolhe um número secreto (a e b) e envia o outro gᵃ mod p e gᵇ mod p. Então Alice eleva o número de Bob ao seu segredo, e Bob faz o mesmo: (gᵇ)ᵃ = (gᵃ)ᵇ = gᵃᵇ mod p. Os dois chegam ao mesmo número, que nunca passou pelo canal. Uma espiã que viu p, g, gᵃ e gᵇ precisaria descobrir a ou b — o problema do logaritmo discreto, inviável para primos de 2048 bits. O protocolo não autentica ninguém: sem assinaturas, um atacante no meio do caminho pode fazer uma troca com cada lado.',
+    complexity: { best: 'O(k³) (exponenciação modular, k bits)', average: 'O(k³)', worst: 'O(k³)', space: 'O(k)' },
+    steps: [
+      'Alice e Bob combinam publicamente um primo grande p e um gerador g.',
+      'Alice escolhe um segredo a e envia A = gᵃ mod p. Bob escolhe um segredo b e envia B = gᵇ mod p.',
+      'Alice calcula s = Bᵃ mod p; Bob calcula s = Aᵇ mod p. Os dois obtêm gᵃᵇ mod p.',
+      'O segredo s passa por uma função de derivação de chaves (KDF) e vira a chave de uma cifra simétrica, como o AES.',
+      'Para evitar o ataque do homem do meio, as mensagens A e B precisam ser autenticadas (por exemplo, com assinaturas digitais).',
+    ],
+    usedIn: ['TLS/HTTPS (troca de chaves efêmera, sigilo futuro)', 'SSH', 'VPNs (IPsec/IKE, WireGuard com curvas elípticas)', 'Signal e WhatsApp (protocolo X3DH e Double Ratchet)', 'Wi-Fi WPA3 (SAE)'],
+    realWorld: [
+      { title: 'Sigilo futuro no HTTPS', text: 'No TLS 1.3, toda conexão faz uma troca Diffie-Hellman efêmera (geralmente com curvas elípticas). Assim, mesmo que a chave do servidor vaze no futuro, as conversas gravadas no passado continuam protegidas.' },
+      { title: 'Mensageiros', text: 'Signal e WhatsApp fazem trocas Diffie-Hellman continuamente: cada mensagem nova pode atualizar a chave, de modo que comprometer uma chave não expõe o resto da conversa.' },
+      { title: 'Logjam', text: 'Em 2015, o ataque Logjam mostrou que muitos servidores aceitavam Diffie-Hellman com primos de 512 bits ou reutilizavam os mesmos primos de 1024 bits — que um órgão com recursos poderia pré-computar. Hoje recomenda-se 2048 bits ou curvas elípticas.' },
+    ],
+    curiosities: [
+      'Diffie e Hellman receberam o Prêmio Turing de 2015. Hellman defende que o protocolo deveria se chamar Diffie-Hellman-Merkle, porque Ralph Merkle teve a ideia do acordo de chaves público antes.',
+      'Malcolm Williamson, do GCHQ britânico, chegou ao mesmo método em 1974, mas o trabalho só foi revelado em 1997.',
+      'A analogia clássica é com tintas: misturar é fácil, separar a mistura é quase impossível. A cor compartilhada é "tinta comum + segredo de Alice + segredo de Bob".',
+    ],
+    code: {
+      python: String.raw`
+        import secrets
+
+        # Exemplo clássico com números pequenos
+        p, g = 23, 5
+        a, b = 6, 15                     # segredos de Alice e de Bob
+        A, B = pow(g, a, p), pow(g, b, p)
+        print(A, B, pow(B, a, p), pow(A, b, p))  # 8 19 2 2 — os dois chegam a 2
+
+        # Com um primo de 64 bits (ainda pequeno demais para uso real: use 2048+ bits ou X25519)
+        p = 2**64 - 59
+        a, b = secrets.randbelow(p - 2) + 1, secrets.randbelow(p - 2) + 1
+        A, B = pow(2, a, p), pow(2, b, p)
+        print("iguais" if pow(B, a, p) == pow(A, b, p) else "diferentes")  # iguais
+      `,
+      javascript: String.raw`
+        import crypto from "node:crypto";
+
+        function modPow(b, e, m) {
+          let r = 1n;
+          for (b %= m; e > 0n; e >>= 1n, b = (b * b) % m) if (e & 1n) r = (r * b) % m;
+          return r;
+        }
+
+        // Exemplo clássico com números pequenos
+        let p = 23n, g = 5n, a = 6n, b = 15n; // segredos de Alice e de Bob
+        let A = modPow(g, a, p), B = modPow(g, b, p);
+        console.log(A + " " + B + " " + modPow(B, a, p) + " " + modPow(A, b, p)); // 8 19 2 2
+
+        // Com um primo de 64 bits (ainda pequeno demais: use crypto.createECDH ou X25519 de verdade)
+        p = 2n ** 64n - 59n;
+        const aleatorio = () => (crypto.randomBytes(8).readBigUInt64BE() % (p - 2n)) + 1n;
+        a = aleatorio(); b = aleatorio();
+        A = modPow(2n, a, p); B = modPow(2n, b, p);
+        console.log(modPow(B, a, p) === modPow(A, b, p) ? "iguais" : "diferentes"); // iguais
+      `,
+      java: String.raw`
+        import java.math.BigInteger;
+        import java.security.SecureRandom;
+
+        public class DiffieHellman {
+            public static void main(String[] args) {
+                // Exemplo clássico com números pequenos
+                BigInteger p = BigInteger.valueOf(23), g = BigInteger.valueOf(5);
+                BigInteger a = BigInteger.valueOf(6), b = BigInteger.valueOf(15); // segredos de Alice e de Bob
+                BigInteger A = g.modPow(a, p), B = g.modPow(b, p);
+                System.out.println(A + " " + B + " " + B.modPow(a, p) + " " + A.modPow(b, p)); // 8 19 2 2
+
+                // Com um primo de 64 bits (ainda pequeno: em produção, KeyAgreement.getInstance("X25519"))
+                p = BigInteger.TWO.pow(64).subtract(BigInteger.valueOf(59));
+                SecureRandom rnd = new SecureRandom();
+                a = new BigInteger(63, rnd).add(BigInteger.ONE);
+                b = new BigInteger(63, rnd).add(BigInteger.ONE);
+                A = BigInteger.TWO.modPow(a, p);
+                B = BigInteger.TWO.modPow(b, p);
+                System.out.println(B.modPow(a, p).equals(A.modPow(b, p)) ? "iguais" : "diferentes"); // iguais
+            }
+        }
+      `,
+      cpp: String.raw`
+        #include <cstdint>
+        #include <cstdio>
+        #include <random>
+        using namespace std;
+
+        uint64_t modPow(uint64_t b, uint64_t e, uint64_t m) {
+            uint64_t r = 1;
+            for (b %= m; e; e >>= 1, b = (unsigned __int128)b * b % m)
+                if (e & 1) r = (unsigned __int128)r * b % m;
+            return r;
+        }
+
+        int main() {
+            // Exemplo clássico com números pequenos
+            uint64_t p = 23, g = 5, a = 6, b = 15; // segredos de Alice e de Bob
+            uint64_t A = modPow(g, a, p), B = modPow(g, b, p);
+            printf("%llu %llu %llu %llu\n", (unsigned long long)A, (unsigned long long)B,
+                   (unsigned long long)modPow(B, a, p), (unsigned long long)modPow(A, b, p)); // 8 19 2 2
+
+            // Com um primo de 64 bits (ainda pequeno: em produção, use X25519 do OpenSSL ou libsodium)
+            p = 18446744073709551557ULL; // 2^64 - 59
+            random_device rd;
+            uniform_int_distribution<uint64_t> dist(1, p - 2);
+            a = dist(rd); b = dist(rd);
+            A = modPow(2, a, p); B = modPow(2, b, p);
+            printf("%s\n", modPow(B, a, p) == modPow(A, b, p) ? "iguais" : "diferentes"); // iguais
+        }
+      `,
+    },
+  },
+  {
+    id: 'elgamal',
+    name: 'Criptossistema ElGamal',
+    difficulty: 'Avançado',
+    en: { name: 'ElGamal Cryptosystem', summary: 'Public-key encryption built on Diffie-Hellman: each message uses a fresh random number, so encrypting the same text twice gives different ciphertexts.' },
+    facts: { 'Criado por': 'Taher Elgamal', 'Ano': '1985', 'Tipo': 'Criptografia de chave pública e assinatura', 'Base de segurança': 'Problema do logaritmo discreto', 'Característica': 'Cifragem aleatorizada (texto cifrado 2× maior)', 'Situação': 'Seguro com parâmetros grandes' },
+    summary: 'Criptografia de chave pública construída sobre o Diffie-Hellman: cada mensagem usa um número aleatório novo, então cifrar o mesmo texto duas vezes dá resultados diferentes.',
+    description:
+      'O ElGamal transforma a troca Diffie-Hellman em um sistema de cifragem. O destinatário publica p, g e h = gˣ mod p, guardando x. Para cifrar uma mensagem m (um número menor que p), o remetente escolhe um número aleatório k, só para essa mensagem, e envia o par c₁ = gᵏ e c₂ = m · hᵏ mod p. Em outras palavras: ele faz uma troca Diffie-Hellman "de mão única" com o destinatário e usa o segredo compartilhado hᵏ = gˣᵏ como máscara multiplicativa. O destinatário recalcula a máscara como c₁ˣ e a desfaz com o inverso modular. Como k muda a cada vez, a cifragem é probabilística — uma propriedade importante, que o RSA "puro" não tem. O preço é que o texto cifrado tem o dobro do tamanho da mensagem.',
+    complexity: { best: 'O(k³) por operação (k bits)', average: 'O(k³)', worst: 'O(k³)', space: 'O(k)' },
+    steps: [
+      'Chaves: escolha um primo p, um gerador g e um segredo x; publique (p, g, h = gˣ mod p).',
+      'Cifrar m: escolha um k aleatório e novo; calcule c₁ = gᵏ mod p e c₂ = m · hᵏ mod p. Envie (c₁, c₂).',
+      'Decifrar: calcule a máscara s = c₁ˣ mod p (que é igual a hᵏ).',
+      'Calcule o inverso s⁻¹ mod p e recupere m = c₂ · s⁻¹ mod p.',
+      'Nunca reutilize k: com dois textos cifrados com o mesmo k, conhecer uma mensagem revela a outra.',
+    ],
+    usedIn: ['GnuPG/OpenPGP (chaves ElGamal para cifragem)', 'Base do DSA (assinatura derivada do ElGamal)', 'Votação eletrônica (cifragem homomórfica)', 'Protocolos de computação multipartidária', 'Ensino de criptografia de chave pública'],
+    realWorld: [
+      { title: 'GnuPG', text: 'Por anos, a configuração padrão do GnuPG gerava um par de chaves DSA (para assinar) + ElGamal (para cifrar), como alternativa livre de patentes ao RSA.' },
+      { title: 'Votação eletrônica', text: 'O ElGamal é homomórfico para a multiplicação: multiplicar dois textos cifrados dá a cifra do produto. Uma variante (com a mensagem no expoente) permite somar votos cifrados sem decifrar nenhum voto individual — base de sistemas como o Helios.' },
+      { title: 'Reutilizar k é fatal', text: 'Se k se repete, c₂/c₂′ = m/m′: conhecendo uma mensagem, descobre-se a outra. Erros desse tipo — reaproveitar o número aleatório — já derrubaram vários sistemas reais baseados em ElGamal e DSA.' },
+    ],
+    curiosities: [
+      'Taher Elgamal, criador do sistema, também é considerado o "pai do SSL": como cientista-chefe da Netscape, liderou o desenvolvimento do protocolo que deu origem ao HTTPS.',
+      'O esquema de assinatura ElGamal, publicado no mesmo artigo, inspirou o DSA e, indiretamente, o ECDSA usado no Bitcoin.',
+      'A mesma ideia funciona em qualquer grupo onde o logaritmo discreto seja difícil — inclusive em curvas elípticas, com chaves muito menores.',
+    ],
+    code: {
+      python: String.raw`
+        p, g = 467, 2                  # parâmetros públicos (didáticos; o real usa 2048+ bits)
+        x = 127                        # chave privada do destinatário
+        h = pow(g, x, p)               # chave pública
+
+        m, k = 100, 213                # mensagem e número aleatório (novo a cada mensagem!)
+        c1, c2 = pow(g, k, p), m * pow(h, k, p) % p
+        print(f"cifrado: ({c1}, {c2})")         # cifrado: (29, 375)
+
+        s = pow(c1, x, p)                       # a mesma máscara h^k, sem conhecer k
+        print(f"decifrado: {c2 * pow(s, -1, p) % p}")  # decifrado: 100
+      `,
+      javascript: String.raw`
+        function modPow(b, e, m) {
+          let r = 1n;
+          for (b %= m; e > 0n; e >>= 1n, b = (b * b) % m) if (e & 1n) r = (r * b) % m;
+          return r;
+        }
+        const modInverso = (a, p) => modPow(a, p - 2n, p); // pequeno teorema de Fermat (p primo)
+
+        const p = 467n, g = 2n;       // parâmetros públicos (didáticos; o real usa 2048+ bits)
+        const x = 127n;               // chave privada do destinatário
+        const h = modPow(g, x, p);    // chave pública
+
+        const m = 100n, k = 213n;     // mensagem e número aleatório (novo a cada mensagem!)
+        const c1 = modPow(g, k, p), c2 = (m * modPow(h, k, p)) % p;
+        console.log("cifrado: (" + c1 + ", " + c2 + ")");              // cifrado: (29, 375)
+
+        const s = modPow(c1, x, p);   // a mesma máscara h^k, sem conhecer k
+        console.log("decifrado: " + (c2 * modInverso(s, p)) % p);      // decifrado: 100
+      `,
+      java: String.raw`
+        import java.math.BigInteger;
+
+        public class ElGamal {
+            public static void main(String[] args) {
+                BigInteger p = BigInteger.valueOf(467), g = BigInteger.TWO; // didático; o real usa 2048+ bits
+                BigInteger x = BigInteger.valueOf(127);                    // chave privada do destinatário
+                BigInteger h = g.modPow(x, p);                             // chave pública
+
+                BigInteger m = BigInteger.valueOf(100), k = BigInteger.valueOf(213); // k: novo a cada mensagem!
+                BigInteger c1 = g.modPow(k, p), c2 = m.multiply(h.modPow(k, p)).mod(p);
+                System.out.println("cifrado: (" + c1 + ", " + c2 + ")");   // cifrado: (29, 375)
+
+                BigInteger s = c1.modPow(x, p);                            // a mesma máscara h^k
+                System.out.println("decifrado: " + c2.multiply(s.modInverse(p)).mod(p)); // decifrado: 100
+            }
+        }
+      `,
+      cpp: String.raw`
+        #include <cstdint>
+        #include <cstdio>
+        using namespace std;
+
+        uint64_t modPow(uint64_t b, uint64_t e, uint64_t m) {
+            uint64_t r = 1;
+            for (b %= m; e; e >>= 1, b = b * b % m)
+                if (e & 1) r = r * b % m;
+            return r;
+        }
+
+        int main() {
+            uint64_t p = 467, g = 2;         // parâmetros públicos (didáticos; o real usa 2048+ bits)
+            uint64_t x = 127;                // chave privada do destinatário
+            uint64_t h = modPow(g, x, p);    // chave pública
+
+            uint64_t m = 100, k = 213;       // mensagem e número aleatório (novo a cada mensagem!)
+            uint64_t c1 = modPow(g, k, p), c2 = m * modPow(h, k, p) % p;
+            printf("cifrado: (%llu, %llu)\n", (unsigned long long)c1, (unsigned long long)c2); // cifrado: (29, 375)
+
+            uint64_t s = modPow(c1, x, p);               // a mesma máscara h^k, sem conhecer k
+            uint64_t sInv = modPow(s, p - 2, p);         // inverso pelo pequeno teorema de Fermat
+            printf("decifrado: %llu\n", (unsigned long long)(c2 * sInv % p)); // decifrado: 100
+        }
+      `,
+    },
+  },
+  {
+    id: 'dsa',
+    name: 'DSA (Digital Signature Algorithm)',
+    difficulty: 'Avançado',
+    en: { name: 'DSA (Digital Signature Algorithm)', summary: 'The US government signature standard: proves who signed a message and that it was not altered, using the discrete logarithm problem.' },
+    facts: { 'Criado por': 'NIST / NSA (David Kravitz)', 'Ano': '1991; padrão em 1994 (FIPS 186)', 'Tipo': 'Assinatura digital', 'Base de segurança': 'Problema do logaritmo discreto', 'Variante moderna': 'ECDSA e EdDSA (curvas elípticas)', 'Situação': 'Retirado do FIPS 186-5 (2023) em favor do ECDSA/EdDSA' },
+    summary: 'O padrão de assinatura digital do governo dos EUA: prova quem assinou uma mensagem e que ela não foi alterada, usando o problema do logaritmo discreto.',
+    description:
+      'Uma assinatura digital garante três coisas: autoria (só o dono da chave privada consegue assinar), integridade (qualquer alteração invalida a assinatura) e não repúdio (o autor não pode negar). No DSA, os parâmetros públicos são dois primos p e q, com q dividindo p − 1, e um gerador g de ordem q. A chave privada é um número x, e a pública é y = gˣ mod p. Para assinar, calcula-se o hash H da mensagem e escolhe-se um número secreto k, único para cada assinatura: r = (gᵏ mod p) mod q e s = k⁻¹(H + x·r) mod q. A assinatura é o par (r, s). Quem verifica calcula w = s⁻¹, u₁ = H·w e u₂ = r·w e confere se (g^u₁ · y^u₂ mod p) mod q = r. A identidade funciona porque g^u₁ · y^u₂ = g^((H + x·r)·w) = gᵏ.',
+    complexity: { best: 'O(k³) por assinatura (k bits)', average: 'O(k³)', worst: 'O(k³)', space: 'O(k)' },
+    steps: [
+      'Parâmetros: primos p e q (q divide p − 1) e g = h^((p−1)/q) mod p, de ordem q. Chaves: x secreto e y = gˣ mod p.',
+      'Assinar: H = hash(mensagem) mod q; escolha k aleatório e secreto; r = (gᵏ mod p) mod q; s = k⁻¹ · (H + x·r) mod q.',
+      'Se r ou s der zero, escolha outro k. A assinatura é (r, s).',
+      'Verificar: w = s⁻¹ mod q; u₁ = H·w mod q; u₂ = r·w mod q; v = (g^u₁ · y^u₂ mod p) mod q.',
+      'A assinatura é válida se v = r. Um k repetido ou previsível revela a chave privada x.',
+    ],
+    usedIn: ['Assinaturas de documentos e código (FIPS 186)', 'SSH (chaves ssh-dss, hoje desativadas)', 'GnuPG (chaves DSA)', 'Base do ECDSA (Bitcoin, Ethereum, TLS)', 'Certificados governamentais'],
+    realWorld: [
+      { title: 'PlayStation 3', text: 'Em 2010, o grupo fail0verflow descobriu que a Sony assinava o software do PS3 com ECDSA usando sempre o mesmo k. Com duas assinaturas, bastou resolver um sistema de equações para obter a chave privada da Sony.' },
+      { title: 'Carteiras de Bitcoin', text: 'Em 2013, um defeito no gerador de números aleatórios do Android fez carteiras de Bitcoin repetirem o k do ECDSA. Atacantes recuperaram as chaves privadas e roubaram os fundos.' },
+      { title: 'k determinístico', text: 'Para eliminar esse risco, a RFC 6979 define como gerar k de forma determinística a partir da chave privada e da mensagem — sem depender de um bom gerador aleatório. O EdDSA (Ed25519) já nasce com essa ideia.' },
+    ],
+    curiosities: [
+      'O DSA foi proposto em 1991 em parte para evitar as patentes do RSA. Sua escolha gerou polêmica, porque a NSA participou do projeto e o padrão inicial limitava as chaves a 1024 bits.',
+      'Com a mesma chave privada, duas assinaturas com o mesmo k dão duas equações com duas incógnitas (k e x): x = (s₂·H₁ − s₁·H₂) / (r·(s₁ − s₂)) mod q.',
+      'Em 2023, o FIPS 186-5 deixou de aprovar o DSA para novas assinaturas, mantendo o ECDSA e acrescentando o EdDSA.',
+    ],
+    code: {
+      python: String.raw`
+        import hashlib
+
+        # Parâmetros didáticos: q divide p − 1 = 7878 = 2 · 3 · 13 · 101. O real usa q de 256 bits.
+        p, q = 7879, 101
+        g = pow(3, (p - 1) // q, p)        # gerador de ordem q
+        x = 75                             # chave privada
+        y = pow(g, x, p)                   # chave pública
+
+        def H(mensagem):
+            return int.from_bytes(hashlib.sha256(mensagem.encode()).digest(), "big") % q
+
+        def assinar(mensagem, k):          # k: secreto e único por assinatura!
+            r = pow(g, k, p) % q
+            s = pow(k, -1, q) * (H(mensagem) + x * r) % q
+            return r, s
+
+        def verificar(mensagem, r, s):
+            w = pow(s, -1, q)
+            u1, u2 = H(mensagem) * w % q, r * w % q
+            return pow(g, u1, p) * pow(y, u2, p) % p % q == r
+
+        r, s = assinar("transferir R$ 100", 50)
+        print(r, s)                                                     # 94 5
+        print("válida" if verificar("transferir R$ 100", r, s) else "inválida")   # válida
+        print("válida" if verificar("transferir R$ 900", r, s) else "inválida")   # inválida
+      `,
+      javascript: String.raw`
+        import crypto from "node:crypto";
+
+        function modPow(b, e, m) {
+          let r = 1n;
+          for (b %= m; e > 0n; e >>= 1n, b = (b * b) % m) if (e & 1n) r = (r * b) % m;
+          return r;
+        }
+        const inverso = (a, q) => modPow(a, q - 2n, q); // q é primo
+
+        // Parâmetros didáticos: q divide p − 1. O real usa q de 256 bits (ou ECDSA/Ed25519 via crypto.sign).
+        const p = 7879n, q = 101n;
+        const g = modPow(3n, (p - 1n) / q, p); // gerador de ordem q
+        const x = 75n, y = modPow(g, x, p);    // chaves privada e pública
+        const H = m => BigInt("0x" + crypto.createHash("sha256").update(m).digest("hex")) % q;
+
+        function assinar(m, k) { // k: secreto e único por assinatura!
+          const r = modPow(g, k, p) % q;
+          return [r, (inverso(k, q) * (H(m) + x * r)) % q];
+        }
+
+        function verificar(m, r, s) {
+          const w = inverso(s, q), u1 = (H(m) * w) % q, u2 = (r * w) % q;
+          return ((modPow(g, u1, p) * modPow(y, u2, p)) % p) % q === r;
+        }
+
+        const [r, s] = assinar("transferir R$ 100", 50n);
+        console.log(r + " " + s);                                                      // 94 5
+        console.log(verificar("transferir R$ 100", r, s) ? "válida" : "inválida");    // válida
+        console.log(verificar("transferir R$ 900", r, s) ? "válida" : "inválida");    // inválida
+      `,
+      java: String.raw`
+        import java.math.BigInteger;
+        import java.nio.charset.StandardCharsets;
+        import java.security.MessageDigest;
+
+        public class DSA {
+            // Parâmetros didáticos: q divide p − 1. Em produção: Signature.getInstance("SHA256withECDSA") ou "Ed25519".
+            static final BigInteger p = BigInteger.valueOf(7879), q = BigInteger.valueOf(101);
+            static final BigInteger g = BigInteger.valueOf(3).modPow(p.subtract(BigInteger.ONE).divide(q), p); // ordem q
+            static final BigInteger x = BigInteger.valueOf(75), y = g.modPow(x, p); // chaves privada e pública
+
+            static BigInteger H(String m) throws Exception {
+                byte[] d = MessageDigest.getInstance("SHA-256").digest(m.getBytes(StandardCharsets.UTF_8));
+                return new BigInteger(1, d).mod(q);
+            }
+
+            static BigInteger[] assinar(String m, BigInteger k) throws Exception { // k: secreto e único!
+                BigInteger r = g.modPow(k, p).mod(q);
+                BigInteger s = k.modInverse(q).multiply(H(m).add(x.multiply(r))).mod(q);
+                return new BigInteger[]{r, s};
+            }
+
+            static boolean verificar(String m, BigInteger r, BigInteger s) throws Exception {
+                BigInteger w = s.modInverse(q), u1 = H(m).multiply(w).mod(q), u2 = r.multiply(w).mod(q);
+                return g.modPow(u1, p).multiply(y.modPow(u2, p)).mod(p).mod(q).equals(r);
+            }
+
+            public static void main(String[] args) throws Exception {
+                BigInteger[] rs = assinar("transferir R$ 100", BigInteger.valueOf(50));
+                System.out.println(rs[0] + " " + rs[1]);                                                     // 94 5
+                System.out.println(verificar("transferir R$ 100", rs[0], rs[1]) ? "válida" : "inválida");   // válida
+                System.out.println(verificar("transferir R$ 900", rs[0], rs[1]) ? "válida" : "inválida");   // inválida
+            }
+        }
+      `,
+      cpp: String.raw`
+        // Compile com: g++ dsa.cpp -lcrypto (usa o SHA-256 do OpenSSL)
+        #include <cstdint>
+        #include <cstdio>
+        #include <cstring>
+        #include <openssl/sha.h>
+        using namespace std;
+
+        // Parâmetros didáticos: q divide p − 1 = 7878. O real usa q de 256 bits (ou ECDSA/Ed25519).
+        const uint64_t p = 7879, q = 101;
+
+        uint64_t modPow(uint64_t b, uint64_t e, uint64_t m) {
+            uint64_t r = 1;
+            for (b %= m; e; e >>= 1, b = b * b % m)
+                if (e & 1) r = r * b % m;
+            return r;
+        }
+        uint64_t inverso(uint64_t a) { return modPow(a, q - 2, q); } // q é primo
+
+        uint64_t H(const char* m) { // SHA-256 da mensagem, reduzido mod q
+            unsigned char d[32];
+            SHA256((const unsigned char*)m, strlen(m), d);
+            uint64_t h = 0;
+            for (unsigned char b : d) h = (h * 256 + b) % q;
+            return h;
+        }
+
+        const uint64_t g = modPow(3, (p - 1) / q, p), x = 75, y = modPow(g, x, p);
+
+        void assinar(const char* m, uint64_t k, uint64_t& r, uint64_t& s) { // k: secreto e único!
+            r = modPow(g, k, p) % q;
+            s = inverso(k) * ((H(m) + x * r) % q) % q;
+        }
+
+        bool verificar(const char* m, uint64_t r, uint64_t s) {
+            uint64_t w = inverso(s), u1 = H(m) * w % q, u2 = r * w % q;
+            return modPow(g, u1, p) * modPow(y, u2, p) % p % q == r;
+        }
+
+        int main() {
+            uint64_t r, s;
+            assinar("transferir R$ 100", 50, r, s);
+            printf("%llu %llu\n", (unsigned long long)r, (unsigned long long)s);         // 94 5
+            printf("%s\n", verificar("transferir R$ 100", r, s) ? "válida" : "inválida"); // válida
+            printf("%s\n", verificar("transferir R$ 900", r, s) ? "válida" : "inválida"); // inválida
+        }
+      `,
+    },
+  },
+  {
+    id: 'ntru',
+    name: 'NTRUEncrypt',
+    difficulty: 'Avançado',
+    en: { name: 'NTRUEncrypt', summary: 'Lattice-based public-key encryption using small polynomials — fast, and believed to resist quantum computers.' },
+    facts: { 'Criado por': 'Jeffrey Hoffstein, Jill Pipher e Joseph Silverman', 'Ano': '1996 (publicado em 1998)', 'Tipo': 'Criptografia de chave pública baseada em reticulados', 'Base de segurança': 'Vetor mais curto em reticulados (SVP)', 'Resistência quântica': 'Sim (pós-quântico)', 'Situação': 'Seguro; inspirou padrões pós-quânticos' },
+    summary: 'Criptografia de chave pública baseada em reticulados, com polinômios pequenos — rápida e considerada resistente a computadores quânticos.',
+    description:
+      'O NTRU trabalha com polinômios de grau menor que N cujos coeficientes são inteiros, multiplicados "em círculo" (como se xᴺ = 1). A chave privada é um polinômio pequeno f, com coeficientes −1, 0 e 1, que tem inverso módulo um número pequeno p e módulo um número grande q. A chave pública é h = p · f_q · g mod q, onde g é outro polinômio pequeno — h parece aleatório. Para cifrar uma mensagem m (também com coeficientes pequenos), escolhe-se um polinômio aleatório pequeno r e calcula-se e = r·h + m mod q. Para decifrar, multiplica-se por f: f·e = p·r·g + f·m, e como todos esses termos são pequenos, nenhum coeficiente "dá a volta" em q. Reduzindo módulo p, o termo p·r·g desaparece; multiplicando pelo inverso de f módulo p, sobra m. Quebrar o NTRU equivale a achar vetores curtos em um reticulado de alta dimensão, um problema para o qual não se conhece algoritmo quântico eficiente.',
+    complexity: { best: 'O(N log N) com multiplicação rápida', average: 'O(N²) com multiplicação direta', worst: 'O(N²)', space: 'O(N)' },
+    steps: [
+      'Escolha N (primo), p pequeno (3) e q grande (potência de 2), com mdc(p, q) = 1.',
+      'Escolha f e g pequenos; calcule f_p = f⁻¹ mod p e f_q = f⁻¹ mod q (se não existirem, escolha outro f).',
+      'Chave pública: h = p · f_q · g mod q. Chave privada: f e f_p.',
+      'Cifrar: com r pequeno e aleatório, e = r·h + m mod q.',
+      'Decifrar: a = f·e mod q (coeficientes entre −q/2 e q/2); b = a mod p; m = f_p·b mod p (coeficientes entre −1 e 1).',
+    ],
+    usedIn: ['Padrões pós-quânticos (NTRU foi finalista do concurso do NIST)', 'OpenSSH (sntrup761x25519, padrão desde a versão 9.0)', 'Chrome e Cloudflare (testes pós-quânticos)', 'Padrões IEEE 1363.1 e X9.98', 'Base de esquemas de assinatura como o Falcon'],
+    realWorld: [
+      { title: 'SSH pós-quântico', text: 'Desde 2022, o OpenSSH usa por padrão uma troca de chaves híbrida que combina o NTRU Prime (sntrup761) com o X25519: mesmo que alguém grave a sessão hoje e tenha um computador quântico no futuro, a chave continua protegida.' },
+      { title: 'Concurso do NIST', text: 'O NTRU chegou à rodada final do concurso de criptografia pós-quântica do NIST. O vencedor para cifragem, o ML-KEM (Kyber), é de outra família de reticulados, mas a assinatura Falcon usa reticulados NTRU.' },
+      { title: '"Colha agora, decifre depois"', text: 'Agências podem estar guardando tráfego cifrado hoje para decifrá-lo quando houver computadores quânticos grandes. Por isso a migração para algoritmos como NTRU e ML-KEM já começou, antes de a ameaça existir.' },
+    ],
+    curiosities: [
+      'O nome NTRU é atribuído a "Number Theorists R Us" (ou "Number Theory Research Unit") — uma brincadeira dos três matemáticos da Universidade Brown que o criaram.',
+      'Com parâmetros pequenos demais, como os do exemplo, a decifragem pode falhar de vez em quando: algum coeficiente de f·e passa de q/2. Os parâmetros reais são escolhidos para que essa chance seja desprezível.',
+      'O NTRU foi patenteado até 2017, o que atrasou sua adoção; depois que a patente foi liberada, ele passou a ser usado em produtos e padrões.',
+    ],
+    code: {
+      python: String.raw`
+        # Exemplo clássico (N = 11, p = 3, q = 32). Os inversos f_p e f_q foram calculados com o
+        # algoritmo de Euclides para polinômios; aqui eles são dados e conferidos.
+        N, p, q = 11, 3, 32
+        f  = [-1, 1, 1, 0, -1, 0, 1, 0, 0, 1, -1]     # coeficientes de x^0 a x^10
+        g  = [-1, 0, 1, 1, 0, 1, 0, 0, -1, 0, -1]
+        fp = [1, 2, 0, 2, 2, 1, 0, 2, 1, 2, 0]
+        fq = [5, 9, 6, 16, 4, 15, 16, 22, 20, 18, 30]
+
+        def mult(a, b):  # multiplicação "em círculo": x^N = 1
+            c = [0] * N
+            for i in range(N):
+                for j in range(N):
+                    c[(i + j) % N] += a[i] * b[j]
+            return c
+
+        def centrar(a, m):  # reduz mod m para o intervalo (−m/2, m/2]
+            return [((v % m) - m if v % m > m // 2 else v % m) for v in a]
+
+        h = [p * v % q for v in mult(fq, g)]            # chave pública
+        m = [-1, 0, 0, 1, -1, 0, 0, 0, -1, 1, 1]        # mensagem
+        r = [-1, 0, 1, 1, 1, -1, 0, -1, 0, 0, 0]        # aleatório, novo a cada mensagem
+        e = [(v + mi) % q for v, mi in zip(mult(r, h), m)]
+        print(" ".join(map(str, e)))                     # 14 11 26 24 14 16 30 7 25 6 19
+
+        a = centrar(mult(f, e), q)                       # decifrar
+        b = centrar(a, p)
+        recuperada = centrar(mult(fp, b), p)
+        print(" ".join(map(str, recuperada)))            # -1 0 0 1 -1 0 0 0 -1 1 1
+        print("ok" if recuperada == m else "falha")      # ok
+      `,
+      javascript: String.raw`
+        // Exemplo clássico (N = 11, p = 3, q = 32). Os inversos f_p e f_q foram calculados com o
+        // algoritmo de Euclides para polinômios; aqui eles são dados.
+        const N = 11, p = 3, q = 32;
+        const f = [-1, 1, 1, 0, -1, 0, 1, 0, 0, 1, -1]; // coeficientes de x^0 a x^10
+        const g = [-1, 0, 1, 1, 0, 1, 0, 0, -1, 0, -1];
+        const fp = [1, 2, 0, 2, 2, 1, 0, 2, 1, 2, 0];
+        const fq = [5, 9, 6, 16, 4, 15, 16, 22, 20, 18, 30];
+
+        function mult(a, b) { // multiplicação "em círculo": x^N = 1
+          const c = Array(N).fill(0);
+          for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) c[(i + j) % N] += a[i] * b[j];
+          return c;
+        }
+        const modulo = (v, m) => ((v % m) + m) % m;
+        const centrar = (a, m) => a.map(v => (modulo(v, m) > m / 2 ? modulo(v, m) - m : modulo(v, m)));
+
+        const h = mult(fq, g).map(v => modulo(p * v, q));            // chave pública
+        const m = [-1, 0, 0, 1, -1, 0, 0, 0, -1, 1, 1];               // mensagem
+        const r = [-1, 0, 1, 1, 1, -1, 0, -1, 0, 0, 0];               // aleatório, novo a cada mensagem
+        const e = mult(r, h).map((v, i) => modulo(v + m[i], q));
+        console.log(e.join(" "));                                      // 14 11 26 24 14 16 30 7 25 6 19
+
+        const a = centrar(mult(f, e), q);                              // decifrar
+        const b = centrar(a, p);
+        const recuperada = centrar(mult(fp, b), p);
+        console.log(recuperada.join(" "));                             // -1 0 0 1 -1 0 0 0 -1 1 1
+        console.log(recuperada.every((v, i) => v === m[i]) ? "ok" : "falha"); // ok
+      `,
+      java: String.raw`
+        import java.util.Arrays;
+        import java.util.stream.Collectors;
+
+        public class NTRU {
+            static final int N = 11, P = 3, Q = 32;
+
+            static int[] mult(int[] a, int[] b) { // multiplicação "em círculo": x^N = 1
+                int[] c = new int[N];
+                for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) c[(i + j) % N] += a[i] * b[j];
+                return c;
+            }
+
+            static int[] centrar(int[] a, int m) { // reduz mod m para (−m/2, m/2]
+                return Arrays.stream(a).map(v -> Math.floorMod(v, m) > m / 2 ? Math.floorMod(v, m) - m : Math.floorMod(v, m)).toArray();
+            }
+
+            static String texto(int[] a) { return Arrays.stream(a).mapToObj(String::valueOf).collect(Collectors.joining(" ")); }
+
+            public static void main(String[] args) {
+                // Exemplo clássico. Os inversos f_p e f_q vêm do algoritmo de Euclides para polinômios.
+                int[] f = {-1, 1, 1, 0, -1, 0, 1, 0, 0, 1, -1}, g = {-1, 0, 1, 1, 0, 1, 0, 0, -1, 0, -1};
+                int[] fp = {1, 2, 0, 2, 2, 1, 0, 2, 1, 2, 0}, fq = {5, 9, 6, 16, 4, 15, 16, 22, 20, 18, 30};
+                int[] h = Arrays.stream(mult(fq, g)).map(v -> Math.floorMod(P * v, Q)).toArray(); // chave pública
+
+                int[] m = {-1, 0, 0, 1, -1, 0, 0, 0, -1, 1, 1}, r = {-1, 0, 1, 1, 1, -1, 0, -1, 0, 0, 0};
+                int[] rh = mult(r, h), e = new int[N];
+                for (int i = 0; i < N; i++) e[i] = Math.floorMod(rh[i] + m[i], Q);
+                System.out.println(texto(e));                          // 14 11 26 24 14 16 30 7 25 6 19
+
+                int[] recuperada = centrar(mult(fp, centrar(centrar(mult(f, e), Q), P)), P); // decifrar
+                System.out.println(texto(recuperada));                 // -1 0 0 1 -1 0 0 0 -1 1 1
+                System.out.println(Arrays.equals(recuperada, m) ? "ok" : "falha"); // ok
+            }
+        }
+      `,
+      cpp: String.raw`
+        #include <cstdio>
+        #include <vector>
+        using namespace std;
+
+        const int N = 11, P = 3, Q = 32;
+        using Poli = vector<int>;
+
+        Poli mult(const Poli& a, const Poli& b) { // multiplicação "em círculo": x^N = 1
+            Poli c(N, 0);
+            for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) c[(i + j) % N] += a[i] * b[j];
+            return c;
+        }
+        int modulo(int v, int m) { return (v % m + m) % m; }
+        Poli centrar(Poli a, int m) { // reduz mod m para (−m/2, m/2]
+            for (int& v : a) { v = modulo(v, m); if (v > m / 2) v -= m; }
+            return a;
+        }
+        void imprimir(const Poli& a) { for (int i = 0; i < N; i++) printf(i ? " %d" : "%d", a[i]); printf("\n"); }
+
+        int main() {
+            // Exemplo clássico. Os inversos f_p e f_q vêm do algoritmo de Euclides para polinômios.
+            Poli f = {-1, 1, 1, 0, -1, 0, 1, 0, 0, 1, -1}, g = {-1, 0, 1, 1, 0, 1, 0, 0, -1, 0, -1};
+            Poli fp = {1, 2, 0, 2, 2, 1, 0, 2, 1, 2, 0}, fq = {5, 9, 6, 16, 4, 15, 16, 22, 20, 18, 30};
+            Poli h = mult(fq, g);
+            for (int& v : h) v = modulo(P * v, Q);                    // chave pública
+
+            Poli m = {-1, 0, 0, 1, -1, 0, 0, 0, -1, 1, 1}, r = {-1, 0, 1, 1, 1, -1, 0, -1, 0, 0, 0};
+            Poli e = mult(r, h);
+            for (int i = 0; i < N; i++) e[i] = modulo(e[i] + m[i], Q);
+            imprimir(e);                                               // 14 11 26 24 14 16 30 7 25 6 19
+
+            Poli recuperada = centrar(mult(fp, centrar(centrar(mult(f, e), Q), P)), P); // decifrar
+            imprimir(recuperada);                                      // -1 0 0 1 -1 0 0 0 -1 1 1
+            printf("%s\n", recuperada == m ? "ok" : "falha");          // ok
+        }
+      `,
+    },
+  },
+  {
+    id: 'elliptic-curve',
+    name: 'Criptografia de Curvas Elípticas (ECDH)',
+    difficulty: 'Avançado',
+    en: { name: 'Elliptic Curve Cryptography (ECDH)', summary: 'Diffie-Hellman on the points of an elliptic curve: the same security as RSA with keys about ten times smaller.' },
+    facts: { 'Criado por': 'Neal Koblitz e Victor Miller (independentemente)', 'Ano': '1985', 'Tipo': 'Acordo de chaves e assinatura (ECDH, ECDSA, EdDSA)', 'Base de segurança': 'Logaritmo discreto em curvas elípticas', 'Tamanho da chave': '256 bits ≈ RSA de 3072 bits', 'Situação': 'Seguro; vulnerável a computadores quânticos' },
+    summary: 'Diffie-Hellman sobre os pontos de uma curva elíptica: a mesma segurança do RSA com chaves cerca de dez vezes menores.',
+    description:
+      'Uma curva elíptica é o conjunto dos pontos (x, y) que satisfazem y² = x³ + ax + b — em criptografia, com x e y inteiros módulo um primo p, o que transforma a curva em uma nuvem de pontos. Existe uma forma de "somar" dois pontos: traça-se a reta que passa por eles, encontra-se o terceiro ponto em que ela corta a curva e reflete-se esse ponto no eixo x. Somar um ponto G a ele mesmo k vezes dá k·G, que pode ser calculado rapidamente pelo método "dobra e soma" (como a exponenciação rápida). O caminho inverso — descobrir k sabendo G e k·G — é o logaritmo discreto em curvas elípticas, e não se conhece atalho para ele. No ECDH, Alice publica a·G, Bob publica b·G, e os dois calculam o segredo comum a·(b·G) = b·(a·G). Como os melhores ataques são mais lentos que contra o RSA, chaves de 256 bits bastam.',
+    complexity: { best: 'O(k) operações de ponto (k bits)', average: 'O(k) — cada uma O(k²)', worst: 'O(k³)', space: 'O(k)' },
+    steps: [
+      'Fixe uma curva y² = x³ + ax + b sobre os inteiros módulo p e um ponto base G de ordem n grande (curvas padronizadas, como a P-256 e a Curve25519).',
+      'Soma de pontos: λ = (y₂ − y₁)/(x₂ − x₁) (ou (3x₁² + a)/(2y₁) para dobrar); x₃ = λ² − x₁ − x₂; y₃ = λ(x₁ − x₃) − y₁, tudo módulo p.',
+      'Multiplicação k·G por dobra e soma: percorra os bits de k, dobrando o ponto a cada bit e somando G quando o bit é 1.',
+      'ECDH: Alice escolhe a e publica A = a·G; Bob escolhe b e publica B = b·G.',
+      'Alice calcula a·B e Bob calcula b·A: o mesmo ponto (ab)·G, cujo x vira a chave compartilhada.',
+    ],
+    usedIn: ['TLS 1.3 (X25519 e P-256 na maioria das conexões)', 'Bitcoin e Ethereum (ECDSA na curva secp256k1)', 'Signal, WhatsApp e iMessage', 'SSH (chaves Ed25519)', 'Passaportes eletrônicos, cartões e chaves de segurança (FIDO2)'],
+    realWorld: [
+      { title: 'Bitcoin', text: 'A chave privada de uma carteira de Bitcoin é um número k de 256 bits; a chave pública é k·G na curva secp256k1. Gastar moedas exige uma assinatura ECDSA feita com k.' },
+      { title: 'X25519 em todo lugar', text: 'A curva Curve25519, criada por Daniel J. Bernstein em 2005, foi projetada para ser rápida e difícil de implementar errado. Hoje ela faz a troca de chaves da maioria das conexões HTTPS, do Signal, do WireGuard e do SSH.' },
+      { title: 'Chaves de segurança', text: 'Chaves FIDO2 (YubiKey, passkeys do celular) geram um par de chaves de curva elíptica por site e assinam um desafio a cada login. A chave privada nunca sai do dispositivo.' },
+    ],
+    curiosities: [
+      'Neal Koblitz e Victor Miller propuseram curvas elípticas para criptografia em 1985, independentemente — e a ideia levou cerca de 20 anos para ser amplamente adotada.',
+      'Em 2013, documentos vazados por Edward Snowden indicaram que a NSA havia inserido uma porta dos fundos no gerador de números Dual_EC_DRBG, baseado em curvas elípticas. O padrão foi retirado em 2014.',
+      'A curva do visualizador tem só 99 pontos; a secp256k1 do Bitcoin tem cerca de 2²⁵⁶ — mais do que o número estimado de átomos do universo observável.',
+    ],
+    code: {
+      python: String.raw`
+        # Curva didática y² = x³ + 2x + 3 (mod 97); G = (0, 10) gera 50 pontos.
+        # Em produção: X25519 ou P-256 de uma biblioteca (ex.: o pacote cryptography).
+        P, A = 97, 2
+        G = (0, 10)
+
+        def soma(p1, p2):  # None representa o ponto no infinito (o "zero" da curva)
+            if p1 is None: return p2
+            if p2 is None: return p1
+            (x1, y1), (x2, y2) = p1, p2
+            if x1 == x2 and (y1 + y2) % P == 0:
+                return None
+            if p1 == p2:
+                l = (3 * x1 * x1 + A) * pow(2 * y1, -1, P) % P   # tangente (dobrar)
+            else:
+                l = (y2 - y1) * pow(x2 - x1, -1, P) % P          # reta pelos dois pontos
+            x3 = (l * l - x1 - x2) % P
+            return (x3, (l * (x1 - x3) - y1) % P)
+
+        def multiplicar(k, ponto):  # dobra e soma
+            R = None
+            for bit in bin(k)[2:]:
+                R = soma(R, R)
+                if bit == "1":
+                    R = soma(R, ponto)
+            return R
+
+        a, b = 7, 23                           # segredos de Alice e de Bob
+        Apub, Bpub = multiplicar(a, G), multiplicar(b, G)
+        print(Apub, Bpub)                         # (10, 76) (49, 34)
+        print(multiplicar(a, Bpub), multiplicar(b, Apub))   # o mesmo ponto: (17, 87) (17, 87)
+      `,
+      javascript: String.raw`
+        // Curva didática y² = x³ + 2x + 3 (mod 97); G = (0, 10) gera 50 pontos.
+        // Em produção: crypto.diffieHellman com chaves X25519 (crypto.generateKeyPairSync("x25519")).
+        const P = 97, A = 2, G = [0, 10];
+        const mod = v => ((v % P) + P) % P;
+        const inverso = v => { let r = 1, b = mod(v); for (let e = P - 2; e; e >>= 1, b = (b * b) % P) if (e & 1) r = (r * b) % P; return r; };
+
+        function soma(p1, p2) { // null representa o ponto no infinito (o "zero" da curva)
+          if (!p1) return p2;
+          if (!p2) return p1;
+          const [x1, y1] = p1, [x2, y2] = p2;
+          if (x1 === x2 && mod(y1 + y2) === 0) return null;
+          const l = x1 === x2 && y1 === y2
+            ? mod((3 * x1 * x1 + A) * inverso(2 * y1))    // tangente (dobrar)
+            : mod((y2 - y1) * inverso(x2 - x1));          // reta pelos dois pontos
+          const x3 = mod(l * l - x1 - x2);
+          return [x3, mod(l * (x1 - x3) - y1)];
+        }
+
+        function multiplicar(k, ponto) { // dobra e soma
+          let R = null;
+          for (const bit of k.toString(2)) {
+            R = soma(R, R);
+            if (bit === "1") R = soma(R, ponto);
+          }
+          return R;
+        }
+
+        const a = 7, b = 23; // segredos de Alice e de Bob
+        const Apub = multiplicar(a, G), Bpub = multiplicar(b, G);
+        const txt = p => "(" + p.join(", ") + ")";
+        console.log(txt(Apub) + " " + txt(Bpub)); // (10, 76) (49, 34)
+        console.log(txt(multiplicar(a, Bpub)) + " " + txt(multiplicar(b, Apub))); // o mesmo ponto: (17, 87) (17, 87)
+      `,
+      java: String.raw`
+        public class CurvaEliptica {
+            // Curva didática y² = x³ + 2x + 3 (mod 97); G = (0, 10). Em produção: KeyAgreement "X25519" ou "ECDH".
+            static final int P = 97, A = 2;
+
+            static int mod(long v) { return (int) (((v % P) + P) % P); }
+            static int inverso(int v) { // pequeno teorema de Fermat
+                long r = 1, b = mod(v);
+                for (int e = P - 2; e > 0; e >>= 1, b = b * b % P) if ((e & 1) == 1) r = r * b % P;
+                return (int) r;
+            }
+
+            static int[] soma(int[] p1, int[] p2) { // null representa o ponto no infinito
+                if (p1 == null) return p2;
+                if (p2 == null) return p1;
+                if (p1[0] == p2[0] && mod(p1[1] + p2[1]) == 0) return null;
+                int l = p1[0] == p2[0] && p1[1] == p2[1]
+                    ? mod((long) (3 * p1[0] * p1[0] + A) * inverso(2 * p1[1]))   // tangente (dobrar)
+                    : mod((long) (p2[1] - p1[1]) * inverso(p2[0] - p1[0]));      // reta pelos dois pontos
+                int x3 = mod((long) l * l - p1[0] - p2[0]);
+                return new int[]{x3, mod((long) l * (p1[0] - x3) - p1[1])};
+            }
+
+            static int[] multiplicar(int k, int[] ponto) { // dobra e soma
+                int[] R = null;
+                for (char bit : Integer.toBinaryString(k).toCharArray()) {
+                    R = soma(R, R);
+                    if (bit == '1') R = soma(R, ponto);
+                }
+                return R;
+            }
+
+            static String txt(int[] p) { return "(" + p[0] + ", " + p[1] + ")"; }
+
+            public static void main(String[] args) {
+                int[] G = {0, 10};
+                int a = 7, b = 23; // segredos de Alice e de Bob
+                int[] Apub = multiplicar(a, G), Bpub = multiplicar(b, G);
+                System.out.println(txt(Apub) + " " + txt(Bpub)); // (10, 76) (49, 34)
+                System.out.println(txt(multiplicar(a, Bpub)) + " " + txt(multiplicar(b, Apub))); // o mesmo ponto: (17, 87) (17, 87)
+            }
+        }
+      `,
+      cpp: String.raw`
+        #include <cstdio>
+        #include <optional>
+        #include <utility>
+        using namespace std;
+
+        // Curva didática y² = x³ + 2x + 3 (mod 97); G = (0, 10). Em produção: X25519 do OpenSSL ou libsodium.
+        const long long P = 97, A = 2;
+        using Ponto = optional<pair<long long, long long>>; // vazio = ponto no infinito
+
+        long long mod(long long v) { return (v % P + P) % P; }
+        long long inverso(long long v) { // pequeno teorema de Fermat
+            long long r = 1, b = mod(v);
+            for (long long e = P - 2; e; e >>= 1, b = b * b % P) if (e & 1) r = r * b % P;
+            return r;
+        }
+
+        Ponto soma(Ponto p1, Ponto p2) {
+            if (!p1) return p2;
+            if (!p2) return p1;
+            auto [x1, y1] = *p1;
+            auto [x2, y2] = *p2;
+            if (x1 == x2 && mod(y1 + y2) == 0) return nullopt;
+            long long l = (x1 == x2 && y1 == y2)
+                ? mod((3 * x1 * x1 + A) * inverso(2 * y1))  // tangente (dobrar)
+                : mod((y2 - y1) * inverso(x2 - x1));        // reta pelos dois pontos
+            long long x3 = mod(l * l - x1 - x2);
+            return make_pair(x3, mod(l * (x1 - x3) - y1));
+        }
+
+        Ponto multiplicar(int k, Ponto ponto) { // dobra e soma
+            Ponto R;
+            for (int i = 31 - __builtin_clz(k); i >= 0; i--) {
+                R = soma(R, R);
+                if ((k >> i) & 1) R = soma(R, ponto);
+            }
+            return R;
+        }
+
+        int main() {
+            Ponto G = make_pair(0LL, 10LL);
+            int a = 7, b = 23; // segredos de Alice e de Bob
+            Ponto Apub = multiplicar(a, G), Bpub = multiplicar(b, G);
+            printf("(%lld, %lld) (%lld, %lld)\n", Apub->first, Apub->second, Bpub->first, Bpub->second); // (10, 76) (49, 34)
+            Ponto s1 = multiplicar(a, Bpub), s2 = multiplicar(b, Apub);
+            printf("(%lld, %lld) (%lld, %lld)\n", s1->first, s1->second, s2->first, s2->second); // o mesmo ponto: (17, 87) (17, 87)
+        }
+      `,
+    },
+  },
 ]
