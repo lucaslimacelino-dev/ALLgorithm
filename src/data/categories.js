@@ -50,6 +50,14 @@ export const categoryList = [
     id: 'otimizacao', icon: '⛰', title: 'Otimização e Algoritmos Evolutivos', description: 'Do gradiente ao Simplex, passando por têmpera simulada, algoritmos genéticos e colônias de formigas.',
     en: { title: 'Optimization & Evolutionary Algorithms', description: 'From gradient descent to Simplex, through simulated annealing, genetic algorithms and ant colonies.' },
   },
+  {
+    id: 'sinais', icon: '∿', title: 'Processamento de Sinais', description: 'Filtros, transformadas de Fourier, CORDIC, contagem de ciclos de fadiga e reconstrução de imagens médicas.',
+    en: { title: 'Signal Processing', description: 'Filters, Fourier transforms, CORDIC, fatigue cycle counting and medical image reconstruction.' },
+  },
+  {
+    id: 'distribuidos', icon: '⇄', title: 'Sistemas Distribuídos', description: 'Como ordenar eventos e fotografar o estado de várias máquinas que só se comunicam por mensagens.',
+    en: { title: 'Distributed Systems', description: 'How to order events and take a snapshot of many machines that only talk through messages.' },
+  },
 ]
 
 // Campos incluídos no índice carregado com o site (busca, biblioteca, página inicial).

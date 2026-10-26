@@ -17,6 +17,8 @@ const DigestVisualizer = lazy(() => import('./DigestVisualizer'))
 const DpTableVisualizer = lazy(() => import('./DpTableVisualizer'))
 const BoardVisualizer = lazy(() => import('./BoardVisualizer'))
 const LandscapeVisualizer = lazy(() => import('./LandscapeVisualizer'))
+const SignalVisualizer = lazy(() => import('./SignalVisualizer'))
+const SpaceTimeVisualizer = lazy(() => import('./SpaceTimeVisualizer'))
 
 const byId = {
   'bst-search': lazy(() => import('./BstVisualizer')),
@@ -79,6 +81,15 @@ const byId = {
   'genetic-algorithm': lazy(() => import('./GeneticVisualizer')),
   'ant-colony': lazy(() => import('./AntColonyVisualizer')),
   'simplex': lazy(() => import('./SimplexVisualizer')),
+  'moving-average': SignalVisualizer,
+  'dft': SignalVisualizer,
+  'fft': SignalVisualizer,
+  'cordic': SignalVisualizer,
+  'rainflow': SignalVisualizer,
+  'osem': SignalVisualizer,
+  'lamport-clocks': SpaceTimeVisualizer,
+  'vector-clocks': SpaceTimeVisualizer,
+  'chandy-lamport': SpaceTimeVisualizer,
 }
 
 // Visualizadores compartilhados por famílias de algoritmos. As listas de ids ficam aqui (e não
