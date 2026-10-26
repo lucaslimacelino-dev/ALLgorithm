@@ -42,6 +42,10 @@ export const categoryList = [
     id: 'criptografia', icon: '⚿', title: 'Criptografia', description: 'Cifras clássicas, cifras de bloco e de fluxo, funções de hash e autenticação: como proteger e verificar dados.',
     en: { title: 'Cryptography', description: 'Classical ciphers, block and stream ciphers, hash functions and authentication: how data is protected and verified.' },
   },
+  {
+    id: 'programacao-dinamica', icon: '▦', title: 'Programação Dinâmica e Backtracking', description: 'Tabelas que guardam subproblemas e buscas que voltam atrás: mochila, LCS, distância de edição, N-rainhas e Sudoku.',
+    en: { title: 'Dynamic Programming & Backtracking', description: 'Tables that store subproblems and searches that backtrack: knapsack, LCS, edit distance, N-queens and Sudoku.' },
+  },
 ]
 
 // Campos incluídos no índice carregado com o site (busca, biblioteca, página inicial).

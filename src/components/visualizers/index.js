@@ -14,6 +14,8 @@ const GeometryVisualizer = lazy(() => import('./GeometryVisualizer'))
 const RasterVisualizer = lazy(() => import('./RasterVisualizer'))
 const ClassicCipherVisualizer = lazy(() => import('./ClassicCipherVisualizer'))
 const DigestVisualizer = lazy(() => import('./DigestVisualizer'))
+const DpTableVisualizer = lazy(() => import('./DpTableVisualizer'))
+const BoardVisualizer = lazy(() => import('./BoardVisualizer'))
 
 const byId = {
   'bst-search': lazy(() => import('./BstVisualizer')),
@@ -60,6 +62,16 @@ const byId = {
   'aes': lazy(() => import('./AesVisualizer')),
   'diffie-hellman': lazy(() => import('./DiffieHellmanVisualizer')),
   'elliptic-curve': lazy(() => import('./EllipticCurveVisualizer')),
+  'fibonacci-dp': DpTableVisualizer,
+  'coin-change': DpTableVisualizer,
+  'knapsack': DpTableVisualizer,
+  'lcs': DpTableVisualizer,
+  'edit-distance': DpTableVisualizer,
+  'subset-sum': DpTableVisualizer,
+  'lis': DpTableVisualizer,
+  'matrix-chain': DpTableVisualizer,
+  'n-queens': BoardVisualizer,
+  'sudoku': BoardVisualizer,
 }
 
 // Visualizadores compartilhados por famílias de algoritmos. As listas de ids ficam aqui (e não
