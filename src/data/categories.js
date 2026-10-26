@@ -46,6 +46,10 @@ export const categoryList = [
     id: 'programacao-dinamica', icon: '▦', title: 'Programação Dinâmica e Backtracking', description: 'Tabelas que guardam subproblemas e buscas que voltam atrás: mochila, LCS, distância de edição, N-rainhas e Sudoku.',
     en: { title: 'Dynamic Programming & Backtracking', description: 'Tables that store subproblems and searches that backtrack: knapsack, LCS, edit distance, N-queens and Sudoku.' },
   },
+  {
+    id: 'otimizacao', icon: '⛰', title: 'Otimização e Algoritmos Evolutivos', description: 'Do gradiente ao Simplex, passando por têmpera simulada, algoritmos genéticos e colônias de formigas.',
+    en: { title: 'Optimization & Evolutionary Algorithms', description: 'From gradient descent to Simplex, through simulated annealing, genetic algorithms and ant colonies.' },
+  },
 ]
 
 // Campos incluídos no índice carregado com o site (busca, biblioteca, página inicial).

@@ -46,6 +46,5 @@ export const difficultyColor = {
 
 // Categorias planejadas, exibidas como "em preparação" na página inicial.
 export const upcomingCategories = [
-  'Otimização', 'Algoritmos Evolutivos',
   'Sistemas Distribuídos', 'Processamento de Sinais', 'Análise Sintática', 'Algoritmos Quânticos',
 ]

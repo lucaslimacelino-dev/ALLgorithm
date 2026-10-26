@@ -16,6 +16,7 @@ const ClassicCipherVisualizer = lazy(() => import('./ClassicCipherVisualizer'))
 const DigestVisualizer = lazy(() => import('./DigestVisualizer'))
 const DpTableVisualizer = lazy(() => import('./DpTableVisualizer'))
 const BoardVisualizer = lazy(() => import('./BoardVisualizer'))
+const LandscapeVisualizer = lazy(() => import('./LandscapeVisualizer'))
 
 const byId = {
   'bst-search': lazy(() => import('./BstVisualizer')),
@@ -72,6 +73,12 @@ const byId = {
   'matrix-chain': DpTableVisualizer,
   'n-queens': BoardVisualizer,
   'sudoku': BoardVisualizer,
+  'gradient-descent': LandscapeVisualizer,
+  'hill-climbing': LandscapeVisualizer,
+  'simulated-annealing': LandscapeVisualizer,
+  'genetic-algorithm': lazy(() => import('./GeneticVisualizer')),
+  'ant-colony': lazy(() => import('./AntColonyVisualizer')),
+  'simplex': lazy(() => import('./SimplexVisualizer')),
 }
 
 // Visualizadores compartilhados por famílias de algoritmos. As listas de ids ficam aqui (e não
