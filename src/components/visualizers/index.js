@@ -90,6 +90,9 @@ const byId = {
   'lamport-clocks': SpaceTimeVisualizer,
   'vector-clocks': SpaceTimeVisualizer,
   'chandy-lamport': SpaceTimeVisualizer,
+  'recursive-descent': lazy(() => import('./ParseTreeVisualizer')),
+  'cyk': DpTableVisualizer,
+  'halting-problem': lazy(() => import('./CollatzVisualizer')),
 }
 
 // Visualizadores compartilhados por famílias de algoritmos. As listas de ids ficam aqui (e não
@@ -100,7 +103,7 @@ const shared = [
   [GridSearchVisualizer, ['bfs', 'dfs', 'best-first-search', 'a-star']],
   [StringSearchVisualizer, ['naive-string-search', 'kmp', 'rabin-karp', 'boyer-moore', 'horspool', 'shift-or']],
   [GraphVisualizer, ['dijkstra', 'bellman-ford', 'floyd-warshall', 'kruskal', 'prim', 'boruvka', 'topological-sort', 'ford-fulkerson', 'edmonds-karp', 'clarke-wright']],
-  [NumberTraceVisualizer, ['euclid', 'trial-division', 'fast-exponentiation', 'karatsuba', 'miller-rabin', 'fermat-factorization', 'pollard-rho', 'pollard-p-1', 'quadratic-sieve', 'lenstra-ecm', 'aks', 'rounding', 'babylonian-sqrt', 'nth-root-digits', 'gauss-legendre', 'power-iteration', 'run-length-encoding', 'delta-encoding', 'incremental-encoding', 'move-to-front', 'lz78', 'lzw', 'deflate', 'one-time-pad', 'rc4', 'hmac', 'des', 'blowfish', 'idea', 'rsa', 'elgamal', 'dsa', 'ntru']],
+  [NumberTraceVisualizer, ['euclid', 'trial-division', 'fast-exponentiation', 'karatsuba', 'miller-rabin', 'fermat-factorization', 'pollard-rho', 'pollard-p-1', 'quadratic-sieve', 'lenstra-ecm', 'aks', 'rounding', 'babylonian-sqrt', 'nth-root-digits', 'gauss-legendre', 'power-iteration', 'run-length-encoding', 'delta-encoding', 'incremental-encoding', 'move-to-front', 'lz78', 'lzw', 'deflate', 'one-time-pad', 'rc4', 'hmac', 'des', 'blowfish', 'idea', 'rsa', 'elgamal', 'dsa', 'ntru', 'earley', 'parity-bit', 'xor-swap', 'chs-conversion', 'crc', 'hamming-code']],
 ]
 for (const [component, ids] of shared) for (const id of ids) byId[id] ??= component
 

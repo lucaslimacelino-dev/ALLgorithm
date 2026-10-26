@@ -58,6 +58,14 @@ export const categoryList = [
     id: 'distribuidos', icon: '⇄', title: 'Sistemas Distribuídos', description: 'Como ordenar eventos e fotografar o estado de várias máquinas que só se comunicam por mensagens.',
     en: { title: 'Distributed Systems', description: 'How to order events and take a snapshot of many machines that only talk through messages.' },
   },
+  {
+    id: 'linguagens', icon: '⟨⟩', title: 'Linguagens e Computabilidade', description: 'Como compiladores entendem código — e os limites do que qualquer algoritmo pode decidir.',
+    en: { title: 'Languages & Computability', description: 'How compilers understand code — and the limits of what any algorithm can decide.' },
+  },
+  {
+    id: 'bits', icon: '01', title: 'Bits e Detecção de Erros', description: 'Paridade, CRC, Hamming e outros truques com bits que mantêm os dados íntegros.',
+    en: { title: 'Bits & Error Detection', description: 'Parity, CRC, Hamming and other bit tricks that keep data intact.' },
+  },
 ]
 
 // Campos incluídos no índice carregado com o site (busca, biblioteca, página inicial).

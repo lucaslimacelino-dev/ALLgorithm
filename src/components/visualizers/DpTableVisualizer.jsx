@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { dpAlgorithms } from '../../lib/dpFrames'
+import { languageTables } from '../../lib/languageFrames'
 import { useI18n } from '../../i18n'
 import { Legend, PlayerControls, StepNote, usePlayer } from './Player'
 import FieldsForm from './FieldsForm'
@@ -9,7 +10,7 @@ const has = (list, r, c) => list?.some(([a, b]) => a === r && b === c)
 // Programação dinâmica: a tabela sendo preenchida, com as células de que cada valor depende.
 export default function DpTableVisualizer({ algorithm }) {
   const { t } = useI18n()
-  const config = dpAlgorithms[algorithm.id]
+  const config = dpAlgorithms[algorithm.id] ?? languageTables[algorithm.id]
   const example = Object.fromEntries(config.fields.map(([k, v]) => [k, v]))
   const [input, setInput] = useState(example)
   const frames = useMemo(() => config.run(input), [config, input])
