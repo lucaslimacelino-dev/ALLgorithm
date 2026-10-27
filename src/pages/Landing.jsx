@@ -1,15 +1,19 @@
-import { useEffect, useState } from 'react'
+import { Suspense, lazy, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import SearchBox from '../components/SearchBox'
-import HeroVisual from '../components/HeroVisual'
+import CategoryIcon from '../components/CategoryIcon'
 import DifficultyBadge from '../components/DifficultyBadge'
 import { SITE } from '../config/site'
 import { usePageTitle } from '../lib/usePageTitle'
 import { useI18n } from '../i18n'
 import { upcomingNames } from '../i18n/messages'
 import { algorithms, categories, getAlgorithm, getCategory, languages, loadAlgorithmContent, mainComplexity, preloadAlgorithm, upcomingCategories } from '../data'
+
+// As animações ficam em pedaços separados do bundle e chegam logo depois da página.
+const Showcase = lazy(() => import('../components/showcase/Showcase'))
+const Gallery = lazy(() => import('../components/showcase/Gallery'))
 
 const popular = ['quick-sort', 'merge-sort', 'heap-sort', 'bubble-sort'].map(getAlgorithm).filter(Boolean)
 
@@ -83,7 +87,9 @@ export default function Landing() {
             </div>
 
             <div className="animate-page-in [animation-delay:120ms]">
-              <HeroVisual />
+              <Suspense fallback={<div className="card h-[22.5rem] sm:h-[25rem]" />}>
+                <Showcase />
+              </Suspense>
             </div>
           </div>
         </section>
@@ -140,6 +146,18 @@ export default function Landing() {
           )}
         </section>
 
+        {/* EM MOVIMENTO */}
+        <section className="border-t border-line">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-20">
+            <SectionHeading eyebrow={t('landing.motion')} title={t('landing.motionTitle')}>
+              {t('landing.motionText')}
+            </SectionHeading>
+            <Suspense fallback={<div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{[0, 1, 2, 3, 4, 5].map(i => <div key={i} className="card h-80" />)}</div>}>
+              <Gallery />
+            </Suspense>
+          </div>
+        </section>
+
         {/* ÍNDICE POR CATEGORIA */}
         <section id="categorias" className="scroll-mt-20 border-t border-line bg-subtle/40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-20">
@@ -150,9 +168,14 @@ export default function Landing() {
 
             <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
               {categories.map((cat, i) => (
-                <div key={cat.id} className="card p-7 flex flex-col">
+                <div key={cat.id} className="group card p-7 flex flex-col">
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs text-faint">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="inline-flex items-center gap-3">
+                      <span className="w-10 h-10 grid place-items-center rounded-xl bg-accent/10 text-accent transition-colors group-hover:bg-accent group-hover:text-white">
+                        <CategoryIcon id={cat.id} className="w-5 h-5" />
+                      </span>
+                      <span className="font-mono text-xs text-faint">{String(i + 1).padStart(2, '0')}</span>
+                    </span>
                     <span className="text-xs text-muted">{t('landing.articles', { n: cat.items.length })}</span>
                   </div>
                   <h3 className="mt-4 title text-xl">

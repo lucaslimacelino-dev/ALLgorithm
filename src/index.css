@@ -77,6 +77,13 @@
   .card-hover { @apply hover:shadow-lift hover:-translate-y-0.5 hover:border-ink/15; }
 }
 
+/* Ícones das categorias: os traços se redesenham quando o cartão (.group) recebe o mouse. */
+.group:hover .icon-draw > * { stroke-dasharray: 1; animation: icon-draw 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.group:hover .icon-draw > :nth-child(2) { animation-delay: 0.08s; }
+.group:hover .icon-draw > :nth-child(3) { animation-delay: 0.16s; }
+.group:hover .icon-draw > :nth-child(n + 4) { animation-delay: 0.24s; }
+@keyframes icon-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+
 /* Fora de @layer: os nomes são montados dinamicamente (tok-${tipo}) e não podem ser removidos no build. */
 .tok-plain   { color: rgb(var(--tok-plain)); }
 .tok-keyword { color: rgb(var(--tok-keyword)); }
