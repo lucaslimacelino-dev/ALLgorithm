@@ -171,7 +171,7 @@ export default function Landing() {
                 </div>
               ))}
 
-              <div className="rounded-2xl border border-dashed border-line p-7 md:col-span-2 lg:col-span-2">
+              {upcomingCategories.length > 0 && <div className="rounded-2xl border border-dashed border-line p-7 md:col-span-2 lg:col-span-2">
                 <span className="font-mono text-xs text-faint">{t('landing.upcoming')}</span>
                 <p className="mt-4 text-sm text-muted">{t('landing.upcomingText')}</p>
                 <ul className="mt-4 flex flex-wrap gap-1.5">
@@ -179,7 +179,7 @@ export default function Landing() {
                     <li key={c} className="px-2.5 h-7 inline-flex items-center rounded-full border border-line text-[13px] text-faint">{locale === 'en' ? upcomingNames[c] ?? c : c}</li>
                   ))}
                 </ul>
-              </div>
+              </div>}
             </div>
           </div>
         </section>

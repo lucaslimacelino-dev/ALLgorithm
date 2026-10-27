@@ -66,6 +66,14 @@ export const categoryList = [
     id: 'bits', icon: '01', title: 'Bits e Detecção de Erros', description: 'Paridade, CRC, Hamming e outros truques com bits que mantêm os dados íntegros.',
     en: { title: 'Bits & Error Detection', description: 'Parity, CRC, Hamming and other bit tricks that keep data intact.' },
   },
+  {
+    id: 'quanticos', icon: '⟩', title: 'Algoritmos Quânticos', description: 'Superposição, interferência e a transformada de Fourier quântica: Deutsch-Jozsa, Grover e Shor em um simulador no navegador.',
+    en: { title: 'Quantum Algorithms', description: 'Superposition, interference and the quantum Fourier transform: Deutsch-Jozsa, Grover and Shor in an in-browser simulator.' },
+  },
+  {
+    id: 'algebra', icon: 'x²', title: 'Álgebra Simbólica', description: 'Cálculo exato com polinômios e palavras: divisão multivariada, bases de Gröbner e completação de Knuth-Bendix.',
+    en: { title: 'Symbolic Algebra', description: 'Exact computation with polynomials and words: multivariate division, Gröbner bases and Knuth-Bendix completion.' },
+  },
 ]
 
 // Campos incluídos no índice carregado com o site (busca, biblioteca, página inicial).

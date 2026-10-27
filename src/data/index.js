@@ -45,6 +45,4 @@ export const difficultyColor = {
 }
 
 // Categorias planejadas, exibidas como "em preparação" na página inicial.
-export const upcomingCategories = [
-  'Algoritmos Quânticos', 'Álgebra Simbólica',
-]
+export const upcomingCategories = []
