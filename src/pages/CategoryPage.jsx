@@ -3,30 +3,21 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import CategoryIcon from '../components/CategoryIcon'
-import DifficultyBadge from '../components/DifficultyBadge'
-import { getVisualizer } from '../components/visualizers'
-import { categories, difficulties, getCategory, mainComplexity, preloadAlgorithm } from '../data'
+import { categories, getCategory, mainComplexity, preloadAlgorithm } from '../data'
+import { topics } from '../data/topics'
 import { matchScore } from '../lib/search'
 import { usePageTitle } from '../lib/usePageTitle'
 import { useI18n } from '../i18n'
 
-function AlgorithmCard({ algorithm, index }) {
-  const { t, loc } = useI18n()
+function AlgorithmCard({ algorithm }) {
+  const { loc } = useI18n()
   return (
     <Link
       to={`/algoritmos/${algorithm.id}`}
       onMouseEnter={() => preloadAlgorithm(algorithm.id)}
       className="group card card-hover p-5 flex flex-col"
     >
-      <div className="flex items-center justify-between gap-3">
-        <span className="font-mono text-xs text-faint tabular-nums">{String(index + 1).padStart(2, '0')}</span>
-        {getVisualizer(algorithm.id) && (
-          <span className="inline-flex items-center gap-1 px-2 h-6 rounded-full bg-accent/10 text-accent text-[11px] font-medium">
-            <span aria-hidden="true">▶</span> {t('category.interactive')}
-          </span>
-        )}
-      </div>
-      <h3 className="mt-3 title text-[17px] leading-snug group-hover:text-accent">{loc(algorithm).name}</h3>
+      <h3 className="title text-[17px] leading-snug group-hover:text-accent">{loc(algorithm).name}</h3>
       <p className="mt-1.5 text-sm leading-relaxed text-muted line-clamp-3">{loc(algorithm).summary}</p>
       <div className="mt-auto pt-4 flex items-center justify-between gap-3">
         <span className="font-mono text-xs text-muted truncate">{mainComplexity(algorithm)}</span>
@@ -36,14 +27,21 @@ function AlgorithmCard({ algorithm, index }) {
   )
 }
 
-// Página de uma categoria: apresenta a categoria e organiza os algoritmos em trilha, do iniciante ao avançado.
+const Grid = ({ items }) => (
+  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {items.map(a => <AlgorithmCard key={a.id} algorithm={a} />)}
+  </div>
+)
+
+// Página de uma categoria: os algoritmos agrupados por tema (a ideia que usam ou o problema que
+// resolvem), com opção de ver tudo em ordem alfabética.
 export default function CategoryPage() {
   const { id } = useParams()
   const { t, loc, locale } = useI18n()
   const category = getCategory(id)
   usePageTitle(category ? loc(category).title : null)
   const [query, setQuery] = useState('')
-  const [level, setLevel] = useState('')
+  const [view, setView] = useState('topics')
   const pills = useRef(null)
   const articles = n => (n === 1 ? t('category.oneArticle') : t('library.articles', { n }))
 
@@ -51,23 +49,24 @@ export default function CategoryPage() {
   useEffect(() => {
     const el = pills.current?.querySelector('[aria-current="page"]')
     if (el) pills.current.scrollLeft = el.offsetLeft - pills.current.clientWidth / 2 + el.offsetWidth / 2
-    setQuery(''); setLevel('')
+    setQuery('')
   }, [id])
 
   const items = useMemo(() => (
-    category ? category.items.filter(a => (!level || a.difficulty === level) && matchScore(a, query, locale) >= 0) : []
-  ), [category, query, level, locale])
+    category ? category.items.filter(a => matchScore(a, query, locale) >= 0) : []
+  ), [category, query, locale])
 
   if (!category) return <Navigate to="/#categorias" replace />
 
   const position = categories.indexOf(category)
   const prev = categories[(position - 1 + categories.length) % categories.length]
   const next = categories[(position + 1) % categories.length]
-  const counts = Object.fromEntries(difficulties.map(d => [d, category.items.filter(a => a.difficulty === d).length]))
-  // Ponto de partida: o indicado na categoria, ou o primeiro artigo de nível iniciante.
-  const start = category.items.find(a => a.id === category.start) ?? category.items.find(a => a.difficulty === 'Iniciante') ?? category.items[0]
-  const numbered = new Map(category.items.map((a, i) => [a.id, i]))
-  const groups = difficulties.map(d => [d, items.filter(a => a.difficulty === d)]).filter(([, list]) => list.length)
+  const byId = new Map(items.map(a => [a.id, a]))
+  const groups = (topics[category.id] ?? [])
+    .map((topic, i) => ({ key: `tema-${i}`, title: locale === 'pt' ? topic.title : topic[locale] ?? topic.title, items: topic.ids.map(x => byId.get(x)).filter(Boolean) }))
+    .filter(g => g.items.length)
+  const sorted = [...items].sort((a, b) => loc(a).name.localeCompare(loc(b).name, locale))
+  const topicCount = (topics[category.id] ?? []).length
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -101,38 +100,20 @@ export default function CategoryPage() {
               ))}
             </div>
 
-            <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-end">
-              <div>
-                <span className="w-14 h-14 grid place-items-center rounded-2xl bg-accent text-white shadow-soft">
-                  <CategoryIcon id={category.id} className="w-7 h-7" />
-                </span>
-                <h1 className="mt-5 title text-4xl sm:text-5xl tracking-[-0.035em]">{loc(category).title}</h1>
-                <p className="mt-4 max-w-2xl text-[17px] leading-relaxed text-muted">{loc(category).description}</p>
-                <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
-                  <span className="text-muted">{articles(category.items.length)}</span>
-                  {difficulties.filter(d => counts[d]).map(d => (
-                    <span key={d} className="inline-flex items-center gap-1.5">
-                      <span className="font-medium text-ink tabular-nums">{counts[d]}</span>
-                      <DifficultyBadge level={d} className="!text-sm" />
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {start && (
-                <Link to={`/algoritmos/${start.id}`} onMouseEnter={() => preloadAlgorithm(start.id)} className="group card card-hover p-6 bg-ink text-paper border-ink">
-                  <p className="text-[13px] font-medium text-paper/60">{t('category.start')}</p>
-                  <p className="mt-2 title !text-paper text-xl">{loc(start).name}</p>
-                  <p className="mt-2 text-sm leading-relaxed text-paper/70 line-clamp-2">{loc(start).summary}</p>
-                  <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium">{t('landing.read')} <span className="group-hover:translate-x-1 transition-transform">→</span></span>
-                </Link>
-              )}
-            </div>
+            <span className="mt-8 w-14 h-14 grid place-items-center rounded-2xl bg-accent text-white shadow-soft">
+              <CategoryIcon id={category.id} className="w-7 h-7" />
+            </span>
+            <h1 className="mt-5 title text-4xl sm:text-5xl tracking-[-0.035em]">{loc(category).title}</h1>
+            <p className="mt-4 max-w-2xl text-[17px] leading-relaxed text-muted">{loc(category).description}</p>
+            <p className="mt-6 text-sm text-muted">
+              {articles(category.items.length)}
+              {topicCount > 1 && <> · {t('category.topicCount', { n: topicCount })}</>}
+            </p>
           </div>
         </div>
 
-        {/* Filtros + trilha */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+          {/* Busca e modo de exibição */}
           <div className="flex flex-col md:flex-row md:items-center gap-3">
             <div className="relative flex-1 max-w-md">
               <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-faint pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -146,39 +127,55 @@ export default function CategoryPage() {
                 className="w-full h-11 pl-11 pr-4 rounded-full bg-surface border border-line shadow-soft text-sm text-ink placeholder:text-faint focus:outline-none focus:ring-4 focus:ring-accent/10"
               />
             </div>
-            <div className="inline-flex p-1 rounded-full border border-line bg-surface shadow-soft self-start overflow-x-auto max-w-full" role="group" aria-label={t('library.level')}>
-              {['', ...difficulties].filter(d => !d || counts[d]).map(d => (
+            <div className="inline-flex p-1 rounded-full border border-line bg-surface shadow-soft self-start" role="group" aria-label={t('category.view')}>
+              {[['topics', t('category.byTopic')], ['az', t('category.az')]].map(([v, label]) => (
                 <button
-                  key={d || 'todos'}
+                  key={v}
                   type="button"
-                  onClick={() => setLevel(d)}
-                  aria-pressed={level === d}
-                  className={`shrink-0 h-9 px-4 rounded-full text-[13px] inline-flex items-center gap-2 ${level === d ? 'bg-ink text-paper' : 'text-muted hover:text-ink'}`}
+                  onClick={() => setView(v)}
+                  aria-pressed={view === v}
+                  className={`h-9 px-4 rounded-full text-[13px] ${view === v ? 'bg-ink text-paper' : 'text-muted hover:text-ink'}`}
                 >
-                  {d ? <DifficultyBadge level={d} className="!text-inherit !text-[13px]" /> : t('library.all')}
+                  {label}
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="mt-10 space-y-12">
-            {groups.map(([d, list]) => (
-              <section key={d}>
-                <div className="flex items-center gap-3 mb-5">
-                  <DifficultyBadge level={d} className="!text-[15px] !text-ink font-semibold" />
-                  <span className="h-px flex-1 bg-line" />
-                  <span className="text-[13px] text-faint">{articles(list.length)}</span>
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {list.map(a => <AlgorithmCard key={a.id} algorithm={a} index={numbered.get(a.id)} />)}
-                </div>
-              </section>
-            ))}
+          {/* Atalhos para os temas */}
+          {view === 'topics' && groups.length > 1 && (
+            <div className="mt-5 flex flex-wrap gap-1.5">
+              {groups.map(g => (
+                <button
+                  key={g.key}
+                  type="button"
+                  onClick={() => document.getElementById(g.key)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                  className="h-8 px-3 rounded-full bg-subtle text-[13px] text-muted hover:text-ink hover:bg-line/60"
+                >
+                  {g.title} <span className="ml-1 font-mono text-[11px] text-faint">{g.items.length}</span>
+                </button>
+              ))}
+            </div>
+          )}
 
-            {!groups.length && (
+          <div className="mt-10 space-y-12">
+            {view === 'topics'
+              ? groups.map(g => (
+                <section key={g.key} id={g.key} className="scroll-mt-24">
+                  <div className="flex items-center gap-3 mb-5">
+                    <h2 className="title text-lg">{g.title}</h2>
+                    <span className="h-px flex-1 bg-line" />
+                    <span className="text-[13px] text-faint">{articles(g.items.length)}</span>
+                  </div>
+                  <Grid items={g.items} />
+                </section>
+              ))
+              : items.length > 0 && <Grid items={sorted} />}
+
+            {!items.length && (
               <div className="card py-16 text-center">
                 <p className="title text-xl">{t('library.noneTitle')}</p>
-                <p className="mt-2 text-sm text-muted">{t('library.noneText')}</p>
+                <p className="mt-2 text-sm text-muted">{t('category.noneText')}</p>
               </div>
             )}
           </div>
