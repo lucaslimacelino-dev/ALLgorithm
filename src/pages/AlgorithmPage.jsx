@@ -38,7 +38,7 @@ function Infobox({ algorithm, category }) {
       <dl className="divide-y divide-line">
         <div className={row}>
           <dt className="text-muted">{t('article.category')}</dt>
-          <dd><Link to={`/algoritmos#${category.id}`} className="text-ink hover:text-accent">{loc(category).title}</Link></dd>
+          <dd><Link to={`/categorias/${category.id}`} className="text-ink hover:text-accent">{loc(category).title}</Link></dd>
         </div>
         <div className={row}>
           <dt className="text-muted">{t('article.level')}</dt>
@@ -180,7 +180,7 @@ function Article({ algorithm: original }) {
           <span className="mx-2">/</span>
           <Link to="/algoritmos" className="hover:text-ink">{t('crumb.library')}</Link>
           <span className="mx-2">/</span>
-          <Link to={`/algoritmos#${category.id}`} className="text-muted hover:text-ink">{loc(category).title}</Link>
+          <Link to={`/categorias/${category.id}`} className="text-muted hover:text-ink">{loc(category).title}</Link>
         </nav>
 
         {!translated && (

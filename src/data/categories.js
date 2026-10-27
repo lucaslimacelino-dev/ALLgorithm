@@ -3,7 +3,7 @@
 // Este arquivo é lido também pelo plugin de build em vite.config.js — mantenha-o sem imports.
 export const categoryList = [
   {
-    id: 'ordenacao', icon: '⇅', title: 'Ordenação', description: 'Colocar dados em ordem — a base de buscas, rankings e bancos de dados.',
+    id: 'ordenacao', start: 'bubble-sort', icon: '⇅', title: 'Ordenação', description: 'Colocar dados em ordem — a base de buscas, rankings e bancos de dados.',
     en: { title: 'Sorting', description: 'Putting data in order — the foundation of searching, rankings and databases.' },
   },
   {
@@ -19,7 +19,7 @@ export const categoryList = [
     en: { title: 'String Searching', description: 'Finding a pattern inside a text without rereading what was already read.' },
   },
   {
-    id: 'grafos', icon: '◈', title: 'Grafos', description: 'Mapas, redes e dependências: caminhos mínimos, árvores, fluxos e rotas.',
+    id: 'grafos', start: 'dijkstra', icon: '◈', title: 'Grafos', description: 'Mapas, redes e dependências: caminhos mínimos, árvores, fluxos e rotas.',
     en: { title: 'Graphs', description: 'Maps, networks and dependencies: shortest paths, trees, flows and routes.' },
   },
   {

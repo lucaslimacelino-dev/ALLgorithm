@@ -17,7 +17,7 @@ export default function Footer() {
           <h2 className="kicker mb-4">{t('footer.categories')}</h2>
           <ul className="space-y-2.5 text-sm">
             {categories.map(c => (
-              <li key={c.id}><Link to={`/algoritmos#${c.id}`} className="text-muted hover:text-ink">{loc(c).title}</Link></li>
+              <li key={c.id}><Link to={`/categorias/${c.id}`} className="text-muted hover:text-ink">{loc(c).title}</Link></li>
             ))}
           </ul>
         </div>

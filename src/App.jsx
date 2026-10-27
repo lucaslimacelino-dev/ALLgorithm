@@ -5,6 +5,7 @@ import ScrollManager from './components/ScrollManager'
 import Landing from './pages/Landing'
 import Library from './pages/Library'
 import AlgorithmPage from './pages/AlgorithmPage'
+import CategoryPage from './pages/CategoryPage'
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/algoritmos" element={<Library />} />
             <Route path="/algoritmos/:id" element={<AlgorithmPage />} />
+            <Route path="/categorias/:id" element={<CategoryPage />} />
             {/* Rota antiga, mantida para links já compartilhados */}
             <Route path="/dashboard" element={<Navigate to="/algoritmos" replace />} />
             <Route path="*" element={<Navigate to="/" replace />} />

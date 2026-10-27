@@ -87,6 +87,13 @@ export const messages = {
     'library.noneTitle': 'Nenhum artigo encontrado',
     'library.noneText': 'Tente outro termo ou remova o filtro de nível.',
 
+    'category.explore': 'Explorar categoria',
+    'category.oneArticle': '1 artigo',
+    'category.start': 'Comece por aqui',
+    'category.interactive': 'Interativo',
+    'category.filter': 'Filtrar nesta categoria…',
+    'category.prev': 'Categoria anterior',
+    'category.next': 'Próxima categoria',
     'crumb.home': 'Início',
     'crumb.library': 'Biblioteca',
 
@@ -525,6 +532,13 @@ export const messages = {
     'library.noneTitle': 'No articles found',
     'library.noneText': 'Try another term or remove the level filter.',
 
+    'category.explore': 'Explore category',
+    'category.oneArticle': '1 article',
+    'category.start': 'Start here',
+    'category.interactive': 'Interactive',
+    'category.filter': 'Filter this category…',
+    'category.prev': 'Previous category',
+    'category.next': 'Next category',
     'crumb.home': 'Home',
     'crumb.library': 'Library',
 
