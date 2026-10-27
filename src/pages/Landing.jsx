@@ -168,7 +168,7 @@ export default function Landing() {
 
             <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
               {categories.map((cat, i) => (
-                <div key={cat.id} className="group card p-7 flex flex-col">
+                <div key={cat.id} className="group relative card card-hover p-7 flex flex-col cursor-pointer">
                   <div className="flex items-center justify-between">
                     <span className="inline-flex items-center gap-3">
                       <span className="w-10 h-10 grid place-items-center rounded-xl bg-accent/10 text-accent transition-colors group-hover:bg-accent group-hover:text-white">
@@ -179,10 +179,11 @@ export default function Landing() {
                     <span className="text-xs text-muted">{t('landing.articles', { n: cat.items.length })}</span>
                   </div>
                   <h3 className="mt-4 title text-xl">
-                    <Link to={`/algoritmos#${cat.id}`} className="hover:text-accent">{loc(cat).title}</Link>
+                    {/* O link se estende (::after) por todo o cartão; os atalhos dos algoritmos ficam por cima. */}
+                    <Link to={`/algoritmos#${cat.id}`} className="group-hover:text-accent after:absolute after:inset-0 after:rounded-2xl after:content-['']">{loc(cat).title}</Link>
                   </h3>
                   <p className="mt-2 text-sm text-muted leading-relaxed">{loc(cat).description}</p>
-                  <ul className="mt-5 flex flex-wrap gap-1.5">
+                  <ul className="relative z-10 mt-5 flex flex-wrap gap-1.5">
                     {cat.items.slice(0, 6).map(a => (
                       <li key={a.id}>
                         <Link onMouseEnter={() => preloadAlgorithm(a.id)} to={`/algoritmos/${a.id}`} className="px-2.5 h-7 inline-flex items-center rounded-full bg-subtle text-[13px] text-muted hover:text-ink hover:bg-line/60">
