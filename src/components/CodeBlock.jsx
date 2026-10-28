@@ -3,6 +3,7 @@ import { languages } from '../data'
 import { useLanguage } from '../context/LanguageContext'
 import { dedent, tokenize } from '../lib/highlight'
 import { useI18n } from '../i18n'
+import LanguageIcon from './LanguageIcon'
 
 export default function CodeBlock({ code }) {
   const { t } = useI18n()
@@ -32,11 +33,12 @@ export default function CodeBlock({ code }) {
               role="tab"
               aria-selected={language === l.id}
               onClick={() => setLanguage(l.id)}
-              className={`shrink-0 my-2 mr-1 h-8 px-3.5 rounded-full text-[13px]
+              className={`shrink-0 my-2 mr-1 h-8 pl-2.5 pr-3.5 rounded-full text-[13px] inline-flex items-center gap-2
                 ${language === l.id
                   ? 'bg-ink text-paper font-medium'
                   : 'text-muted hover:text-ink hover:bg-subtle'}`}
             >
+              <LanguageIcon id={l.id} />
               {l.label}
             </button>
           ))}
