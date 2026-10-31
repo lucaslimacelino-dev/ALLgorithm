@@ -1,12 +1,36 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import DifficultyBadge from '../components/DifficultyBadge'
+import AlgorithmThumb from '../components/AlgorithmThumb'
+import CategoryIcon from '../components/CategoryIcon'
 import { algorithms, categories, difficulties, mainComplexity, preloadAlgorithm } from '../data'
 import { matchScore } from '../lib/search'
 import { usePageTitle } from '../lib/usePageTitle'
 import { useI18n } from '../i18n'
+
+const VIEW_KEY = 'allgorithm:libraryView'
+const readView = () => { try { return localStorage.getItem(VIEW_KEY) === 'list' ? 'list' : 'cards' } catch { return 'cards' } }
+
+function AlgorithmCard({ algorithm }) {
+  const { loc } = useI18n()
+  return (
+    <Link to={`/algoritmos/${algorithm.id}`} onMouseEnter={() => preloadAlgorithm(algorithm.id)} className="group card card-hover overflow-hidden flex flex-col">
+      <div className="bg-subtle/60 border-b border-line px-2.5 py-2 sm:px-4 sm:py-3">
+        <AlgorithmThumb algorithm={algorithm} className="w-full h-auto transition-transform duration-300 group-hover:scale-[1.04]" />
+      </div>
+      <div className="p-3 sm:p-4 flex flex-col flex-1">
+        <h3 className="text-[14px] sm:text-[15px] font-medium text-ink leading-snug group-hover:text-accent">{loc(algorithm).name}</h3>
+        <p className="hidden sm:block mt-1 text-[13px] leading-relaxed text-muted line-clamp-2">{loc(algorithm).summary}</p>
+        <div className="mt-auto pt-3 flex items-center justify-between gap-3">
+          <DifficultyBadge level={algorithm.difficulty} className="hidden sm:inline-flex" />
+          <span className="font-mono text-[11.5px] text-muted truncate">{mainComplexity(algorithm)}</span>
+        </div>
+      </div>
+    </Link>
+  )
+}
 
 export default function Library() {
   const { t, loc, locale } = useI18n()
@@ -14,6 +38,8 @@ export default function Library() {
   const [params, setParams] = useSearchParams()
   const query = params.get('q') ?? ''
   const level = params.get('nivel') ?? ''
+  const [view, setView] = useState(readView)
+  useEffect(() => { try { localStorage.setItem(VIEW_KEY, view) } catch { /* armazenamento indisponível */ } }, [view])
 
   const updateParam = (key, value) => {
     const next = new URLSearchParams(params)
@@ -82,6 +108,21 @@ export default function Library() {
                   </button>
                 ))}
               </div>
+              <div className="inline-flex p-1 rounded-full border border-line bg-surface shadow-soft self-start md:ml-auto" role="group" aria-label={t('library.view')}>
+                {[['cards', t('library.cards'), 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z'], ['list', t('library.list'), 'M4 6h16M4 12h16M4 18h16']].map(([v, label, d]) => (
+                  <button
+                    key={v}
+                    type="button"
+                    onClick={() => setView(v)}
+                    aria-pressed={view === v}
+                    title={label}
+                    className={`h-9 px-3.5 rounded-full text-[13px] inline-flex items-center gap-2 ${view === v ? 'bg-ink text-paper' : 'text-muted hover:text-ink'}`}
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8} strokeLinejoin="round" strokeLinecap="round"><path d={d} /></svg>
+                    <span className="hidden sm:inline">{label}</span>
+                  </button>
+                ))}
+              </div>
             </div>
             <p className="mt-4 text-[13px] text-faint">
               {filtering
@@ -98,8 +139,8 @@ export default function Library() {
             <ul className="space-y-0.5">
               {categories.map(cat => (
                 <li key={cat.id}>
-                  <a href={`#${cat.id}`} className="flex justify-between items-center px-3 h-9 rounded-lg text-sm text-muted hover:text-ink hover:bg-subtle">
-                    {loc(cat).title}
+                  <a href={`#${cat.id}`} className="flex justify-between items-center gap-2 px-3 h-9 rounded-lg text-sm text-muted hover:text-ink hover:bg-subtle">
+                    <span className="inline-flex items-center gap-2 min-w-0"><CategoryIcon id={cat.id} className="w-3.5 h-3.5 shrink-0 text-faint" /><span className="truncate">{loc(cat).title}</span></span>
                     <span className="font-mono text-xs text-faint">{cat.items.length}</span>
                   </a>
                 </li>
@@ -111,13 +152,21 @@ export default function Library() {
             {groups.map(cat => (
               <section key={cat.id} id={cat.id} className="scroll-mt-24">
                 <div className="flex items-end justify-between gap-4 mb-5">
-                  <div>
-                    <h2 className="title text-2xl">{loc(cat).title}</h2>
+                  <div className="flex items-start gap-3">
+                    <span className="mt-0.5 w-9 h-9 shrink-0 grid place-items-center rounded-xl bg-accent/10 text-accent"><CategoryIcon id={cat.id} className="w-[18px] h-[18px]" /></span>
+                    <div>
+                    <h2 className="title text-2xl"><Link to={`/categorias/${cat.id}`} className="hover:text-accent">{loc(cat).title}</Link></h2>
                     <p className="mt-1 text-sm text-muted">{loc(cat).description}</p>
+                    </div>
                   </div>
                   <span className="hidden sm:block shrink-0 text-[13px] text-faint">{t('library.articles', { n: cat.items.length })}</span>
                 </div>
 
+                {view === 'cards' ? (
+                  <div className="grid gap-3 sm:gap-4 grid-cols-2 xl:grid-cols-3">
+                    {cat.items.map(a => <AlgorithmCard key={a.id} algorithm={a} />)}
+                  </div>
+                ) : (
                 <ul className="card divide-y divide-line overflow-hidden">
                   {cat.items.map((a, i) => (
                     <li key={a.id}>
@@ -137,6 +186,7 @@ export default function Library() {
                     </li>
                   ))}
                 </ul>
+                )}
               </section>
             ))}
 
