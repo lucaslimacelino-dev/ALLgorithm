@@ -14,19 +14,24 @@ export const mainComplexity = a => a.complexity?.average ?? a.operations?.[0]?.[
 export const getCategory = id => categories.find(c => c.id === id)
 
 // Cada arquivo de categoria vira um pedaço (chunk) separado, baixado só quando necessário.
+// O corpo dos artigos em inglês fica em algorithms/en/<categoria>.js, indexado pelo id do algoritmo.
 const contentLoaders = import.meta.glob('./algorithms/*.js')
+const translationLoaders = import.meta.glob('./algorithms/en/*.js')
 const loaderOf = category => contentLoaders[`./algorithms/${category}.js`]
+const translationOf = category => translationLoaders[`./algorithms/en/${category}.js`]?.() ?? Promise.resolve(null)
 
 export async function loadAlgorithmContent(id) {
   const meta = getAlgorithm(id)
-  const module = await loaderOf(meta.category)()
-  return { ...meta, ...module.default.find(a => a.id === id) }
+  const [module, translation] = await Promise.all([loaderOf(meta.category)(), translationOf(meta.category)])
+  const item = module.default.find(a => a.id === id)
+  const body = translation?.default[id]
+  return { ...meta, ...item, ...(body ? { en: { ...item.en, ...body } } : {}) }
 }
 
 // Começa a baixar o conteúdo antes do clique (ao passar o mouse em um link).
 export function preloadAlgorithm(id) {
   const meta = getAlgorithm(id)
-  if (meta) loaderOf(meta.category)().catch(() => {})
+  if (meta) Promise.all([loaderOf(meta.category)(), translationOf(meta.category)]).catch(() => {})
 }
 
 export const languages = [

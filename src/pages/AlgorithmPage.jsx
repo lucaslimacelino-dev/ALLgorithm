@@ -3,6 +3,7 @@ import { Link, Navigate, useLocation, useParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import CodeBlock from '../components/CodeBlock'
+import ComplexityChart from '../components/ComplexityChart'
 import DifficultyBadge from '../components/DifficultyBadge'
 import { getVisualizer } from '../components/visualizers'
 import { SITE } from '../config/site'
@@ -70,6 +71,7 @@ function Infobox({ algorithm, category }) {
           ))}
         </dl>
       )}
+      {!algorithm.operations && <ComplexityChart complexity={algorithm.complexity} />}
     </aside>
   )
 }

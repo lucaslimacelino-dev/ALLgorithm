@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
@@ -25,10 +26,12 @@ function algorithmIndex() {
         const file = resolve(dataDir, 'algorithms', `${cat}.js`)
         this.addWatchFile(file)
         const items = (await load(file)).default
+        const enFile = resolve(dataDir, 'algorithms', 'en', `${cat}.js`)
+        const bodies = existsSync(enFile) ? (this.addWatchFile(enFile), (await load(enFile)).default) : {}
         const pick = obj => Object.fromEntries(indexFields.filter(f => f in obj).map(f => [f, obj[f]]))
         // hasCuriosities: permite escolher o "Você sabia?" do idioma sem carregar os textos
-        const pickEn = en => ({ ...pick(en), ...(en.curiosities ? { hasCuriosities: true } : {}) })
-        index[cat] = items.map(a => ({ ...pick(a), ...(a.en ? { en: pickEn(a.en) } : {}) }))
+        const pickEn = (en, body) => ({ ...pick(en), ...(en.curiosities || body?.curiosities ? { hasCuriosities: true } : {}) })
+        index[cat] = items.map(a => ({ ...pick(a), ...(a.en ? { en: pickEn(a.en, bodies[a.id]) } : {}) }))
       }
       return `export default ${JSON.stringify(index)}`
     },
