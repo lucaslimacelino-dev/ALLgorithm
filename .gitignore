@@ -1,0 +1,5 @@
+# Dependências: instaladas pelo npm install (inclusive na Vercel)
+node_modules/
+
+# Build: gerado pela Vercel a cada deploy
+dist/

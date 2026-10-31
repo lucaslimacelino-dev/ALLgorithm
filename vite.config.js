@@ -45,6 +45,20 @@ function algorithmIndex() {
   }
 }
 
+// Depois do build: imagens de compartilhamento e páginas com tags Open Graph (scripts/og).
+function shareImages() {
+  let outDir
+  return {
+    name: 'share-images',
+    apply: 'build',
+    configResolved(config) { outDir = resolve(config.root, config.build.outDir) },
+    async closeBundle() {
+      const { generateShareImages } = await import('./scripts/og/generate.mjs')
+      await generateShareImages(outDir)
+    },
+  }
+}
+
 export default defineConfig({
-  plugins: [react(), algorithmIndex()],
+  plugins: [react(), algorithmIndex(), shareImages()],
 })
